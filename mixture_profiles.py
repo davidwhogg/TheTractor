@@ -181,7 +181,8 @@ class MixtureOfGaussians():
 		return result.reshape((nx, ny))
 
 	evaluate = evaluate_2
-	evaluate_grid = evaluate_grid_hogg
+	#evaluate_grid = evaluate_grid_hogg
+	evaluate_grid = evaluate_grid_dstn
 
 # input: a mixture, a 2d array of x,y minimum values, and a 2d array of x,y maximum values
 # output: a patch
