@@ -1,0 +1,55 @@
+% Copyright 2012 David W. Hogg (NYU).
+% All rights reserved.
+
+\documentclass[12pt]{article}
+
+\begin{document}
+
+\section*{Replacing standard galaxy profiles with \\ mixtures of Gaussians}
+
+\noindent
+David W. Hogg \\
+\textsl{New York University} \\
+\textsl{Max-Planck-Institut f\"ur Astronomie} \\[1ex]
+Dustin Lang \\
+\textsl{Princeton University Observatory}
+
+\begin{abstract}
+Exponential, de~Vaucouleurs, and Sersic profiles are simple and
+successful models for fitting two-dimensional images of galaxies.  One
+numerical issue encountered in this kind of fitting is the pixel
+rendering and convolution (or correlation) of the models with the
+telescope point-spread function (PSF); these operations are slow, and
+easy to get slightly wrong at small radii.  Here we exploit the
+realization that these models can be approximated to arbitrary
+accuracy with a mixture (linear sum) of two-dimensional Gaussians.
+Mixtures of Gaussians are fast to render, fast to affine-transform,
+and fast to convolve with mixture-of-Gaussian PSF models, all at
+machine precision.  We present worked examples that can be directly
+used in image fitting; we are using them ourselves.  We also advocate
+modeling PSFs also as arbitrary mixtures of Gaussians.  Amusingly, in
+the optically thin limit, a mixture-of-Gaussian two-dimensional model
+directly implies its own three-dimensional de-projection.
+\end{abstract}
+
+...Some other authors have worked with mixtures of Gaussians...Very
+related work...thinking more generally...Here we want to solve a very
+specific set of numerical problems...
+
+...Mixtures of Gaussians sometimes used for PSF fitting...Used in
+XD...Other places?...
+
+...Rendering of Sersic profiles (of which exp and dev are types) is
+non-trivial at the center...for the same reason convolution is a
+bitch...
+
+...If we wanted to approximate these models, what objective function
+would we use?  What tolerances are okay?...
+
+...What do we get by running the relevant approximations for exp and
+dev?...Can we make a continuous approximation for the Sersic
+profiles?...
+
+...How to use these in a real setting...An example from the Tractor...
+
+\end{document}
