@@ -2,6 +2,26 @@
 % All rights reserved.
 
 \documentclass[12pt]{article}
+\usepackage{amssymb,amsmath,mathrsfs}
+
+\newcommand{\tmatrix}[1]{\boldsymbol{#1}}
+\newcommand{\inverse}[1]{{#1}^{-1}}
+\newcommand{\transpose}[1]{{#1}^{\mathsf T}}
+\newcommand{\tvector}[1]{\boldsymbol{#1}}
+\newcommand{\pos}{\tvector{x}}
+\newcommand{\spos}{\tvector{\xi}}
+\newcommand{\mean}{\tvector{m}}
+\newcommand{\var}{\tmatrix{V}\!}
+\newcommand{\Gm}{\tmatrix{G}}
+\newcommand{\Hm}{\tmatrix{H}}
+\newcommand{\Rm}{\tmatrix{R}}
+\newcommand{\uv}{\tvector{u}}
+\newcommand{\zero}{\tmatrix{0}}
+\newcommand{\identity}{\tmatrix{I}}
+\newcommand{\normal}{N}
+\newcommand{\given}{\,|\,}
+\renewcommand{\star}{\mathrm{star}}
+\newcommand{\dev}{\mathrm{dev}}
 
 \begin{document}
 
@@ -28,8 +48,9 @@ and fast to convolve with mixture-of-Gaussian PSF models, all at
 machine precision.  We present worked examples that can be directly
 used in image fitting; we are using them ourselves.  We also advocate
 modeling PSFs also as arbitrary mixtures of Gaussians.  Amusingly, in
-the optically thin limit, a mixture-of-Gaussian two-dimensional model
-directly implies its own three-dimensional de-projection.
+the optically thin limit, a circularly symmetric mixture-of-Gaussian
+two-dimensional model directly implies its own spherically symmetric
+three-dimensional de-projection.
 \end{abstract}
 
 ...Some other authors have worked with mixtures of Gaussians...Very
@@ -51,5 +72,64 @@ dev?...Can we make a continuous approximation for the Sersic
 profiles?...
 
 ...How to use these in a real setting...An example from the Tractor...
+
+\begin{eqnarray}\displaystyle
+\normal(\pos\given\mean,\var) &\equiv& \frac{1}{2\pi}\,\det(\var)^{-1/2}\,\exp(-\frac{1}{2}\,\transpose{[\pos-\mean]}\cdot\inverse{\var}\cdot[\pos-\mean])
+\quad ,
+\end{eqnarray}
+
+\begin{eqnarray}\displaystyle
+Q_{\exp}(\spos) &=& \sum_{m=1}^{M_g} g_m\,\normal(\spos\given\zero,\Gm_m)
+\\
+1 &=& \sum_{m=1}^{M_g} g_m
+\\
+\Gm_m &=& \sigma^2_{\exp,m}\,\identity
+\quad ,
+\end{eqnarray}
+
+\begin{eqnarray}\displaystyle
+Q_{\dev}(\spos) &=& \sum_{m=1}^{M_h} h_m\,\normal(\spos\given\zero,\Hm_m)
+\\
+1 &=& \sum_{m=1}^{M_h} h_m
+\\
+\Hm_m &=& \sigma^2_{\dev,m}\,\identity
+\quad ,
+\end{eqnarray}
+
+\begin{eqnarray}\displaystyle
+\psi(\Delta\pos) &=& \sum_{k=1}^K p_k\,\normal(\Delta\pos\given\mean_k,\var_k)
+\\
+1 &=& \sum_{k=1}^K p_k
+\\
+I(\pos\given\star,S_s,\pos_s) &=& \sum_{k=1}^K S_s\,p_k\,\normal(\pos\given\pos_s+\mean_k,\var_k)
+\quad ,
+\end{eqnarray}
+
+\begin{eqnarray}\displaystyle
+I(\pos\given\exp,S_g,\pos_g,\var_g) &=& \sum_{k=1}^K \sum_{m=1}^{M_g} S_g\,g_m\,p_k\,\normal(\pos\given\pos_g+\mean_k,\var_{gn}+\var_k)
+\\
+\var_{gn} &\equiv& \Rm_g\cdot\Gm_m\cdot\transpose{\Rm_g}
+\\
+\var_g &\equiv& \Rm_g\cdot\transpose{\Rm_g}
+\\
+\Rm_g &=& \left[a\,\uv_1 , b\,\uv_2 \right]
+\quad ,
+\end{eqnarray}
+where $a$ and $b$ are the major and minor axis lengths of the galaxy
+ellipse (in appropriate units) and $\uv_1$ and $\uv_2$ are the
+eigenvectors on the sky pointing in the major-axis and minor-axis
+directions respectively.  Since implicitly all vectors are
+two-dimensional column vectors, this makes $\Rm_g$ a $2\times 2$
+affine transformation matrix.
+
+\begin{eqnarray}\displaystyle
+I(\pos\given\dev,S_h,\pos_h,\var_h) &=& \sum_{k=1}^K \sum_{m=1}^{M_h} S_h\,h_m\,p_k\,\normal(\pos\given\pos_h+\mean_k,\var_{hn}+\var_k)
+\\
+\var_{hn} &\equiv& \Rm_h\cdot\Hm_m\cdot\transpose{\Rm_h}
+\\
+\var_h &\equiv& \Rm_h\cdot\transpose{\Rm_h}
+\quad ,
+\end{eqnarray}
+where...
 
 \end{document}
