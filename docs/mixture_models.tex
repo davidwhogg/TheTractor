@@ -4,6 +4,10 @@
 \documentclass[12pt]{article}
 \usepackage{amssymb,amsmath,mathrsfs}
 
+\newcommand{\documentname}{\textsl{Note}}
+\newcommand{\project}[1]{\textsl{#1}}
+\newcommand{\tractor}{\project{Tractor}}
+
 \newcommand{\tmatrix}[1]{\boldsymbol{#1}}
 \newcommand{\inverse}[1]{{#1}^{-1}}
 \newcommand{\transpose}[1]{{#1}^{\mathsf T}}
@@ -14,7 +18,7 @@
 \newcommand{\var}{\tmatrix{V}\!}
 \newcommand{\Gm}{\tmatrix{G}}
 \newcommand{\Hm}{\tmatrix{H}}
-\newcommand{\Rm}{\tmatrix{R}}
+\newcommand{\affine}{\tmatrix{R}}
 \newcommand{\uv}{\tvector{u}}
 \newcommand{\zero}{\tmatrix{0}}
 \newcommand{\identity}{\tmatrix{I}}
@@ -35,7 +39,7 @@ Dustin Lang \\
 \textsl{Princeton University Observatory}
 
 \begin{abstract}
-Exponential, de~Vaucouleurs, and Sersic profiles are simple and
+Exponential and de~Vaucouleurs profiles are simple and
 successful models for fitting two-dimensional images of galaxies.  One
 numerical issue encountered in this kind of fitting is the pixel
 rendering and convolution (or correlation) of the models with the
@@ -67,17 +71,41 @@ bitch...
 ...If we wanted to approximate these models, what objective function
 would we use?  What tolerances are okay?...
 
-...What do we get by running the relevant approximations for exp and
-dev?...Can we make a continuous approximation for the Sersic
-profiles?...
+...Limit scope of this document to just what we need for the
+\tractor...
 
-...How to use these in a real setting...An example from the Tractor...
-
+In what follows we will exclusively use two-dimensional Gaussian or
+Normal distributions, which look like
 \begin{eqnarray}\displaystyle
 \normal(\pos\given\mean,\var) &\equiv& \frac{1}{2\pi}\,\det(\var)^{-1/2}\,\exp(-\frac{1}{2}\,\transpose{[\pos-\mean]}\cdot\inverse{\var}\cdot[\pos-\mean])
 \quad ,
 \end{eqnarray}
+where $\pos$ and $\mean$ are two-dimensional vectors (usually in the
+focal plane or on the sky or something like that), and $\var$ is a
+symmetric $2\times 2$ variance tensor or matrix, and implicitly the
+vectors are column vectors.  A \emph{mixture of Gaussians} is a linear
+superposition of Gaussians.  Any positive two-dimensional function
+with finite support and finite total integral---including as a special
+case any two-dimensional probability distribution function---can be
+represented as a mixture of Gaussians to arbitrary accuracy (DSTN: It
+would be nice to have a reference here).
 
+We wish to make an approximation to the two-dimensional circular
+exponential profile
+\begin{eqnarray}\displaystyle
+Q_{\exp}(\spos) &\approx& \frac{1}{Z_{\exp}}\,\exp(-\frac{|\spos|}{r_{\exp}})
+\\
+Z_{\exp} &=& XXXXX
+\\
+r_{\exp} &=& XXXXX
+\quad ,
+\end{eqnarray}
+where $\spos$ is a dimensionless focal-plane position, and $Z_{\exp}$
+and $r_{\exp}$ are parameters that ensure that the profile integrates
+to unit flux and has unit half-light radius.  The position $\spos$ is
+dimensionless because it parameterizes the unit-size and unit-flux
+dimensionless function.  We seek the best (where ``best'' will be
+defined below) $M_g$-Gaussian mixture approximation
 \begin{eqnarray}\displaystyle
 Q_{\exp}(\spos) &=& \sum_{m=1}^{M_g} g_m\,\normal(\spos\given\zero,\Gm_m)
 \\
@@ -86,50 +114,108 @@ Q_{\exp}(\spos) &=& \sum_{m=1}^{M_g} g_m\,\normal(\spos\given\zero,\Gm_m)
 \Gm_m &=& \sigma^2_{\exp,m}\,\identity
 \quad ,
 \end{eqnarray}
-
+where all of the means are exactly zero and all of the variances
+$\Gm_m$ in the mixture are scalar multiples of the identity matrix
+$\identity$ because we are requiring this dimensionless function to be
+precisely circular (so every component is itself circular and
+concentric).  Similarly for the de~Vaucouleurs profile
 \begin{eqnarray}\displaystyle
+Q_{\dev}(\spos) &\approx& \frac{1}{Z_{\dev}}\,\exp(-\left[\frac{|\spos|}{r_{\dev}}\right]^{1/4})
+\\
+Z_{\dev} &=& XXXXX
+\\
+r_{\dev} &=& XXXXX
+\\
 Q_{\dev}(\spos) &=& \sum_{m=1}^{M_h} h_m\,\normal(\spos\given\zero,\Hm_m)
 \\
 1 &=& \sum_{m=1}^{M_h} h_m
 \\
 \Hm_m &=& \sigma^2_{\dev,m}\,\identity
-\quad ,
+\quad .
 \end{eqnarray}
 
+...Discuss the cutoffs used by PHOTO and adjust $Z$ and $r$ accordingly...
+
+...Define a sensible scalar objective...Give fitting procedure...give actual values for the parameters...
+
+...Show plots demonstrating quality of fit, one-d and two-d plots...
+
+The value of these mixture-of-Gaussian galaxy components comes when
+they are to be convolved with a PSF (usually in fact a pixel-convolved
+PSF) that is itself represented as a mixture of Gaussians.  In this
+scenario, the PSF $\psi(\Delta\pos)$---which is thought of as a
+function of focal-plane displacement $\Delta\pos$ away from, say, a
+true stellar position---is represented as a $K$-Gaussian mixture
 \begin{eqnarray}\displaystyle
 \psi(\Delta\pos) &=& \sum_{k=1}^K p_k\,\normal(\Delta\pos\given\mean_k,\var_k)
 \\
 1 &=& \sum_{k=1}^K p_k
-\\
-I(\pos\given\star,S_s,\pos_s) &=& \sum_{k=1}^K S_s\,p_k\,\normal(\pos\given\pos_s+\mean_k,\var_k)
 \quad ,
 \end{eqnarray}
+where the means $\mean_k$ are \emph{not} required to vanish because
+the PSF can have arbitrarily non-trivial structure (think speckles and
+the like) and the variances $\var_k$ will not in general be
+proportional to the identity or even diagonal because the PSF will not
+in general be round.  An example that illustrates the use of this PSF
+is the following: It implies that a star of flux $S_s$ at focal-plane
+position $\pos_s$ will lead to an image (PSF-convolved intensity map)
+of the form
+\begin{eqnarray}\displaystyle
+I(\pos\given\star,S_s,\pos_s) &=& \sum_{k=1}^K S_s\,p_k\,\normal(\pos\given\pos_s+\mean_k,\var_k)
+\quad .
+\end{eqnarray}
+That is, when the PSF is represented as a mixture of Gaussians, any
+image of a star---or indeed any image of any set of stars---is also
+represented as a mixture of Gaussians.
 
+Applying this PSF to an exponential or de~Vaucouleurs galaxy is
+slightly more complicated, because the galaxy has not just a flux
+$S_g$ and a central position $\pos_g$; it also has a shape.  Because
+we are only considering these simple galaxies, we are only permitting
+ellipsoidal shapes, which can be represented by a semi-major axis $a$,
+a semi-minor axis $b$, and a position angle $\phi$, or equivalently by
+eigenvalues $a, b$ and eigenvectors $\uv_1, \uv_2$, or by a symmetric
+variance tensor $\var_g$ (which is a general representation of an
+ellipse).  The galaxy is distorted by this variance tensor
+\emph{prior} to PSF convolution, so the focal-plane image
+(PSF-convolved intensity field) for a general exponential galaxy is
+given by
 \begin{eqnarray}\displaystyle
 I(\pos\given\exp,S_g,\pos_g,\var_g) &=& \sum_{k=1}^K \sum_{m=1}^{M_g} S_g\,g_m\,p_k\,\normal(\pos\given\pos_g+\mean_k,\var_{gn}+\var_k)
 \\
-\var_{gn} &\equiv& \Rm_g\cdot\Gm_m\cdot\transpose{\Rm_g}
+\var_{gn} &\equiv& \affine_g\cdot\Gm_m\cdot\transpose{\affine_g}
 \\
-\var_g &\equiv& \Rm_g\cdot\transpose{\Rm_g}
+\var_g &\equiv& \affine_g\cdot\transpose{\affine_g}
 \\
-\Rm_g &=& \left[a\,\uv_1 , b\,\uv_2 \right]
+\affine_g &=& \left[a\,\uv_1 , b\,\uv_2 \right]
 \quad ,
 \end{eqnarray}
 where $a$ and $b$ are the major and minor axis lengths of the galaxy
 ellipse (in appropriate units) and $\uv_1$ and $\uv_2$ are the
 eigenvectors on the sky pointing in the major-axis and minor-axis
 directions respectively.  Since implicitly all vectors are
-two-dimensional column vectors, this makes $\Rm_g$ a $2\times 2$
-affine transformation matrix.
-
+two-dimensional column vectors, this makes $\affine_g$ a $2\times 2$
+affine transformation matrix and $\var_g$ a symmetric $2\times 2$
+variance tensor.  Similarly, the general de~Vaucouleurs galaxy is
+given by
 \begin{eqnarray}\displaystyle
 I(\pos\given\dev,S_h,\pos_h,\var_h) &=& \sum_{k=1}^K \sum_{m=1}^{M_h} S_h\,h_m\,p_k\,\normal(\pos\given\pos_h+\mean_k,\var_{hn}+\var_k)
 \\
-\var_{hn} &\equiv& \Rm_h\cdot\Hm_m\cdot\transpose{\Rm_h}
+\var_{hn} &\equiv& \affine_h\cdot\Hm_m\cdot\transpose{\affine_h}
 \\
-\var_h &\equiv& \Rm_h\cdot\transpose{\Rm_h}
+\var_h &\equiv& \affine_h\cdot\transpose{\affine_h}
 \quad ,
 \end{eqnarray}
-where...
+where the matrix mathematics is the same as that in the exponential
+case.  Note the important and key result of this \documentname, to
+wit, that a mixture-of-Gaussian galaxy model (with $M$ components)
+convolved with a mixture-of-Gaussian PSF model (with $K$ components)
+yields a mixture-of-Gaussian image (with $[M\,K]$ components).
+
+...pegagogical figure demonstrating these operations and their results...
+
+...what would you want to do to generalize to Sersic profiles?...
+
+...what about mixtures of exponentials and de~Vaucouleurs:  No problem!...
 
 \end{document}
