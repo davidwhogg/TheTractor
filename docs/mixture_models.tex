@@ -8,12 +8,15 @@
 % - make useful figures
 % - send to Jim Bosch and Kevin Bundy for comments
 
-\documentclass[12pt]{article}
+\documentclass[12pt,pdftex,preprint]{aastex}
 \usepackage{amssymb,amsmath,mathrsfs}
 
+\newcommand{\foreign}[1]{\textit{#1}}
+\newcommand{\etal}{et\,al.}
 \newcommand{\documentname}{\textsl{Note}}
 \newcommand{\project}[1]{\textsl{#1}}
 \newcommand{\tractor}{\project{Tractor}}
+\newcommand{\sdss}{\project{SDSS}}
 
 \newcommand{\tmatrix}[1]{\boldsymbol{#1}}
 \newcommand{\inverse}[1]{{#1}^{-1}}
@@ -36,14 +39,13 @@
 
 \begin{document}
 
-\section*{Replacing standard galaxy profiles with \\ mixtures of Gaussians}
-
-\noindent
-David W. Hogg \\
-\textsl{New York University} \\
-\textsl{Max-Planck-Institut f\"ur Astronomie} \\[1ex]
-Dustin Lang \\
-\textsl{Princeton University Observatory}
+\title{Replacing standard galaxy profiles with \\ mixtures of Gaussians}
+\author{David W. Hogg\altaffilmark{1,2,3} \&
+        Dustin Lang\altaffilmark{4}}
+\altaffiltext{1}{To whom correspondence should be addressed; \texttt{david.hogg@nyu.edu}}
+\altaffiltext{2}{New York University}
+\altaffiltext{3}{Max-Planck-Institut f\"ur Astronomie}
+\altaffiltext{4}{Princeton University Observatory}
 
 \begin{abstract}
 Exponential and de~Vaucouleurs profiles are simple and successful
@@ -64,19 +66,61 @@ Sersic models and applications of these ideas to three-dimensional
 deprojection.
 \end{abstract}
 
-...Some other authors have worked with mixtures of Gaussians...Very
-related work...thinking more generally...Here we want to solve a very
-specific set of numerical problems...
+Gaussians are remarkable distribution functions.  They have the
+incredible properties that---in any number of dimensions---the
+convolution (or correlation) of one multivariate Gaussian with another
+is itself a multivariate Gaussian, and any product of multivariate
+Gaussians is itself a multivariate Gaussian but with a different
+normalization.  Furthermore, the means and variance tensors of the
+Gaussians output by these operations are related simply to the means
+and variance tensors of the inputs.  Add to these wonders the fact
+that Gaussians form a complete basis for representing (smooth)
+probability distribution functions and it becomes remarkable that we
+don't do everything we do in terms of Gaussians.
 
-...Mixtures of Gaussians sometimes used for PSF fitting...Used in
-XD...Other places?...
+To elaborate, a mixture of multivariate Gaussians---a linear
+superposition---can be used to represent any reasonable distribution
+in any number of dimensions to any reasonable precision.  Convolution
+(or correlation) by any other distribution that has also been
+represented by a mixture of multivariate Gaussians creates a new
+mixture of Gaussians with simply adjusted amplitudes, means, and
+variance tensors.  The ubiquity of convolution operations in astronomy
+suggests the widespread adoption of mixture-of-Gaussian modeling.  We
+have pioneered this in the area of distribution modeling in large
+numbers of dimensions \citep{xd, xdqso, xdqsoz}, where convolution
+occurs because the true or noise-free distribution is convolved with
+the noise before being observed.  Here we are going to capitalize on
+the convolution properties of mixtures of Gaussians in modeling galaxy
+morphologies in imaging data, where the true or
+high-angular-resolution intensity field is convolved with the
+point-spread function (PSF) before being observed.  This is
+particularly useful in data sets in which the PSF itself has also been
+modeled as a mixture of Gaussians, which is not uncommon.  For
+example, the \project{Sloan Digital Sky Survey} (\sdss; [HOGG cite
+  York]) imaging pipelines [HOGG cite Lupton] makes such models for
+every imaging field.
 
-...Rendering of Sersic profiles (of which exp and dev are types) is
-non-trivial at the center...for the same reason convolution is a
-bitch...
+We are not the first in this space....modeling galaxies with mixtures
+of Gaussians has been done very successfully before [HOGG cite].
+However, the idea behind that work was to use the mixture of Gaussians
+to provide a very free form for the isophotes of large, nearby, highly
+resolved galaxies.  Here our goals are very limited: We want to
+improve the performance of standard galaxy image model fitting by
+expressing the standard galaxy models---the exponential and
+de~Vaucouleurs profiles---as rigid mixtures of Gaussians.
 
-...If we wanted to approximate these models, what objective function
-would we use?  What tolerances are okay?...
+The performance advantages we will obtain from using mixtures of
+Gaussians are not simply that convolution itself is trivial.  The
+standard unconvolved galaxy models, especially the de~Vaucouleurs and
+S\'ersic models, are very ill-behaved near the galaxy center.
+Rendering these profiles precisely near the center can be very
+challenging numerically.  In addition, most of the rendering time is
+spent at very small radii, where PSF convolution is going to erase all
+structure anyway.  That is, a mixture-of-Gaussians description of the
+de~Vaucouleurs profile saves time both in rendering \emph{and} in PSF
+convolution; it produces profiles that are approximate but very high
+performance when all real uses of the profiles are PSF-convolved, as
+they usually are.
 
 ...Limit scope of this document to just what we need for the
 \tractor...
@@ -146,7 +190,10 @@ Q_{\dev}(\spos) &=& \sum_{m=1}^{M_h} h_m\,\normal(\spos\given\zero,\Hm_m)
 
 ...Discuss the cutoffs used by PHOTO and adjust $Z$ and $r$ accordingly...
 
-...Define a sensible scalar objective...Give fitting procedure...give actual values for the parameters...
+...If we wanted to approximate these models, what objective function
+would we use?  What tolerances are okay?...Define a sensible scalar
+objective...Give fitting procedure...give actual values for the
+parameters...
 
 ...Show plots demonstrating quality of fit, one-d and two-d plots...
 
@@ -227,5 +274,17 @@ yields a mixture-of-Gaussian image (with $[M\,K]$ components).
 ...what would you want to do to generalize to Sersic profiles?...
 
 ...what about mixtures of exponentials and de~Vaucouleurs:  No problem!...
+
+\acknowledgements
+It is a pleasure to thank...
+
+\begin{thebibliography}{70}
+\bibitem[Bovy \etal(2011a)]{xd}
+Bovy,~J., Hogg,~D.~W., \& Roweis,~S., 2011, Ann. Appl. Stat., 5, 1657
+\bibitem[Bovy \etal(2011b)]{xdqso}
+Bovy,~J., \etal, 2011, \apj, 729, 141
+\bibitem[Bovy \etal(2012)]{xdqsoz}
+Bovy,~J. \etal, 2012, \aj, 749, 41
+\end{thebibliography}
 
 \end{document}
