@@ -4,7 +4,6 @@
 
 % to-do
 % -----
-% - find a way to cite galfit in the introduction
 % - write zeroth draft
 % - make useful figures
 % - send to Jim Bosch and Kevin Bundy for comments
@@ -13,7 +12,7 @@
 \usepackage{amssymb,amsmath,mathrsfs}
 
 \newcommand{\foreign}[1]{\textit{#1}}
-\newcommand{\etal}{et\,al.}
+\newcommand{\etal}{\foreign{et\,al.}}
 \newcommand{\documentname}{\textsl{Note}}
 \newcommand{\project}[1]{\textsl{#1}}
 \newcommand{\tractor}{\project{Tractor}}
@@ -101,14 +100,16 @@ example, the \project{Sloan Digital Sky Survey} (\sdss; [HOGG cite
   York]) imaging pipelines [HOGG cite Lupton] makes such models for
 every imaging field.
 
-We are not the first in this space....modeling galaxies with mixtures
-of Gaussians has been done very successfully before [HOGG cite].
-However, the idea behind that work was to use the mixture of Gaussians
-to provide a very free form for the isophotes of large, nearby, highly
-resolved galaxies.  Here our goals are very limited: We want to
-improve the performance of standard galaxy image model fitting by
-expressing the standard galaxy models---the exponential and
-de~Vaucouleurs profiles---as rigid mixtures of Gaussians.
+We are not the first in this space deconvolution and modeling of
+galaxy images with mixtures of Gaussians has been done very
+successfully before \citep[for example,][]{bendinelli, emsellem,
+  bendinelli2, cappellari}.  However, the idea behind those projects
+was to use the mixture of Gaussians to provide a very free form for
+the isophotes or morphologies of resolved galaxies or other complex
+scenes.  Here our goals are very limited: We want to improve the
+performance of standard galaxy image model fitting by expressing the
+standard galaxy models---the exponential and de~Vaucouleurs
+profiles---as rigid mixtures of Gaussians.
 
 The performance advantages we will obtain from using mixtures of
 Gaussians are not simply that convolution itself is trivial.  The
@@ -125,6 +126,8 @@ they usually are.
 
 ...Limit scope of this document to just what we need for the
 \tractor...
+
+...somehow have to cite GALFIT \citep{galfit} in this section...
 
 ...We need to put somewhere Lupton-like comments about sampling the
 pixel-convolved-PSF-convolved scene...
@@ -280,12 +283,22 @@ yields a mixture-of-Gaussian image (with $[M\,K]$ components).
 It is a pleasure to thank...
 
 \begin{thebibliography}{70}
+\bibitem[Bendinelli(1991)]{bendinelli}
+Bendinelli,~O., 1991, \apj, 366, 599
+\bibitem[Bendinelli \& Parmeggiani(1995)]{bendinelli2}
+Bendinelli,~O. \& Parmeggiani,~G., 1995, \aj, 109, 572
 \bibitem[Bovy \etal(2011a)]{xd}
 Bovy,~J., Hogg,~D.~W., \& Roweis,~S., 2011, Ann. Appl. Stat., 5, 1657
 \bibitem[Bovy \etal(2011b)]{xdqso}
 Bovy,~J., \etal, 2011, \apj, 729, 141
 \bibitem[Bovy \etal(2012)]{xdqsoz}
 Bovy,~J. \etal, 2012, \aj, 749, 41
+\bibitem[Cappellari(2002)]{cappellari}
+Cappellari,~M., 2002, \mnras, 333, 400
+\bibitem[Emsellem \etal(1994)]{emsellem}
+Emsellem,~E., Monnet,~G., Bacon,~R., \& Nieto,~J.-L., 1994, \aap, 285, 739
+\bibitem[Peng \etal(2002)]{galfit}
+Peng,~C.~Y., Ho, L.~C., Impey,~C.~D., \& Rix,~H.-W., 2002, \aj, 124, 266
 \end{thebibliography}
 
 \end{document}
