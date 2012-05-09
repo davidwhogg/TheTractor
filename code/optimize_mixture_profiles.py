@@ -1,4 +1,5 @@
-# Copyright 2011 David W. Hogg.  All rights reserved.
+# this file is part of the Tractor project.
+# Copyright 2011 David W. Hogg.
 
 import matplotlib
 matplotlib.use('Agg')
