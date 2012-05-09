@@ -82,7 +82,8 @@ def plot_mixture(pars, prefix, model):
     for k in range(K):
         plt.plot(x2, pars[k] * not_normal(x2, pars[k+K]), 'k-', alpha=0.5)
     plt.axvline(MAX_RADIUS, color='k', alpha=0.25)
-    plt.title(r"%s / $K=%d$ / maximum radius = $%.1f$ / badness = $%.2f\times 10^{%d}$" % (model, len(pars)/2, MAX_RADIUS, badness, LOG10_SQUARED_DEVIATION))
+    plt.title(r"%s / $K=%d$ / maximum radius = $%.1f$ / badness = $%.2f\times 10^{%d}$"
+              % (model, len(pars)/2, MAX_RADIUS, badness, LOG10_SQUARED_DEVIATION))
     plt.xlim(-0.1*MAX_RADIUS, 2.*MAX_RADIUS)
     plt.ylim(-0.1*np.max(y1), 1.1*np.max(y1))
     plt.savefig(prefix+'_'+model+'.png')
@@ -109,12 +110,12 @@ def main(model):
     bestbadness = badness
     for K in range(2,20):
         print 'working on K = %d' % K
-        newvar = 2.0 * np.max(np.append(var,1.0))
+        newvar = 2.0 * np.max(np.append(var, 1.0))
         newamp = 1.0 * newvar
         amp = np.append(newamp, amp)
         var = np.append(newvar, var)
         pars = np.append(amp, var)
-        for i in range(2*K):
+        for i in range(2 * K):
             (badness, pars) = optimize_mixture(K, pars, model)
             if (badness < bestbadness) or (i == 0):
                 print '%d %d improved' % (K, i)
@@ -122,9 +123,9 @@ def main(model):
                 bestbadness = badness
             else:
                 print '%d %d not improved' % (K, i)
-                print i, len(var), K, np.mod(i,K)
-                var[0] = 2.0 * var[np.mod(i,K)]
-                amp[0] = 0.5 * amp[np.mod(i,K)]
+                print i, len(var), K, np.mod(i, K)
+                var[0] = 2.0 * var[np.mod(i, K)]
+                amp[0] = 0.5 * amp[np.mod(i, K)]
                 pars = np.append(amp, var)
                 if (bestbadness < 0.5 * lastKbadness) and (i > 4):
                     print '%d %d improved enough' % (K, i)
@@ -133,7 +134,7 @@ def main(model):
             pars = rearrange_pars(bestpars)
             amp = pars[0:K]
             var = pars[K:K+K]
-            prefix = 'K%02d_MR%02d_LSD%02d' % (K, int(round(MAX_RADIUS)+0.01), -1 * LOG10_SQUARED_DEVIATION)
+            prefix = 'K%02d_MR%02d_LSD%02d' % (K, int(round(MAX_RADIUS) + 0.01), -1 * LOG10_SQUARED_DEVIATION)
             plot_mixture(pars, prefix, model)
             txtfile = open(prefix + '_' + model + '.txt', "w")
             txtfile.write(str(pars))
