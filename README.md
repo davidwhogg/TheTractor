@@ -1,6 +1,6 @@
 # the Tractor
 
-<http://theTractor.org/>
+http://theTractor.org/
 
 Replacing heuristic astronomical-image "object detection" with proper
 justified probabilistic fitting.  This project really lives at
@@ -13,4 +13,4 @@ justified probabilistic fitting.  This project really lives at
 
 ### License
 
-Copyright 2012 by the authors.  All rights reserved.
+Copyright 2012 by the authors.  **All rights reserved.**
