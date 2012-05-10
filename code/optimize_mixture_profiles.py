@@ -17,15 +17,18 @@ def not_normal(x, V):
     result[I] = 1. / (2. * np.pi * V) * np.exp(exparg[I])
     return result
 
-# magic numbers from Lupton (makeprof.c and phFitobj.h) via dstn
+# magic number from Ciotti & Bertin, A&A, 352, 447 (1999)
+# normalized to return 1. at x=1.
 def hogg_exp(x):
-    return np.exp(-1.67835 * (x - 1.))
+    return np.exp(-1.67834699 * (x - 1.))
 
-# magic numbers from Lupton (makeprof.c and phFitobj.h) via dstn
+# magic number from Ciotti & Bertin, A&A, 352, 447 (1999)
+# normalized to return 1. at x=1.
 def hogg_dev(x):
-    return np.exp(-7.66925 * ((x * x + 0.0004)**0.125 - 1.))
+    return np.exp(-7.66924944 * ((x * x)**0.125 - 1.))
 
 # magic numbers from Lupton (makeprof.c and phFitobj.h) via dstn
+# normalized to return 1. at x=1.
 def hogg_lup(x):
     inner = 7.
     outer = 8.
@@ -36,11 +39,16 @@ def hogg_lup(x):
     lup[middle] *= (outer - x[middle]) / (outer - inner)
     return lup
 
-# NEEDS MAGIC NUMBERS
-def hogg_ser(x, n):
-    def amp:
-        return 1.
-    return np.exp(amp(n) * ((x * x + 0.0004)**(0.5 * n) - 1.))
+# magic numbers from Ciotti & Bertin, A&A, 352, 447 (1999)
+# normalized to return 1. at x=1.
+def hogg_ser2(x):
+    return np.exp(-3.67206075 * ((x * x)**0.25 - 1.))
+def hogg_ser3(x):
+    return np.exp(-5.67016119 * ((x * x)**(1./6.) - 1.))
+def hogg_ser4(x):
+    return np.exp(-7.66924944 * ((x * x)**0.125 - 1.))
+def hogg_ser5(x):
+    return np.exp(-9.66871461 * ((x * x)**0.1 - 1.))
 
 def hogg_model(x, model):
     if model == 'exp':
@@ -49,6 +57,14 @@ def hogg_model(x, model):
         return hogg_dev(x)
     if model == 'lup':
         return hogg_lup(x)
+    if model == 'ser2':
+        return hogg_ser2(x)
+    if model == 'ser3':
+        return hogg_ser3(x)
+    if model == 'ser4':
+        return hogg_ser4(x)
+    if model == 'ser5':
+        return hogg_ser5(x)
     assert(1 == 0)
     return None
 
@@ -155,7 +171,10 @@ def main(model):
 if __name__ == '__main__':
     if True: # use multiprocessing
         from multiprocessing import Pool
-        pmap = Pool(3).map
+        pmap = Pool(8).map
     else: # don't use multiprocessing
         pmap = map
-    pmap(main, ['dev', 'lup', 'exp'])
+    models = ['dev', 'lup', 'exp', 'ser2', 'ser3', 'ser4', 'ser5']
+    for model in models:
+        print "%s at x = 1.0: %f" % (model, hogg_model(np.array([1.0, ]), model))
+    pmap(main, models)
