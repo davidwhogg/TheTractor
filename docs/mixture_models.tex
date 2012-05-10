@@ -37,6 +37,9 @@
 \renewcommand{\star}{\mathrm{star}}
 \newcommand{\dev}{\mathrm{dev}}
 
+\newlength{\figwidth}
+\setlength{\figwidth}{0.49\textwidth}
+
 \begin{document}
 
 \title{Replacing standard galaxy profiles with \\ mixtures of Gaussians}
@@ -300,5 +303,13 @@ Emsellem,~E., Monnet,~G., Bacon,~R., \& Nieto,~J.-L., 1994, \aap, 285, 739
 \bibitem[Peng \etal(2002)]{galfit}
 Peng,~C.~Y., Ho, L.~C., Impey,~C.~D., \& Rix,~H.-W., 2002, \aj, 124, 266
 \end{thebibliography}
+
+\clearpage
+\begin{figure}
+\includegraphics[width=\figwidth]{K08_MR08_LSD04_dev.png}
+\includegraphics[width=\figwidth]{K08_MR08_LSD04_dev_log.png} \\
+\includegraphics[width=\figwidth]{K08_MR08_LSD04_lup.png}
+\includegraphics[width=\figwidth]{K08_MR08_LSD04_lup_log.png}
+\end{figure}
 
 \end{document}
