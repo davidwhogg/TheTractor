@@ -11,7 +11,7 @@ import scipy.optimize as op
 # note wacky normalization because this is for 2-d Gaussians
 # (but only ever called in 1-d).  Wacky!
 def not_normal(x, V):
-    exparg = -0.5 * x**2 / V
+    exparg = -0.5 * x * x / V
     result = np.zeros_like(x)
     I = ((exparg > -1000) * (exparg < 1000))
     result[I] = 1. / (2. * np.pi * V) * np.exp(exparg[I])
@@ -23,7 +23,7 @@ def hogg_exp(x):
 
 # magic numbers from Lupton (makeprof.c and phFitobj.h) via dstn
 def hogg_dev(x):
-    return np.exp(-7.66925 * ((x*x + 0.0004)**0.125 - 1.))
+    return np.exp(-7.66925 * ((x * x + 0.0004)**0.125 - 1.))
 
 # magic numbers from Lupton (makeprof.c and phFitobj.h) via dstn
 def hogg_lup(x):
@@ -35,6 +35,12 @@ def hogg_lup(x):
     middle = (x >= inner) * (x <= outer)
     lup[middle] *= (outer - x[middle]) / (outer - inner)
     return lup
+
+# NEEDS MAGIC NUMBERS
+def hogg_ser(x, n):
+    def amp:
+        return 1.
+    return np.exp(amp(n) * ((x * x + 0.0004)**(0.5 * n) - 1.))
 
 def hogg_model(x, model):
     if model == 'exp':
@@ -60,7 +66,7 @@ def badness_of_fit(lnpars, model, max_radius, log10_squared_deviation):
     pars = np.exp(lnpars)
     x = np.arange(0.0005, max_radius, 0.001)
     badness = np.mean((mixture_of_not_normals(x, pars)
-               - hogg_model(x, model))**2) / 10.**log10_squared_deviation
+                       - hogg_model(x, model))**2) / 10.**log10_squared_deviation
     K = len(pars) / 2
     var = pars[K:]
     extrabadness = 0.0001 * np.sum(var) / max_radius**2
@@ -143,14 +149,13 @@ def main(model):
             txtfile = open(prefix + '_' + model + '.txt', "w")
             txtfile.write("pars = %s" % repr(pars))
             txtfile.close
-        if bestbadness < 1.0:
+        if bestbadness < 1.0 and K >= 8:
             break
 
 if __name__ == '__main__':
     if True: # use multiprocessing
         from multiprocessing import Pool
-        p = Pool(3)
-        pmap = p.map
+        pmap = Pool(3).map
     else: # don't use multiprocessing
         pmap = map
     pmap(main, ['dev', 'lup', 'exp'])
