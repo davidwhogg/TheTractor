@@ -1,17 +1,20 @@
 '''
-this file is part of the Tractor project.
+This file is part of the Tractor project.
 Copyright 2011 David W. Hogg.
 
 ### bugs:
-- should use levmar not bfgs!
+- Should use levmar not bfgs!
 '''
 
 import matplotlib
 matplotlib.use('Agg')
+from matplotlib import rc
+rc('font',**{'family':'serif','serif':'Computer Modern Roman','size':12})
+rc('text', usetex=True)
 import pylab as plt
-import matplotlib.cm as cm
 import numpy as np
 import scipy.optimize as op
+from multiprocessing import Pool
 
 # note wacky normalization because this is for 2-d Gaussians
 # (but only ever called in 1-d).  Wacky!
@@ -179,7 +182,6 @@ def main(input):
 
 if __name__ == '__main__':
     if True: # use multiprocessing
-        from multiprocessing import Pool
         pmap = Pool(10).map
     else: # don't use multiprocessing
         pmap = map
