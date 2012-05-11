@@ -117,11 +117,11 @@ def plot_mixture(pars, prefix, model, max_radius, log10_squared_deviation, radiu
               % (model, len(pars) / 2, max_radius, badname, badness * 100., log10_squared_deviation - 2.))
     plt.xlim(-0.1 * max_radius, 1.2 * max_radius)
     plt.ylim(-0.1 * 8.0, 1.1 * 8.0)
-    plt.savefig(prefix+'_'+model+'.png')
+    plt.savefig(model + '_' + prefix + '.png')
     plt.loglog()
     plt.xlim(0.001, 5. * max_radius)
     plt.ylim(3.e-5, 1.5 * np.max(y1))
-    plt.savefig(prefix+'_'+model+'_log.png')
+    plt.savefig(model + '_' + prefix + '_log.png')
 
 def rearrange_pars(pars):
     K = len(pars) / 2
