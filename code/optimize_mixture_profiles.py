@@ -32,7 +32,7 @@ def hogg_dev(x):
 def hogg_lup(x):
     inner = 7.
     outer = 8.
-    lup = hogg_dev(x)
+    lup = np.exp(-7.66925 * ((x * x + 0.0004)**0.125 - 1.))
     outside = (x >= outer)
     lup[outside] *= 0.
     middle = (x >= inner) * (x <= outer)
@@ -93,7 +93,7 @@ def optimize_mixture(K, pars, model, max_radius, log10_squared_deviation):
     return (badness_of_fit(newlnpars, model, max_radius, log10_squared_deviation), np.exp(newlnpars))
 
 def plot_mixture(pars, prefix, model, max_radius, log10_squared_deviation):
-    x2 = np.arange(0., 10. * max_radius, 0.001)
+    x2 = np.arange(0.0005, np.sqrt(5. * max_radius), 0.001)**2 # note non-linear spacing
     y1 = hogg_model(x2, model)
     badness = badness_of_fit(np.log(pars), model, max_radius, log10_squared_deviation)
     K = len(pars) / 2
@@ -165,7 +165,7 @@ def main(model):
             txtfile = open(prefix + '_' + model + '.txt', "w")
             txtfile.write("pars = %s" % repr(pars))
             txtfile.close
-        if bestbadness < 1.0 and K >= 8:
+        if bestbadness < 1.0 and K > 9:
             break
 
 if __name__ == '__main__':
