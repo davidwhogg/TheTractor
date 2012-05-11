@@ -4,3 +4,4 @@
 *.pdf
 code/*.png
 code/*.txt
+code/*.pickle
