@@ -143,7 +143,10 @@ def main(input):
     lastKbadness = badness
     bestbadness = badness
     for K in range(2, 20):
-        print 'working on %s at K = %d' % (model, K)
+        prefix = '%s_K%02d_MR%02d' % (model, K, int(round(max_radius) + 0.01))
+        if radius_weighted:
+            prefix += "_w"
+        print 'working on %s at K = %d (%s)' % (model, K, prefix)
         newvar = 2.0 * np.max(np.append(var, 1.0))
         newamp = 1.0 * newvar
         amp = np.append(newamp, amp)
@@ -163,17 +166,14 @@ def main(input):
                 if (bestbadness < 0.5 * lastKbadness) and (i > 4):
                     print '%s %d %d improved enough' % (model, K, i)
                     break
-            lastKbadness = bestbadness
-            pars = rearrange_pars(bestpars)
-            amp = pars[0:K]
-            var = pars[K:K+K]
-            prefix = '%s_K%02d_MR%02d' % (model, K, int(round(max_radius) + 0.01))
-            if radius_weighted:
-                prefix += "_w"
-            plot_mixture(pars, prefix, model, max_radius, log10_squared_deviation, radius_weighted)
-            txtfile = open(prefix + '.txt', "w")
-            txtfile.write("pars = %s" % repr(pars))
-            txtfile.close
+        lastKbadness = bestbadness
+        pars = rearrange_pars(bestpars)
+        amp = pars[0:K]
+        var = pars[K:K+K]
+        plot_mixture(pars, prefix, model, max_radius, log10_squared_deviation, radius_weighted)
+        txtfile = open(prefix + '.txt', "w")
+        txtfile.write("pars = %s" % repr(pars))
+        txtfile.close
         if bestbadness < 1.0 and K > 9:
             break
 
@@ -188,11 +188,5 @@ if __name__ == '__main__':
               ('ser2', True),
               ('ser3', True),
               ('dev', True),
-              ('ser5', True),
-              ('lup', False),
-              ('exp', False),
-              ('ser2', False),
-              ('ser3', False),
-              ('dev', False),
-              ('ser5', False)]
+              ('ser5', True), ]
     pmap(main, inputs)
