@@ -164,8 +164,8 @@ def main(input):
                 bestbadness = badness
             else:
                 print '%s %d %d not improved' % (model, K, i)
-                amp = bestpars[0:K]
-                var = bestpars[K:K+K]
+                amp = 1. * bestpars[0:K]
+                var = 1. * bestpars[K:K+K]
                 var[0] = 2.0 * var[np.mod(i, K)]
                 amp[0] = 0.5 * amp[np.mod(i, K)]
                 pars = np.append(amp, var)
@@ -188,10 +188,10 @@ if __name__ == '__main__':
         pmap = Pool(10).map
     else: # don't use multiprocessing
         pmap = map
-    inputs = [('lup', True),
+    inputs = [('dev', True),
+              ('lup', True),
               ('exp', True),
               ('ser2', True),
               ('ser3', True),
-              ('dev', True),
               ('ser5', True), ]
     pmap(main, inputs)
