@@ -135,7 +135,7 @@ def rearrange_pars(pars):
 def main(input):
     model, radius_weighted = input
     max_radius = 8.0
-    log10_squared_deviation = -4
+    log10_squared_deviation = -6
     amp = np.array([1.0])
     var = np.array([1.0])
     pars = np.append(amp, var)
@@ -167,14 +167,14 @@ def main(input):
             pars = rearrange_pars(bestpars)
             amp = pars[0:K]
             var = pars[K:K+K]
-            prefix = 'K%02d_MR%02d_LSD%02d' % (K, int(round(max_radius) + 0.01), -1 * log10_squared_deviation)
+            prefix = 'K%02d_MR%02d' % (K, int(round(max_radius) + 0.01))
             if radius_weighted:
                 prefix += "_w"
             plot_mixture(pars, prefix, model, max_radius, log10_squared_deviation, radius_weighted)
             txtfile = open(prefix + '_' + model + '.txt', "w")
             txtfile.write("pars = %s" % repr(pars))
             txtfile.close
-        if bestbadness < 1.0 and K > 9:
+        if bestbadness < 100.0 and K > 9:
             break
 
 if __name__ == '__main__':
