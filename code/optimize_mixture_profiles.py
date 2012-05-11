@@ -45,8 +45,6 @@ def hogg_ser2(x):
     return np.exp(-3.67206075 * ((x * x)**0.25 - 1.))
 def hogg_ser3(x):
     return np.exp(-5.67016119 * ((x * x)**(1./6.) - 1.))
-def hogg_ser4(x):
-    return np.exp(-7.66924944 * ((x * x)**0.125 - 1.))
 def hogg_ser5(x):
     return np.exp(-9.66871461 * ((x * x)**0.1 - 1.))
 
@@ -61,8 +59,6 @@ def hogg_model(x, model):
         return hogg_ser2(x)
     if model == 'ser3':
         return hogg_ser3(x)
-    if model == 'ser4':
-        return hogg_ser4(x)
     if model == 'ser5':
         return hogg_ser5(x)
     assert(1 == 0)
@@ -135,7 +131,7 @@ def main(model):
     lastKbadness = badness
     bestbadness = badness
     for K in range(2, 20):
-        print 'working on K = %d' % K
+        print 'working on %s at K = %d' % (model, K)
         newvar = 2.0 * np.max(np.append(var, 1.0))
         newamp = 1.0 * newvar
         amp = np.append(newamp, amp)
@@ -144,17 +140,16 @@ def main(model):
         for i in range(2 * K):
             (badness, pars) = optimize_mixture(K, pars, model, max_radius, log10_squared_deviation)
             if (badness < bestbadness) or (i == 0):
-                print '%d %d improved' % (K, i)
+                print '%s %d %d improved' % (model, K, i)
                 bestpars = pars
                 bestbadness = badness
             else:
-                print '%d %d not improved' % (K, i)
-                print i, len(var), K, np.mod(i, K)
+                print '%s %d %d not improved' % (model, K, i)
                 var[0] = 2.0 * var[np.mod(i, K)]
                 amp[0] = 0.5 * amp[np.mod(i, K)]
                 pars = np.append(amp, var)
                 if (bestbadness < 0.5 * lastKbadness) and (i > 4):
-                    print '%d %d improved enough' % (K, i)
+                    print '%s %d %d improved enough' % (model, K, i)
                     break
             lastKbadness = bestbadness
             pars = rearrange_pars(bestpars)
@@ -174,7 +169,5 @@ if __name__ == '__main__':
         pmap = Pool(8).map
     else: # don't use multiprocessing
         pmap = map
-    models = ['dev', 'lup', 'exp', 'ser2', 'ser3', 'ser4', 'ser5']
-    for model in models:
-        print "%s at x = 1.0: %f" % (model, hogg_model(np.array([1.0, ]), model))
+    models = ['lup', 'exp', 'ser2', 'ser3', 'dev', 'ser5']
     pmap(main, models)
