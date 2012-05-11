@@ -15,6 +15,7 @@ import pylab as plt
 import numpy as np
 import scipy.optimize as op
 from multiprocessing import Pool
+import cPickle as pickle
 
 # note wacky normalization because this is for 2-d Gaussians
 # (but only ever called in 1-d).  Wacky!
@@ -174,8 +175,11 @@ def main(input):
         var = pars[K:K+K]
         plot_mixture(pars, prefix, model, max_radius, log10_squared_deviation, radius_weighted)
         txtfile = open(prefix + '.txt', "w")
-        txtfile.write("pars = %s" % repr(pars))
+        txtfile.write("%s\n" % repr(pars))
         txtfile.close
+        pckfile = open(prefix + '.pickle', "wb")
+        pickle.dump(pars, pckfile)
+        pckfile.close
         if bestbadness < 1.0 and K > 15:
             break
 
