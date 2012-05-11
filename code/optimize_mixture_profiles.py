@@ -174,7 +174,7 @@ def main(input):
         txtfile = open(prefix + '.txt', "w")
         txtfile.write("pars = %s" % repr(pars))
         txtfile.close
-        if bestbadness < 1.0 and K > 9:
+        if bestbadness < 1.0 and K > 15:
             break
 
 if __name__ == '__main__':
