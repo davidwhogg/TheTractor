@@ -1,5 +1,10 @@
-# this file is part of the Tractor project.
-# Copyright 2011 David W. Hogg.
+'''
+this file is part of the Tractor project.
+Copyright 2011 David W. Hogg.
+
+### bugs:
+- should use levmar not bfgs!
+'''
 
 import matplotlib
 matplotlib.use('Agg')
@@ -74,24 +79,30 @@ def mixture_of_not_normals(x, pars):
 # note that you can do (x * ymix - x * ytrue)**2 or (ymix - ytrue)**2
 # each has disadvantages.
 # note magic number in the penalty for large variance
-def badness_of_fit(lnpars, model, max_radius, log10_squared_deviation):
+def badness_of_fit(lnpars, model, max_radius, log10_squared_deviation, radius_weighted):
     pars = np.exp(lnpars)
     x = np.arange(0.0005, max_radius, 0.001)
-    badness = np.mean((mixture_of_not_normals(x, pars)
-                       - hogg_model(x, model))**2) / 10.**log10_squared_deviation
+    residual = mixture_of_not_normals(x, pars) - hogg_model(x, model)
+    if radius_weighted:
+        numerator = np.sum(x * residual * residual)
+        denominator = np.sum(x)
+    else:
+        numerator = np.sum(residual * residual)
+        denominator = float(x.size)
+    badness = numerator / denominator / 10.**log10_squared_deviation
     K = len(pars) / 2
     var = pars[K:]
     extrabadness = 0.0001 * np.sum(var) / max_radius**2
     return badness + extrabadness
 
-def optimize_mixture(K, pars, model, max_radius, log10_squared_deviation):
-    newlnpars = op.fmin_bfgs(badness_of_fit, np.log(pars), args=(model, max_radius, log10_squared_deviation))
-    return (badness_of_fit(newlnpars, model, max_radius, log10_squared_deviation), np.exp(newlnpars))
+def optimize_mixture(K, pars, model, max_radius, log10_squared_deviation, radius_weighted):
+    newlnpars = op.fmin_bfgs(badness_of_fit, np.log(pars), args=(model, max_radius, log10_squared_deviation, radius_weighted))
+    return (badness_of_fit(newlnpars, model, max_radius, log10_squared_deviation, radius_weighted), np.exp(newlnpars))
 
-def plot_mixture(pars, prefix, model, max_radius, log10_squared_deviation):
+def plot_mixture(pars, prefix, model, max_radius, log10_squared_deviation, radius_weighted):
     x2 = np.arange(0.0005, np.sqrt(5. * max_radius), 0.001)**2 # note non-linear spacing
     y1 = hogg_model(x2, model)
-    badness = badness_of_fit(np.log(pars), model, max_radius, log10_squared_deviation)
+    badness = badness_of_fit(np.log(pars), model, max_radius, log10_squared_deviation, radius_weighted)
     K = len(pars) / 2
     y2 = mixture_of_not_normals(x2, pars)
     plt.clf()
@@ -100,8 +111,10 @@ def plot_mixture(pars, prefix, model, max_radius, log10_squared_deviation):
     for k in range(K):
         plt.plot(x2, pars[k] * not_normal(x2, pars[k + K]), 'k-', alpha=0.5)
     plt.axvline(max_radius, color='k', alpha=0.25)
-    plt.title(r"%s / $K=%d$ / maximum radius = $%.1f$ / badness = $%.2f\times 10^{%d}$"
-              % (model, len(pars) / 2, max_radius, badness, log10_squared_deviation))
+    badname = "badness"
+    if radius_weighted: badname = "weighted " + badname
+    plt.title(r"%s / $K=%d$ / max radius = $%.1f$ / %s = $%.3f\times 10^{%d}$"
+              % (model, len(pars) / 2, max_radius, badname, badness, log10_squared_deviation))
     plt.xlim(-0.1 * max_radius, 1.2 * max_radius)
     plt.ylim(-0.1 * 8.0, 1.1 * 8.0)
     plt.savefig(prefix+'_'+model+'.png')
@@ -119,15 +132,14 @@ def rearrange_pars(pars):
 
 # run this (possibly with adjustments to the magic numbers at top)
 # to find different or better mixtures approximations
-def main(model):
+def main(input):
+    model, radius_weighted = input
     max_radius = 8.0
     log10_squared_deviation = -4
-    if model == 'exp':
-        log10_squared_deviation = -6
     amp = np.array([1.0])
     var = np.array([1.0])
     pars = np.append(amp, var)
-    (badness, pars) = optimize_mixture(1, pars, model, max_radius, log10_squared_deviation)
+    (badness, pars) = optimize_mixture(1, pars, model, max_radius, log10_squared_deviation, radius_weighted)
     lastKbadness = badness
     bestbadness = badness
     for K in range(2, 20):
@@ -138,7 +150,7 @@ def main(model):
         var = np.append(newvar, var)
         pars = np.append(amp, var)
         for i in range(2 * K):
-            (badness, pars) = optimize_mixture(K, pars, model, max_radius, log10_squared_deviation)
+            (badness, pars) = optimize_mixture(K, pars, model, max_radius, log10_squared_deviation, radius_weighted)
             if (badness < bestbadness) or (i == 0):
                 print '%s %d %d improved' % (model, K, i)
                 bestpars = pars
@@ -156,7 +168,9 @@ def main(model):
             amp = pars[0:K]
             var = pars[K:K+K]
             prefix = 'K%02d_MR%02d_LSD%02d' % (K, int(round(max_radius) + 0.01), -1 * log10_squared_deviation)
-            plot_mixture(pars, prefix, model, max_radius, log10_squared_deviation)
+            if radius_weighted:
+                prefix += "_w"
+            plot_mixture(pars, prefix, model, max_radius, log10_squared_deviation, radius_weighted)
             txtfile = open(prefix + '_' + model + '.txt', "w")
             txtfile.write("pars = %s" % repr(pars))
             txtfile.close
@@ -166,8 +180,19 @@ def main(model):
 if __name__ == '__main__':
     if True: # use multiprocessing
         from multiprocessing import Pool
-        pmap = Pool(8).map
+        pmap = Pool(10).map
     else: # don't use multiprocessing
         pmap = map
-    models = ['lup', 'exp', 'ser2', 'ser3', 'dev', 'ser5']
-    pmap(main, models)
+    inputs = [('lup', True),
+              ('exp', True),
+              ('ser2', True),
+              ('ser3', True),
+              ('dev', True),
+              ('ser5', True),
+              ('lup', False),
+              ('exp', False),
+              ('ser2', False),
+              ('ser3', False),
+              ('dev', False),
+              ('ser5', False)]
+    pmap(main, inputs)
