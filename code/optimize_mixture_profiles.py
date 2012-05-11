@@ -148,8 +148,8 @@ def main(input):
     bestbadness = badness
     for K in range(2, 20):
         prefix = '%s_K%02d_MR%02d' % (model, K, int(round(max_radius) + 0.01))
-        if radius_weighted:
-            prefix += "_w"
+        if not radius_weighted:
+            prefix += "_uw"
         print 'working on %s at K = %d (%s)' % (model, K, prefix)
         newvar = 2.0 * np.max(np.append(var, 1.0))
         newamp = 1.0 * newvar
@@ -177,9 +177,9 @@ def main(input):
         txtfile = open(prefix + '.txt', "w")
         txtfile.write("%s\n" % repr(pars))
         txtfile.close
-        pckfile = open(prefix + '.pickle', "wb")
-        pickle.dump(pars, pckfile)
-        pckfile.close
+        picklefile = open(prefix + '.pickle', "wb")
+        pickle.dump(pars, picklefile)
+        picklefile.close
         if bestbadness < 1.0 and K > 15:
             break
 
