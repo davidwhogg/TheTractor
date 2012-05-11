@@ -115,7 +115,7 @@ def plot_mixture(pars, prefix, model, max_radius, log10_squared_deviation, radiu
         plt.plot(x2, pars[k] * not_normal(x2, pars[k + K]), 'k-', alpha=0.5)
     plt.axvline(max_radius, color='k', alpha=0.25)
     badname = "badness"
-    if radius_weighted: badname = "weighted " + badname
+    if not radius_weighted: badname = "unweighted " + badname
     plt.title(r"%s / $K=%d$ / max radius = $%.1f$ / %s = $%.3f\times 10^{%d}$"
               % (model, len(pars) / 2, max_radius, badname, badness * 100., log10_squared_deviation - 2.))
     plt.xlim(-0.1 * max_radius, 1.2 * max_radius)
@@ -159,16 +159,15 @@ def main(input):
             (badness, pars) = optimize_mixture(K, pars, model, max_radius, log10_squared_deviation, radius_weighted)
             if (badness < bestbadness) or (i == 0):
                 print '%s %d %d improved' % (model, K, i)
-                bestpars = pars
+                bestpars = rearrange_pars(pars)
                 bestbadness = badness
             else:
                 print '%s %d %d not improved' % (model, K, i)
+                amp = bestpars[0:K]
+                var = bestpars[K:K+K]
                 var[0] = 2.0 * var[np.mod(i, K)]
                 amp[0] = 0.5 * amp[np.mod(i, K)]
                 pars = np.append(amp, var)
-                if (bestbadness < 0.5 * lastKbadness) and (i > 4):
-                    print '%s %d %d improved enough' % (model, K, i)
-                    break
         lastKbadness = bestbadness
         pars = rearrange_pars(bestpars)
         amp = pars[0:K]
