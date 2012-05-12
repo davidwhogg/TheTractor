@@ -118,7 +118,7 @@ def plot_mixture(pars, prefix, model, max_radius, log10_squared_deviation, radiu
     badname = "badness"
     if not radius_weighted: badname = "unweighted " + badname
     plt.title(r"%s / $K=%d$ / max radius = $%.1f$ / %s = $%.3f\times 10^{%d}$"
-              % (model, len(pars) / 2, max_radius, badname, badness * 100., log10_squared_deviation - 2.))
+              % (model, len(pars) / 2, max_radius, badname, badness, log10_squared_deviation))
     plt.xlim(-0.1 * max_radius, 1.2 * max_radius)
     plt.ylim(-0.1 * 8.0, 1.1 * 8.0)
     plt.savefig(prefix + '.png')
@@ -139,7 +139,7 @@ def rearrange_pars(pars):
 def main(input):
     model, radius_weighted = input
     max_radius = 8.0
-    log10_squared_deviation = -4
+    log10_squared_deviation = -2.
     amp = np.array([1.0])
     var = np.array([1.0])
     pars = np.append(amp, var)
@@ -162,6 +162,9 @@ def main(input):
                 print '%s %d %d improved' % (model, K, i)
                 bestpars = rearrange_pars(pars)
                 bestbadness = badness
+                while bestbadness < 1.:
+                    bestbadness *= 10.
+                    log10_squared_deviation -= 1.
             else:
                 print '%s %d %d not improved' % (model, K, i)
                 amp = 1. * bestpars[0:K]
