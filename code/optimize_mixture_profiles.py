@@ -179,10 +179,10 @@ def main(input):
         plot_mixture(pars, prefix, model, max_radius, log10_squared_deviation, radius_weighted)
         txtfile = open(prefix + '.txt', "w")
         txtfile.write("%s\n" % repr(pars))
-        txtfile.close
+        txtfile.close()
         picklefile = open(prefix + '.pickle', "wb")
         pickle.dump(pars, picklefile)
-        picklefile.close
+        picklefile.close()
         if bestbadness < 1.0 and K > 15:
             break
 
