@@ -187,13 +187,13 @@ def main(input):
             break
 
 if __name__ == '__main__':
-    if True: # use multiprocessing
+    if False: # use multiprocessing
         pmap = Pool(10).map
     else: # don't use multiprocessing
         pmap = map
-    inputs = [('dev', True),
+    inputs = [('exp', True),
               ('lup', True),
-              ('exp', True),
+              ('dev', True),
               ('ser2', True),
               ('ser3', True),
               ('ser5', True), ]
