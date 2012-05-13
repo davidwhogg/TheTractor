@@ -4,6 +4,7 @@ Copyright 2011 David W. Hogg.
 
 ### bugs:
 - Should use levmar not bfgs!
+- Spews enormous numbers of warnings when log10_squared_deviation gets very negative.
 '''
 
 import matplotlib
@@ -123,8 +124,10 @@ def plot_mixture(pars, prefix, model, max_radius, log10_squared_deviation, radiu
     plt.ylim(-0.1 * 8.0, 1.1 * 8.0)
     plt.savefig(prefix + '.png')
     plt.loglog()
-    plt.xlim(0.001, 5. * max_radius)
-    plt.ylim(3.e-5, 1.5 * np.max(y1))
+    xmin = 0.001
+    yint = np.interp([xmin, ], x2, y1)[0]
+    plt.xlim(xmin, 5. * max_radius)
+    plt.ylim(1.5e-6 * yint, 1.5 * yint)
     plt.savefig(prefix + '_log.png')
 
 def rearrange_pars(pars):
@@ -162,7 +165,7 @@ def main(input):
                 print '%s %d %d improved' % (model, K, i)
                 bestpars = rearrange_pars(pars)
                 bestbadness = badness
-                while bestbadness < 1.:
+                while bestbadness < 1. and log10_squared_deviation > -5.5:
                     bestbadness *= 10.
                     log10_squared_deviation -= 1.
             else:
@@ -187,14 +190,16 @@ def main(input):
             break
 
 if __name__ == '__main__':
-    if False: # use multiprocessing
-        pmap = Pool(10).map
+    if True: # use multiprocessing
+        pmap = Pool(6).map
     else: # don't use multiprocessing
         pmap = map
-    inputs = [('exp', True),
-              ('lup', True),
-              ('dev', True),
-              ('ser2', True),
-              ('ser3', True),
-              ('ser5', True), ]
+    inputs = [
+        ('exp', True),
+        ('dev', True),
+        ('lup', True),
+        ('ser2', True),
+        ('ser3', True),
+        ('ser5', True),
+        ]
     pmap(main, inputs)
