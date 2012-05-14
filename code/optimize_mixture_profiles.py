@@ -167,7 +167,7 @@ def main(input):
                 bestbadness = badness
                 while bestbadness < 1. and log10_squared_deviation > -5.5:
                     bestbadness *= 10.
-                    log10_squared_deviation -= 1.
+                    log10_squared_deviation = np.round(log10_squared_deviation - 1.)
             else:
                 print '%s %d %d not improved' % (model, K, i)
                 amp = 1. * bestpars[0:K]
@@ -186,7 +186,7 @@ def main(input):
         picklefile = open(prefix + '.pickle', "wb")
         pickle.dump(pars, picklefile)
         picklefile.close()
-        if bestbadness < 1.0 and K > 15:
+        if bestbadness < 10. and log10_squared_deviation < -5.5 and K > 11:
             break
 
 if __name__ == '__main__':
