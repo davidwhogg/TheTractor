@@ -112,23 +112,45 @@ def plot_mixture(pars, prefix, model, max_radius, log10_squared_deviation, radiu
     y2 = mixture_of_not_normals(x2, pars)
     plt.clf()
     plt.plot(x2, y1, 'k-')
-    plt.plot(x2, y2, 'k-', lw=4, alpha=0.25)
+    plt.plot(x2, y2, 'k-', lw=6, alpha=0.25)
     for k in range(K):
         plt.plot(x2, pars[k] * not_normal(x2, pars[k + K]), 'k-', alpha=0.5)
     plt.axvline(max_radius, color='k', alpha=0.25)
     badname = "badness"
     if not radius_weighted: badname = "unweighted " + badname
-    plt.title(r"%s / $K=%d$ / max radius = $%.1f$ / %s = $%.3f\times 10^{%d}$"
-              % (model, len(pars) / 2, max_radius, badname, badness, log10_squared_deviation))
-    plt.xlim(-0.1 * max_radius, 1.2 * max_radius)
+    title = r"%s / $K=%d$ / max radius = $%.1f$ / %s = $%.3f\times 10^{%d}$" % (
+        model, len(pars) / 2, max_radius, badname, badness, log10_squared_deviation)
+    plt.title(title)
+    plt.xlim(0., 1.2 * max_radius)
+    xlim1 = plt.xlim()
     plt.ylim(-0.1 * 8.0, 1.1 * 8.0)
-    plt.savefig(prefix + '.png')
+    xlabel = r"dimensionless angular radius $\xi$"
+    plt.xlabel(xlabel)
+    plt.ylabel(r"intensity (relative to $\xi = 1$)")
+    plt.savefig(prefix + '_profile.png')
     plt.loglog()
     xmin = 0.001
     yint = np.interp([xmin, ], x2, y1)[0]
     plt.xlim(xmin, 5. * max_radius)
+    xlim2 = plt.xlim()
     plt.ylim(1.5e-6 * yint, 1.5 * yint)
-    plt.savefig(prefix + '_log.png')
+    plt.savefig(prefix + '_profile_log.png')
+    plt.clf()
+    plt.plot(x2, y1 - y2, 'k-')
+    plt.plot(x2, 0. * x2, 'k-', lw=6, alpha=0.25)
+    plt.axvline(max_radius, color='k', alpha=0.25)
+    plt.title(title)
+    plt.xlim(*xlim1)
+    ymax = 30. * np.sqrt(badness * 10.**log10_squared_deviation)
+    plt.ylim(-ymax, ymax)
+    plt.xlabel(xlabel)
+    plt.ylabel(r"intensity residual (relative to $\xi = 1$)")
+    plt.savefig(prefix + '_residual.png')
+    plt.semilogx()
+    xmin = 0.001
+    plt.xlim(*xlim2)
+    plt.savefig(prefix + '_residual_log.png')
+    return None
 
 def rearrange_pars(pars):
     K = len(pars) / 2
@@ -188,6 +210,7 @@ def main(input):
         picklefile.close()
         if bestbadness < 10. and log10_squared_deviation < -5.5 and K > 11:
             break
+    return None
 
 if __name__ == '__main__':
     if True: # use multiprocessing
