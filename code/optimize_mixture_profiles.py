@@ -126,7 +126,7 @@ def plot_mixture(pars, prefix, model, max_radius, log10_squared_deviation, radiu
     plt.ylim(-0.1 * 8.0, 1.1 * 8.0)
     xlabel = r"dimensionless angular radius $\xi$"
     plt.xlabel(xlabel)
-    plt.ylabel(r"intensity (relative to $\xi = 1$)")
+    plt.ylabel(r"intensity (relative to intensity at $\xi = 1$)")
     plt.savefig(prefix + '_profile.png')
     plt.loglog()
     xmin = 0.001
@@ -141,15 +141,28 @@ def plot_mixture(pars, prefix, model, max_radius, log10_squared_deviation, radiu
     plt.axvline(max_radius, color='k', alpha=0.25)
     plt.title(title)
     plt.xlim(*xlim1)
-    ymax = 30. * np.sqrt(badness * 10.**log10_squared_deviation)
-    plt.ylim(-ymax, ymax)
+    plt.ylim(-1., 1.)
     plt.xlabel(xlabel)
-    plt.ylabel(r"intensity residual (relative to $\xi = 1$)")
+    plt.ylabel(r"intensity residual (relative to intensity at $\xi = 1$)")
     plt.savefig(prefix + '_residual.png')
     plt.semilogx()
     xmin = 0.001
     plt.xlim(*xlim2)
     plt.savefig(prefix + '_residual_log.png')
+    plt.clf()
+    plt.plot(x2, (y1 - y2) / y1, 'k-')
+    plt.plot(x2, 0. * x2, 'k-', lw=6, alpha=0.25)
+    plt.axvline(max_radius, color='k', alpha=0.25)
+    plt.title(title)
+    plt.xlim(*xlim1)
+    plt.ylim(-1., 1.)
+    plt.xlabel(xlabel)
+    plt.ylabel(r"fractional intensity residual")
+    plt.savefig(prefix + '_fractional.png')
+    plt.semilogx()
+    xmin = 0.001
+    plt.xlim(*xlim2)
+    plt.savefig(prefix + '_fractional_log.png')
     return None
 
 def rearrange_pars(pars):
