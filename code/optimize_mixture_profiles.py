@@ -18,53 +18,106 @@ import scipy.optimize as op
 from multiprocessing import Pool
 import cPickle as pickle
 
-# note wacky normalization because this is for 2-d Gaussians
-# (but only ever called in 1-d).  Wacky!
 def not_normal(x, V):
+    """
+    Make a one-dimensional profile of a two-dimensional Gaussian.
+
+    Note wacky normalization because this is for 2-d Gaussians
+    (but only ever called in 1-d).  Wacky!
+    """
     exparg = -0.5 * x * x / V
     result = np.zeros_like(x)
     I = ((exparg > -1000) * (exparg < 1000))
     result[I] = 1. / (2. * np.pi * V) * np.exp(exparg[I])
     return result
 
-# magic number from Ciotti & Bertin, A&A, 352, 447 (1999)
-# normalized to return 1. at x=1.
 def hogg_exp(x):
+    """
+    One-dimensional exponential profile.
+
+    Magic number from Ciotti & Bertin, A&A, 352, 447 (1999).
+    Normalized to return 1. at x=1.
+    """
     return np.exp(-1.67834699 * (x - 1.))
 
-# magic number from Ciotti & Bertin, A&A, 352, 447 (1999)
-# normalized to return 1. at x=1.
 def hogg_dev(x):
+    """
+    One-dimensional DeVaucouleurs profile.
+
+    magic number from Ciotti & Bertin, A&A, 352, 447 (1999)
+    normalized to return 1. at x=1.
+    """
     return np.exp(-7.66924944 * ((x * x)**0.125 - 1.))
 
-# magic numbers from Lupton (makeprof.c and phFitobj.h) via dstn
-# normalized to return 1. at x=1.
 def hogg_lup(x):
+    """
+    One-dimensional Lupton approximation to DeVaucouleurs profile.
+
+    Magic numbers from Lupton (makeprof.c and phFitobj.h) via dstn.
+    Normalized to return 1. at x=1.
+    """
     inner = 7.
     outer = 8.
     lup = np.exp(-7.66925 * ((x * x + 0.0004)**0.125 - 1.))
-    outside = (x >= outer)
-    lup[outside] *= 0.
+    lup[x > outer] *= 0.
     middle = (x >= inner) * (x <= outer)
-    lup[middle] *= (outer - x[middle]) / (outer - inner)
+    lup[middle] *= (1. - ((x[middle] - inner) / (outer - inner)) ** 2) ** 2
     return lup
 
-# magic numbers from Ciotti & Bertin, A&A, 352, 447 (1999)
-# normalized to return 1. at x=1.
+def hogg_lue(x):
+    """
+    One-dimensional Lupton approximation to exponential profile.
+
+    Magic numbers from Lupton (makeprof.c and phFitobj.h) via dstn.
+    Normalized to return 1. at x=1.
+    """
+    inner = 3.
+    outer = 4.
+    lue = np.exp(-1.67835 * (x - 1.))
+    lue[x > outer] *= 0.
+    middle = (x >= inner) * (x <= outer)
+    lue[middle] *= (1. - ((x[middle] - inner) / (outer - inner)) ** 2) ** 2
+    return lue
+
 def hogg_ser2(x):
+    """
+    One-dimensional S\'ersic profile at n=2.
+
+    Magic numbers from Ciotti & Bertin, A&A, 352, 447 (1999)
+    Normalized to return 1. at x=1.
+    """
     return np.exp(-3.67206075 * ((x * x)**0.25 - 1.))
+
 def hogg_ser3(x):
+    """
+    One-dimensional S\'ersic profile at n=3.
+
+    Magic numbers from Ciotti & Bertin, A&A, 352, 447 (1999)
+    Normalized to return 1. at x=1.
+    """
     return np.exp(-5.67016119 * ((x * x)**(1./6.) - 1.))
+
 def hogg_ser5(x):
+    """
+    One-dimensional S\'ersic profile at n=5.
+
+    Magic numbers from Ciotti & Bertin, A&A, 352, 447 (1999)
+    Normalized to return 1. at x=1.
+    """
     return np.exp(-9.66871461 * ((x * x)**0.1 - 1.))
 
 def hogg_model(x, model):
+    """
+    Interface to all one-dimensional profiles.
+    """
     if model == 'exp':
         return hogg_exp(x)
     if model == 'dev':
         return hogg_dev(x)
     if model == 'lup':
         return hogg_lup(x)
+    if model == 'lue':
+        return hogg_lue(x)
     if model == 'ser2':
         return hogg_ser2(x)
     if model == 'ser3':
@@ -75,6 +128,10 @@ def hogg_model(x, model):
     return None
 
 def mixture_of_not_normals(x, pars):
+    """
+    One-dimensional profile made from a mixture of two dimensional
+    concentric Gaussians.
+    """
     K = len(pars)/2
     y = 0.
     for k in range(K):
@@ -197,8 +254,7 @@ def rearrange_pars(pars):
 # run this (possibly with adjustments to the magic numbers at top)
 # to find different or better mixtures approximations
 def main(input):
-    model = input
-    max_radius = 8.0
+    model, max_radius = input
     log10_squared_deviation = -2.
     amp = np.array([1.0])
     var = np.array([1.0])
@@ -250,17 +306,17 @@ def main(input):
     return None
 
 if __name__ == '__main__':
-    if False: # use multiprocessing
+    if True: # use multiprocessing
         pmap = Pool(6).map
     else: # don't use multiprocessing
         pmap = map
     inputs = [
-        'exp',
-        'dev',
-        'lup',
-        'ser2',
-        'ser3',
-        'ser5',
+        ('exp', 8.),
+        ('dev', 8.),
+        ('lup', 8.),
+        ('lue', 4.),
+        ('ser2', 8.),
+        ('ser3', 8.),
+        ('ser5', 8.),
         ]
-    inputs = ['lup', ]
     pmap(main, inputs)
