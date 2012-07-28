@@ -1,0 +1,102 @@
+% This file is part of the Tractor project.
+% Copyright 2012 David W. Hogg (NYU) and Dustin Lang (Princeton).
+% All rights reserved.
+
+% to-do
+% -----
+% - outline
+% - make figures
+% - write
+% - get comments
+% - submit
+
+\documentclass[12pt,pdftex,preprint]{aastex}
+\usepackage{amssymb,amsmath,mathrsfs}
+
+\newcommand{\foreign}[1]{\textit{#1}}
+\newcommand{\etal}{\foreign{et\,al.}}
+\newcommand{\documentname}{\textsl{Note}}
+\newcommand{\project}[1]{\textsl{#1}}
+\newcommand{\TheTractor}{\project{The~Tractor}}
+\newcommand{\sdss}{\project{SDSS}}
+\newcommand{\Herschel}{\project{Herschel}}
+
+\newcommand{\tmatrix}[1]{\boldsymbol{#1}}
+\newcommand{\inverse}[1]{{#1}^{-1}}
+\newcommand{\transpose}[1]{{#1}^{\mathsf T}}
+\newcommand{\tvector}[1]{\boldsymbol{#1}}
+\newcommand{\pos}{\tvector{x}}
+\newcommand{\spos}{\tvector{\xi}}
+\newcommand{\mean}{\tvector{m}}
+\newcommand{\var}{\tmatrix{V}\!}
+\newcommand{\Gm}{\tmatrix{G}}
+\newcommand{\Hm}{\tmatrix{H}}
+\newcommand{\affine}{\tmatrix{R}}
+\newcommand{\uv}{\tvector{u}}
+\newcommand{\zero}{\tmatrix{0}}
+\newcommand{\identity}{\tmatrix{I}}
+\newcommand{\normal}{N}
+\newcommand{\given}{\,|\,}
+\renewcommand{\star}{\mathrm{star}}
+\newcommand{\dev}{\mathrm{dev}}
+
+\newlength{\figwidth}
+\setlength{\figwidth}{0.49\textwidth}
+
+\begin{document}
+
+\title{High angular resolution dust density and temperature maps from \Herschel\ imaging data}
+\author{Lang, Hogg, etc}
+\altaffiltext{1}{To whom correspondence should be addressed; \texttt{foo@bar.edu}}
+\altaffiltext{2}{New York University}
+\altaffiltext{3}{Max-Planck-Institut f\"ur Astronomie}
+\altaffiltext{4}{Princeton University Observatory}
+
+\begin{abstract}
+The \Herschel\ Observatory takes images at wavelengths
+$100<\lambda<500\,\micron$ and thereby is excellent for measuring the
+density and temperature of interstellar dust.  Being
+diffraction-limited, however, the images have angular resolution (or
+beam size) that is a strong function of wavelength.  In this
+\documentname\ we show that it is possible, with very weak priors or
+regularization, to infer the properties of the dust---column,
+temperature, and emissivity parameter---at the angular resolution of
+the highest resolution images.  This is true even though much of the
+crucial information comes from the lowest-resolution images.  The
+method works by optimizing the posterior probability of a generative
+model for the data; the model involves convolution with the
+pixel-convolved beam for each image.  The method is demonstrated on a
+small patch of \Herschel\ imaging of the dust disk of M31.  The method
+can be used in similar circumstances for other \Herschel\ data or on
+data from other observatories.  All the code is available under an
+open-source license as part of \TheTractor\ image-modeling project.
+\end{abstract}
+
+This paper is a stub.  You can edit it and help \TheTractor, so long
+as you are either Hogg or Lang!
+
+\acknowledgements
+It is a pleasure to thank...
+
+\begin{thebibliography}{70}
+\bibitem[Bendinelli(1991)]{bendinelli}
+Bendinelli,~O., 1991, \apj, 366, 599
+\bibitem[Bendinelli \& Parmeggiani(1995)]{bendinelli2}
+Bendinelli,~O. \& Parmeggiani,~G., 1995, \aj, 109, 572
+\bibitem[Bovy \etal(2011a)]{xd}
+Bovy,~J., Hogg,~D.~W., \& Roweis,~S., 2011, Ann. Appl. Stat., 5, 1657
+\bibitem[Bovy \etal(2011b)]{xdqso}
+Bovy,~J., \etal, 2011, \apj, 729, 141
+\bibitem[Bovy \etal(2012)]{xdqsoz}
+Bovy,~J. \etal, 2012, \aj, 749, 41
+\bibitem[Cappellari(2002)]{cappellari}
+Cappellari,~M., 2002, \mnras, 333, 400
+\bibitem[Ciotti \& Bertin(1999)]{ciotti}
+Ciotti,~L. \& Bertin,~G., 1999, \aa, 352, 447
+\bibitem[Emsellem \etal(1994)]{emsellem}
+Emsellem,~E., Monnet,~G., Bacon,~R., \& Nieto,~J.-L., 1994, \aap, 285, 739
+\bibitem[Peng \etal(2002)]{galfit}
+Peng,~C.~Y., Ho, L.~C., Impey,~C.~D., \& Rix,~H.-W., 2002, \aj, 124, 266
+\end{thebibliography}
+
+\end{document}
