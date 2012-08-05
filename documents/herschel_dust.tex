@@ -195,15 +195,15 @@ perform the inference of the dust-map parameters $\Omega_k, T_k,
 left-out data, and base the hyperparameter settings on the quality of
 the predictions.
 
-In detail, this works by choosing a random integer $1\leq s\leq S$
-(where $S$ is the number of leave-some-out trials, $S=8$ in what
-follows) for every data pixel $n$.  For each value of $s$---say
+In detail, this works by choosing a random integer $s$ with $1\leq
+s\leq S$ (where $S$ is the number of leave-some-out trials, $S=8$ in
+what follows) for every data pixel $n$.  For each value of $s$---say
 3---MAP values for the dust-map parameters are obtained given all the
 data \emph{except} that marked with integer $s=3$.  The data marked
 with integer $s=3$ are predicted by this model, and a prediction
-$\chi^2$ value is computed for the left-out $s=3$ data.  This is
-repeated for all values of $s$ and all 8 prediction $\chi^2$ values
-are summed.  This total prediction leave-some-out $\chi^2$ is a
+$\chi_s^2$ value is computed for the left-out $s=3$ data.  This is
+repeated for all values of $s$ and all $S$ prediction $\chi_s^2$
+values are summed.  This total prediction leave-some-out $\chi^2$ is a
 function of the hyperparameters; the hyperparameters $\alpha$ at which
 it is minimized are chosen as the best hyperparameters.
 
@@ -217,7 +217,13 @@ the variance (mean squared error) in the map parameters.
 
 \section{experiments and results}
 
-...(in detail, sky)...
+...details of $\theta_k$, small patch, and so-on...
+
+...(in detail, sky level)...
+
+...what happened in the cross-validation...
+
+...results and jackknifes...
 
 ...comparison to \PHAT\ extinction maps...
 
