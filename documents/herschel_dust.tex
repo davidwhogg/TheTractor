@@ -186,14 +186,14 @@ these hyperparameters values that have been dervied objectively from
 the data, so that the collection of \emph{all} data informs the prior
 probability for the parameters $\Omega_k, T_k, \beta_k$ affecting any
 small part of the data.  The best methods for such hyperparameter
-inference is hierarchical Bayesian inference, which is too
-computationally costly for the present effort.  The approximation to
-hierarchical inference adopted here is that of leave-some-out
-cross-validation: We drop randomly chosen small subsets of the data,
-perform the inference of the dust-map parameters $\Omega_k, T_k,
-\beta_k$ using the remaining (the non-left-out) data, predict the
-left-out data, and base the hyperparameter settings on the quality of
-the predictions.
+inference is hierarchical Bayesian inference (for example,
+\citealt{eccentricity}, MORE REFERENCES), which is too computationally
+costly for the present effort.  The approximation to hierarchical
+inference adopted here is that of leave-some-out cross-validation: We
+drop randomly chosen small subsets of the data, perform the inference
+of the dust-map parameters $\Omega_k, T_k, \beta_k$ using the
+remaining (the non-left-out) data, predict the left-out data, and base
+the hyperparameter settings on the quality of the predictions.
 
 In detail, this works by choosing a random integer $s$ with $1\leq
 s\leq S$ (where $S$ is the number of leave-some-out trials, $S=8$ in
@@ -246,24 +246,8 @@ documentation used in this project is available as part of
 \TheTractor\ at \url{http://TheTractor.org/}.
 
 \begin{thebibliography}{70}
-\bibitem[Bendinelli(1991)]{bendinelli}
-Bendinelli,~O., 1991, \apj, 366, 599
-\bibitem[Bendinelli \& Parmeggiani(1995)]{bendinelli2}
-Bendinelli,~O. \& Parmeggiani,~G., 1995, \aj, 109, 572
-\bibitem[Bovy \etal(2011a)]{xd}
-Bovy,~J., Hogg,~D.~W., \& Roweis,~S., 2011, Ann. Appl. Stat., 5, 1657
-\bibitem[Bovy \etal(2011b)]{xdqso}
-Bovy,~J., \etal, 2011, \apj, 729, 141
-\bibitem[Bovy \etal(2012)]{xdqsoz}
-Bovy,~J. \etal, 2012, \aj, 749, 41
-\bibitem[Cappellari(2002)]{cappellari}
-Cappellari,~M., 2002, \mnras, 333, 400
-\bibitem[Ciotti \& Bertin(1999)]{ciotti}
-Ciotti,~L. \& Bertin,~G., 1999, \aa, 352, 447
-\bibitem[Emsellem \etal(1994)]{emsellem}
-Emsellem,~E., Monnet,~G., Bacon,~R., \& Nieto,~J.-L., 1994, \aap, 285, 739
-\bibitem[Peng \etal(2002)]{galfit}
-Peng,~C.~Y., Ho, L.~C., Impey,~C.~D., \& Rix,~H.-W., 2002, \aj, 124, 266
+\bibitem[Hogg \etal(2010)]{eccentricity}
+Hogg,~D.~W., Myers,~A.~D., \& Bovy,~J., 2010, \apj, 725, 2166
 \end{thebibliography}
 
 \end{document}
