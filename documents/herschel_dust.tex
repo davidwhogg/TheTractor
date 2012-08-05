@@ -179,7 +179,12 @@ posterior probability.  The parameters so derived---maximum \foreign{a
   posteriori} or MAP---are taken to be the ``best-fit'' parameters in
 what follows.  The MAP dust-map parameters depend on the data, the
 spatial grid $\theta_k$, the data $d_n$, and the data noise variances
-$\sigma_n$.
+$\sigma_n$.  Given the large number of parameters---three per pixel in
+the dust map model---optimization is challenging.  However, the
+problem is very sparse: Most parameters do not affect most data
+pixels.  We use a brutal hand-built sparse optimizer that is part of
+our image modeling project \TheTractor (CITATION); more about this
+below.
 
 The hyperparameters $\alpha$---parameters of the priors---set the
 strictness or information content of the priors.  We want to give
