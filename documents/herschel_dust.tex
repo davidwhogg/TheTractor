@@ -49,8 +49,8 @@
 
 \title{High angular resolution dust density and temperature maps from \Herschel\ imaging data}
 \author{
-  David~W.~Hogg\altaffilmark{1,2,3},
   Dustin~Lang\altaffilmark{4,5},
+  David~W.~Hogg\altaffilmark{1,2,3},
   Brent~Groves\altaffilmark{3},
   Hans-Walter~Rix\altaffilmark{3},
   Karin~Sandstrom\altaffilmark{3}}
@@ -144,9 +144,11 @@ noise variance $\sigma_n^2$.
 
 In non-parametric models like this---even when we only want point
 estimates or optima of an objective function---we cannot avoid using
-prior information to regularize the fit.  The priors we choose are
-``smoothness'' priors inspired by Gaussian processes.  They penalize
-the sum of squares of differences between neighboring pixels.
+prior information to regularize the fit.  There are no extremely good
+priors to put on images, and certainly not images of interstellar
+dust.  For this reason we choose simply ``smoothness'' priors inspired
+by Gaussian processes.  They penalize the sum of squares of
+differences between neighboring pixels.
 \begin{eqnarray}\displaystyle
 -2\,\ln p(\Omega_k) &\approx& \sum_{\mathrm{neighbors}~k'} \epsilon_\Omega\,\left[\Omega_k - \Omega_{k'}\right]^2
 \\
@@ -167,7 +169,51 @@ $\alpha$ of hyper-parameters $\{\epsilon_\Omega, \epsilon_T,
 $\beta_k$ is given the additional prior that we expect values around
 2.
 
-...The hyperparameters are set by cross-validation...
+The posterior probability is proportional to the likelihood times the
+prior; its logarithm is sum sum of the log likelihood and the log
+prior.  Dust map inference---the determination of the solid-angle
+parameters $\Omega_k$, the temperature parameters $T_k$, and the
+emissivity parameters $\beta_k$ proceeds by optimization of the log
+posterior probability.  The parameters so derived---maximum \foreign{a
+  posteriori} or MAP---are taken to be the ``best-fit'' parameters in
+what follows.  The MAP dust-map parameters depend on the data, the
+spatial grid $\theta_k$, the data $d_n$, and the data noise variances
+$\sigma_n$.
+
+The hyperparameters $\alpha$---parameters of the priors---set the
+strictness or information content of the priors.  We want to give
+these hyperparameters values that have been dervied objectively from
+the data, so that the collection of \emph{all} data informs the prior
+probability for the parameters $\Omega_k, T_k, \beta_k$ affecting any
+small part of the data.  The best methods for such hyperparameter
+inference is hierarchical Bayesian inference, which is too
+computationally costly for the present effort.  The approximation to
+hierarchical inference adopted here is that of leave-some-out
+cross-validation: We drop randomly chosen small subsets of the data,
+perform the inference of the dust-map parameters $\Omega_k, T_k,
+\beta_k$ using the remaining (the non-left-out) data, predict the
+left-out data, and base the hyperparameter settings on the quality of
+the predictions.
+
+In detail, this works by choosing a random integer $1\leq s\leq S$
+(where $S$ is the number of leave-some-out trials, $S=8$ in what
+follows) for every data pixel $n$.  For each value of $s$---say
+3---MAP values for the dust-map parameters are obtained given all the
+data \emph{except} that marked with integer $s=3$.  The data marked
+with integer $s=3$ are predicted by this model, and a prediction
+$\chi^2$ value is computed for the left-out $s=3$ data.  This is
+repeated for all values of $s$ and all 8 prediction $\chi^2$ values
+are summed.  This total prediction leave-some-out $\chi^2$ is a
+function of the hyperparameters; the hyperparameters $\alpha$ at which
+it is minimized are chosen as the best hyperparameters.
+
+One extremely valuable side-effect of the leave-one-out trials is that
+they also provide uncertainty estimates on the dust-map parameters.
+The leave-some-out trials are effectively also a set of jackknife
+trials.  The variance (mean squared deviation) in the map parameters
+across the $S$ leave-some-out trials is multiplied by (HOGG: FORMULA
+HERE) to give a conservative empirical (bootstrap-like) estimate of
+the variance (mean squared error) in the map parameters.
 
 \section{experiments and results}
 
