@@ -143,7 +143,7 @@ resulting mixture at the pixel centers).
 
 We need good performance in two-dimensional image synthesis (for
 fitting) because, with \thetractor\ (Lang \etal, forthcoming), we are
-building a comprehensive model of all the imaging data we can; this
+building a comprehensive model of all the imaging data we have; this
 will have models of many millions of galaxies in imaging that contains
 on the order of $10^{13}$ pixels.  We are basing our models on the
 \sdss\ Catalog galaxy models, which only include exponential,
@@ -195,9 +195,8 @@ Q_{\exp}(\spos) &\equiv& \exp(-\alpha_{\exp}\,[|\spos| - 1])
 where $\spos$ is a dimensionless focal-plane position, and
 $\alpha_{\exp}$ ensures that the profile has unit half-light radius.
 The position $\spos$ is dimensionless because it parameterizes the
-unit-size and unit-flux dimensionless function.  We seek the best
-(where ``best'' will be defined below) $M_g$-Gaussian mixture
-approximation
+unit-size dimensionless function.  We seek the best (where ``best''
+will be defined below) $M_{\exp}$-Gaussian mixture approximation
 \begin{eqnarray}\displaystyle
 Q_{\exp}(\spos) &\approx& \sum_{m=1}^{M_{\exp}} a_{\exp,m}\,\normal(\spos\given\zero,\var_{\exp,m})
 \\
@@ -205,10 +204,10 @@ Q_{\exp}(\spos) &\approx& \sum_{m=1}^{M_{\exp}} a_{\exp,m}\,\normal(\spos\given\
 \quad ,
 \end{eqnarray}
 where all of the means are exactly zero and all of the variances
-$\var_m$ in the mixture are scalar multiples of the identity matrix
-$\identity$ because we are requiring this dimensionless function to be
-precisely circular (so every component is itself circular and
-concentric).  Similarly for the de~Vaucouleurs profile
+$\var_{\exp,m}$ in the mixture are scalar multiples of the identity
+matrix $\identity$ because we are requiring this dimensionless
+function to be precisely circular (so every component is itself
+circular and concentric).  Similarly for the de~Vaucouleurs profile
 \begin{eqnarray}\displaystyle
 Q_{\dev}(\spos) &\equiv& \exp(-\alpha_{\dev}\,[|\spos|^{1/4} - 1])
 \\
@@ -225,10 +224,13 @@ determine the parameters
 \begin{eqnarray}
 \{a_{\exp,m},\sigma_{\exp,m}\}_{m=1}^{M_{\exp}} \mbox{~and~} \{a_{\dev,m},\sigma_{\dev,m}\}_{m=1}^{M_{\dev}}
 \end{eqnarray}
-to best approximate the
-traditional galaxy profile functions, under some sensible definiton of
-the word ``best'', as a function of the model complexity parameters
-(numbers of components) $(M_{\exp}, M_{\dev})$.
+to best approximate the traditional galaxy profile functions, under
+some sensible definiton of the word ``best'', as a function of the
+model complexity parameters (numbers of components) $(M_{\exp},
+M_{\dev})$.
+
+...In addition to these there are general Sersi\'c profiles, of which
+the exponential and de~Vaucouleurs profiles are special cases...
 
 The \sdss\ pipelines make use of modified profiles, which have been
 truncated smoothly at large radius and (in the case of the
@@ -259,13 +261,7 @@ Q_{\luv}(\spos) &\equiv& \left\{\begin{array}{ll}
 \end{eqnarray}
 (The half-light radius parameters $\alpha_{\exp}$ and
 $\alpha_{\dev}$---and the softening and cutoff radius parameters---are
-taken from the \sdss\ codebase.)  The \sdss\ radial profiles are much
-better behaved than the standard forms; we recommend them strongly.
-Once again, the challenge is to determine the best parameters
-\begin{eqnarray}
-\{a_{\lux,m},\sigma_{\lux,m}\}_{m=1}^{M_{\lux}} \mbox{~and~} \{a_{\luv,m},\sigma_{\luv,m}\}_{m=1}^{M_{\luv}}
-\quad .
-\end{eqnarray}
+taken from the \sdss\ codebase.)
 
 ...Note normalization issues and how easy it is to normalize the mixture-of-Gaussian model...
 
