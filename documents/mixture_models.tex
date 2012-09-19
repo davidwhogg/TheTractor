@@ -217,7 +217,8 @@ Q_{\dev}(\spos) &=& \sum_{m=1}^{M_h} h_m\,\normal(\spos\given\zero,\Hm_m)
 \Hm_m &=& \sigma^2_{\dev,m}\,\identity
 \quad .
 \end{eqnarray}
-...Cite (\citealt{ciotti}) re half-light radius constants...
+The half-light radius parameters $\alpha_{\exp}$ and $\alpha_{\dev}$
+are from \cite{ciotti}.
 
 The Lupton profiles are...
 
@@ -273,9 +274,9 @@ ellipse).  The galaxy is distorted by this variance tensor
 (PSF-convolved intensity field) for a general exponential galaxy is
 given by
 \begin{eqnarray}\displaystyle
-I(\pos\given\exp,S_g,\pos_g,\var_g) &=& \sum_{k=1}^K \sum_{m=1}^{M_g} S_g\,g_m\,p_k\,\normal(\pos\given\pos_g+\mean_k,\var_{gn}+\var_k)
+I(\pos\given\exp,S_g,\pos_g,\var_g) &=& \sum_{k=1}^K \sum_{m=1}^{M_g} S_g\,g_m\,p_k\,\normal(\pos\given\pos_g+\mean_k,\var_{gm}+\var_k)
 \\
-\var_{gn} &\equiv& \affine_g\cdot\Gm_m\cdot\transpose{\affine_g}
+\var_{gm} &\equiv& \affine_g\cdot\Gm_m\cdot\transpose{\affine_g}
 \\
 \var_g &\equiv& \affine_g\cdot\transpose{\affine_g}
 \\
