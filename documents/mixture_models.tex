@@ -9,6 +9,7 @@
 % - decide which models will make it in
 % - make useful figures
 % - make figures showing use of the models in a real situation
+% - make sure we are consistent about normalization! (do the profiles sum to unity or are they unity at \xi = 1?)
 % - send to Jim Bosch and Kevin Bundy for comments
 
 \documentclass[12pt,pdftex,preprint]{aastex}
@@ -184,23 +185,19 @@ approximation is properly normalized.
 We wish to make an approximation $Q_{\exp}(\cdot)$ to the
 two-dimensional circular exponential profile
 \begin{eqnarray}\displaystyle
-Q_{\exp}(\spos) &\approx& \frac{1}{Z_{\exp}}\,\exp(-\frac{|\spos|}{\xi_{\exp}})
+Q_{\exp}(\spos) &\approx& \exp(-\alpha_{\exp}\,|\spos|)
 \\
-Z_{\exp} &=& X.XXXX
-\\
-\xi_{\exp} &=& X.XXXX
+\alpha_{\exp} &=& -1.67834699
 \quad ,
 \end{eqnarray}
-where $\spos$ is a dimensionless focal-plane position, and $Z_{\exp}$
-and $\xi_{\exp}$ are parameters that ensure that the profile integrates
-to unit flux and has unit half-light radius.  The position $\spos$ is
-dimensionless because it parameterizes the unit-size and unit-flux
-dimensionless function.  We seek the best (where ``best'' will be
-defined below) $M_g$-Gaussian mixture approximation
+where $\spos$ is a dimensionless focal-plane position, and
+$\alpha_{\exp}$ ensures that the profile has unit half-light radius.
+The position $\spos$ is dimensionless because it parameterizes the
+unit-size and unit-flux dimensionless function.  We seek the best
+(where ``best'' will be defined below) $M_g$-Gaussian mixture
+approximation
 \begin{eqnarray}\displaystyle
 Q_{\exp}(\spos) &=& \sum_{m=1}^{M_g} g_m\,\normal(\spos\given\zero,\Gm_m)
-\\
-1 &=& \sum_{m=1}^{M_g} g_m
 \\
 \Gm_m &=& \sigma^2_{\exp,m}\,\identity
 \quad ,
@@ -211,15 +208,11 @@ $\identity$ because we are requiring this dimensionless function to be
 precisely circular (so every component is itself circular and
 concentric).  Similarly for the de~Vaucouleurs profile
 \begin{eqnarray}\displaystyle
-Q_{\dev}(\spos) &\approx& \frac{1}{Z_{\dev}}\,\exp(-\left[\frac{|\spos|}{\xi_{\dev}}\right]^{1/4})
+Q_{\dev}(\spos) &\approx& \frac{1}{Z_{\dev}}\,\exp(-\alpha_{\dev}\,|\spos|^{1/4})
 \\
-Z_{\dev} &=& X.XXXX
-\\
-\xi_{\dev} &=& X.XXXX
+\alpha_{\dev} &=& -7.66924944
 \\
 Q_{\dev}(\spos) &=& \sum_{m=1}^{M_h} h_m\,\normal(\spos\given\zero,\Hm_m)
-\\
-1 &=& \sum_{m=1}^{M_h} h_m
 \\
 \Hm_m &=& \sigma^2_{\dev,m}\,\identity
 \quad .
