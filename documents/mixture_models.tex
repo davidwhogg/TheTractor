@@ -18,7 +18,7 @@
 \newcommand{\etal}{\foreign{et\,al.}}
 \newcommand{\documentname}{\textsl{Note}}
 \newcommand{\project}[1]{\textsl{#1}}
-\newcommand{\tractor}{\project{Tractor}}
+\newcommand{\thetractor}{\project{The~Tractor}}
 \newcommand{\sdss}{\project{SDSS}}
 
 \newcommand{\tmatrix}[1]{\boldsymbol{#1}}
@@ -130,21 +130,32 @@ convolution; it produces profiles that are approximate but very high
 performance when all real uses of the profiles are PSF-convolved, as
 they usually are.
 
-We need good performance in two-dimensional image fitting because,
-with \thetractor (Lang \etal, forthcoming), we are building a
-comprehensive model of all the imaging data we can; this will have
-models of many millions of galaxies in imaging that contains on the
-order of $10^{13}$ pixels.  We are basing our models on the
-\sdss\ models (\citealt{lupton})...Limit scope of this document to
-just what we need for the \tractor...
+Along those lines, it is important in any image-modeling situation to
+think of the PSF as the \emph{pixel-convolved} point-spread function.
+Under this choice, synthesis of a pixelized image involves only
+convolution with the PSF and sampling at the pixel centers.  That is,
+image synthesis (returned to at the end of this \documentname)
+consists of PSF convolution (an arithmetic operation on the two
+mixtures of Gaussians) followed by sampling (evaluation of the
+resulting mixture at the pixel centers).
 
-...somehow have to cite GALFIT (\citealt{galfit}) in this section...
+We need good performance in two-dimensional image synthesis (for
+fitting) because, with \thetractor\ (Lang \etal, forthcoming), we are
+building a comprehensive model of all the imaging data we can; this
+will have models of many millions of galaxies in imaging that contains
+on the order of $10^{13}$ pixels.  We are basing our models on the
+\sdss\ Catalog galaxy models, which only include exponential,
+de~Vaucouleurs, and composite (mixture of the two) radial profiles.
+In detail, in fact, the \sdss\ Catalog models are small modifications
+of these (\citealt{lupton}); details below.  So our goal here is to
+provide replacements for these models in order to improve the
+performance of galaxy image modeling and analysis software.  Some of
+the models we present have been used previously in the study of XXX
+(\cite{bundy}); they could also be used to speed other image-fitting
+systems, like the very successful \project{GALFIT} (\citealt{galfit}).
 
-...We need to put somewhere Lupton-like comments about sampling the
-pixel-convolved-PSF-convolved scene...
-
-In what follows we will make heavy use of two-dimensional Gaussian or
-Normal distributions, which look like
+Because we are thinking about two-dimensional imaging, we use here
+two-dimensional Gaussian or Normal distributions, which look like
 \begin{eqnarray}\displaystyle
 \normal(\pos\given\mean,\var) &\equiv& \frac{1}{2\pi}\,\det(\var)^{-1/2}\,\exp(-\frac{1}{2}\,\transpose{[\pos-\mean]}\cdot\inverse{\var}\cdot[\pos-\mean])
 \quad ,
@@ -173,15 +184,15 @@ approximation is properly normalized.
 We wish to make an approximation $Q_{\exp}(\cdot)$ to the
 two-dimensional circular exponential profile
 \begin{eqnarray}\displaystyle
-Q_{\exp}(\spos) &\approx& \frac{1}{Z_{\exp}}\,\exp(-\frac{|\spos|}{r_{\exp}})
+Q_{\exp}(\spos) &\approx& \frac{1}{Z_{\exp}}\,\exp(-\frac{|\spos|}{\xi_{\exp}})
 \\
 Z_{\exp} &=& X.XXXX
 \\
-r_{\exp} &=& X.XXXX
+\xi_{\exp} &=& X.XXXX
 \quad ,
 \end{eqnarray}
 where $\spos$ is a dimensionless focal-plane position, and $Z_{\exp}$
-and $r_{\exp}$ are parameters that ensure that the profile integrates
+and $\xi_{\exp}$ are parameters that ensure that the profile integrates
 to unit flux and has unit half-light radius.  The position $\spos$ is
 dimensionless because it parameterizes the unit-size and unit-flux
 dimensionless function.  We seek the best (where ``best'' will be
@@ -200,11 +211,11 @@ $\identity$ because we are requiring this dimensionless function to be
 precisely circular (so every component is itself circular and
 concentric).  Similarly for the de~Vaucouleurs profile
 \begin{eqnarray}\displaystyle
-Q_{\dev}(\spos) &\approx& \frac{1}{Z_{\dev}}\,\exp(-\left[\frac{|\spos|}{r_{\dev}}\right]^{1/4})
+Q_{\dev}(\spos) &\approx& \frac{1}{Z_{\dev}}\,\exp(-\left[\frac{|\spos|}{\xi_{\dev}}\right]^{1/4})
 \\
 Z_{\dev} &=& X.XXXX
 \\
-r_{\dev} &=& X.XXXX
+\xi_{\dev} &=& X.XXXX
 \\
 Q_{\dev}(\spos) &=& \sum_{m=1}^{M_h} h_m\,\normal(\spos\given\zero,\Hm_m)
 \\
@@ -213,12 +224,11 @@ Q_{\dev}(\spos) &=& \sum_{m=1}^{M_h} h_m\,\normal(\spos\given\zero,\Hm_m)
 \Hm_m &=& \sigma^2_{\dev,m}\,\identity
 \quad .
 \end{eqnarray}
-
 ...Cite (\citealt{ciotti}) re half-light radius constants...
 
-...Lupton profile as different from de~Vaucouleurs...Sersic profiles...
+The Lupton profiles are...
 
-...Discuss the cutoffs and regularization used by PHOTO and adjust $Z$ and $r$ accordingly...
+...Lupton profiles as different from de~Vaucouleurs...Sersic profiles...Discuss the cutoffs and regularization used by PHOTO and adjust $Z$ and $r$ accordingly...
 
 ...Note normalization issues and how easy it is to normalize the mixture-of-Gaussian model...
 
