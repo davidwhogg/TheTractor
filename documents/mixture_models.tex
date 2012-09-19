@@ -10,6 +10,7 @@
 % - make useful figures
 % - make figures showing use of the models in a real situation
 % - make sure we are consistent about normalization! (do the profiles sum to unity or are they unity at \xi = 1?)
+% - does the Lupton paper give the profiles, or should we cite the code directly?
 % - send to Jim Bosch and Kevin Bundy for comments
 
 \documentclass[12pt,pdftex,preprint]{aastex}
@@ -30,8 +31,6 @@
 \newcommand{\spos}{\tvector{\xi}}
 \newcommand{\mean}{\tvector{m}}
 \newcommand{\var}{\tmatrix{V}\!}
-\newcommand{\Gm}{\tmatrix{G}}
-\newcommand{\Hm}{\tmatrix{H}}
 \newcommand{\affine}{\tmatrix{R}}
 \newcommand{\uv}{\tvector{u}}
 \newcommand{\zero}{\tmatrix{0}}
@@ -40,6 +39,8 @@
 \newcommand{\given}{\,|\,}
 \renewcommand{\star}{\mathrm{star}}
 \newcommand{\dev}{\mathrm{dev}}
+\newcommand{\lux}{\mathrm{lux}}
+\newcommand{\luv}{\mathrm{luv}}
 
 \newlength{\figwidth}
 \setlength{\figwidth}{0.49\textwidth}
@@ -151,9 +152,10 @@ In detail, in fact, the \sdss\ Catalog models are small modifications
 of these (\citealt{lupton}); details below.  So our goal here is to
 provide replacements for these models in order to improve the
 performance of galaxy image modeling and analysis software.  Some of
-the models we present have been used previously in the study of XXX
-(\cite{bundy}); they could also be used to speed other image-fitting
-systems, like the very successful \project{GALFIT} (\citealt{galfit}).
+the models we present have been used previously in tools for precise
+photometry (Bundy \etal, forthcoming); they could also be used to
+speed other image-fitting systems, like the very successful
+\project{GALFIT} (\citealt{galfit}).
 
 Because we are thinking about two-dimensional imaging, we use here
 two-dimensional Gaussian or Normal distributions, which look like
@@ -182,12 +184,12 @@ have amplitudes $a_k$, means $\mean_k$, and variance tensors $\var_k$.
 The sum-to-one condition ensures that the probability distribution
 approximation is properly normalized.
 
-We wish to make an approximation $Q_{\exp}(\cdot)$ to the
-two-dimensional circular exponential profile
+We wish to make an approximation to the two-dimensional circular
+exponential profile $Q_{\exp}(\cdot)$
 \begin{eqnarray}\displaystyle
-Q_{\exp}(\spos) &\approx& \exp(-\alpha_{\exp}\,|\spos|)
+Q_{\exp}(\spos) &\equiv& \exp(-\alpha_{\exp}\,[|\spos| - 1])
 \\
-\alpha_{\exp} &=& -1.67834699
+\alpha_{\exp} &\equiv& -1.67834699
 \quad ,
 \end{eqnarray}
 where $\spos$ is a dimensionless focal-plane position, and
@@ -197,32 +199,73 @@ unit-size and unit-flux dimensionless function.  We seek the best
 (where ``best'' will be defined below) $M_g$-Gaussian mixture
 approximation
 \begin{eqnarray}\displaystyle
-Q_{\exp}(\spos) &=& \sum_{m=1}^{M_g} g_m\,\normal(\spos\given\zero,\Gm_m)
+Q_{\exp}(\spos) &\approx& \sum_{m=1}^{M_{\exp}} a_{\exp,m}\,\normal(\spos\given\zero,\var_{\exp,m})
 \\
-\Gm_m &=& \sigma^2_{\exp,m}\,\identity
+\var_{\exp,m} &\equiv& \sigma^2_{\exp,m}\,\identity
 \quad ,
 \end{eqnarray}
 where all of the means are exactly zero and all of the variances
-$\Gm_m$ in the mixture are scalar multiples of the identity matrix
+$\var_m$ in the mixture are scalar multiples of the identity matrix
 $\identity$ because we are requiring this dimensionless function to be
 precisely circular (so every component is itself circular and
 concentric).  Similarly for the de~Vaucouleurs profile
 \begin{eqnarray}\displaystyle
-Q_{\dev}(\spos) &\approx& \frac{1}{Z_{\dev}}\,\exp(-\alpha_{\dev}\,|\spos|^{1/4})
+Q_{\dev}(\spos) &\equiv& \exp(-\alpha_{\dev}\,[|\spos|^{1/4} - 1])
 \\
-\alpha_{\dev} &=& -7.66924944
+\alpha_{\dev} &\equiv& -7.66924944
 \\
-Q_{\dev}(\spos) &=& \sum_{m=1}^{M_h} h_m\,\normal(\spos\given\zero,\Hm_m)
+Q_{\dev}(\spos) &\approx& \sum_{m=1}^{M_{\dev}} a_{\dev,m}\,\normal(\spos\given\zero,\var_{\dev,m})
 \\
-\Hm_m &=& \sigma^2_{\dev,m}\,\identity
+\var_{\dev,m} &\equiv& \sigma^2_{\dev,m}\,\identity
 \quad .
 \end{eqnarray}
-The half-light radius parameters $\alpha_{\exp}$ and $\alpha_{\dev}$
-are from \cite{ciotti}.
+(The half-light radius parameters $\alpha_{\exp}$ and $\alpha_{\dev}$
+are taken from \citealt{ciotti}.)  The challenge we meet below is to
+determine the parameters
+\begin{eqnarray}
+\{a_{\exp,m},\sigma_{\exp,m}\}_{m=1}^{M_{\exp}} \mbox{~and~} \{a_{\dev,m},\sigma_{\dev,m}\}_{m=1}^{M_{\dev}}
+\end{eqnarray}
+to best approximate the
+traditional galaxy profile functions, under some sensible definiton of
+the word ``best'', as a function of the model complexity parameters
+(numbers of components) $(M_{\exp}, M_{\dev})$.
 
-The Lupton profiles are...
-
-...Lupton profiles as different from de~Vaucouleurs...Sersic profiles...Discuss the cutoffs and regularization used by PHOTO and adjust $Z$ and $r$ accordingly...
+The \sdss\ pipelines make use of modified profiles, which have been
+truncated smoothly at large radius and (in the case of the
+de~Vaucouleurs profile) ``softened'' at the center (\citealt{lupton}).
+The \sdss\ form of the exponential profile is
+\begin{eqnarray}\displaystyle
+Q_{\lux}(\spos) &\equiv& \left\{\begin{array}{ll}
+  \exp(-\alpha_{\lux}\,[|\spos| - 1]) & \mbox{for~}|\spos| < 3 \\
+  \exp(-\alpha_{\lux}\,[|\spos| - 1])
+  \,\left[1 - [|\spos| - 3]^2\right]^2 & \mbox{for~}3 < |\spos| < 4 \\
+  0                                   & \mbox{for~}4 < |\spos|
+\end{array}\right.
+\\
+\alpha_{\lux} &\equiv& -1.67835
+\quad ,
+\end{eqnarray}
+and the \sdss\ form of the de~Vaucouleurs profile is
+\begin{eqnarray}\displaystyle
+Q_{\luv}(\spos) &\equiv& \left\{\begin{array}{ll}
+  \exp(-\alpha_{\luv}\,\left[[|\spos|^2 + 0.0004]^{1/8} - 1\right]) & \mbox{for~}|\spos| < 7 \\
+  \exp(-\alpha_{\luv}\,\left[[|\spos|^2 + 0.0004]^{1/8} - 1\right])
+  \,\left[1 - [|\spos| - 7]^2\right]^2 & \mbox{for~}7 < |\spos| < 8 \\
+  0                                   & \mbox{for~}8 < |\spos|
+\end{array}\right.
+\\
+\alpha_{\luv} &\equiv& -7.66925
+\quad .
+\end{eqnarray}
+(The half-light radius parameters $\alpha_{\exp}$ and
+$\alpha_{\dev}$---and the softening and cutoff radius parameters---are
+taken from the \sdss\ codebase.)  The \sdss\ radial profiles are much
+better behaved than the standard forms; we recommend them strongly.
+Once again, the challenge is to determine the best parameters
+\begin{eqnarray}
+\{a_{\lux,m},\sigma_{\lux,m}\}_{m=1}^{M_{\lux}} \mbox{~and~} \{a_{\luv,m},\sigma_{\luv,m}\}_{m=1}^{M_{\luv}}
+\quad .
+\end{eqnarray}
 
 ...Note normalization issues and how easy it is to normalize the mixture-of-Gaussian model...
 
@@ -276,7 +319,7 @@ given by
 \begin{eqnarray}\displaystyle
 I(\pos\given\exp,S_g,\pos_g,\var_g) &=& \sum_{k=1}^K \sum_{m=1}^{M_g} S_g\,g_m\,p_k\,\normal(\pos\given\pos_g+\mean_k,\var_{gm}+\var_k)
 \\
-\var_{gm} &\equiv& \affine_g\cdot\Gm_m\cdot\transpose{\affine_g}
+\var_{gm} &\equiv& \affine_g\cdot\var_m\cdot\transpose{\affine_g}
 \\
 \var_g &\equiv& \affine_g\cdot\transpose{\affine_g}
 \\
@@ -294,7 +337,7 @@ given by
 \begin{eqnarray}\displaystyle
 I(\pos\given\dev,S_h,\pos_h,\var_h) &=& \sum_{k=1}^K \sum_{m=1}^{M_h} S_h\,h_m\,p_k\,\normal(\pos\given\pos_h+\mean_k,\var_{hn}+\var_k)
 \\
-\var_{hn} &\equiv& \affine_h\cdot\Hm_m\cdot\transpose{\affine_h}
+\var_{hn} &\equiv& \affine_h\cdot\var_m\cdot\transpose{\affine_h}
 \\
 \var_h &\equiv& \affine_h\cdot\transpose{\affine_h}
 \quad ,
