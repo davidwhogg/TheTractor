@@ -93,7 +93,7 @@ mixture of Gaussians with simply adjusted amplitudes, means, and
 variance tensors.  The ubiquity of convolution operations in astronomy
 suggests the widespread adoption of mixture-of-Gaussian modeling.  We
 have pioneered this in the area of distribution modeling in large
-numbers of dimensions \citep{xd, xdqso, xdqsoz}, where convolution
+numbers of dimensions (\citealt{xd, xdqso, xdqsoz}), where convolution
 occurs because the true or noise-free distribution is convolved with
 the noise before being observed.  Here we are going to capitalize on
 the convolution properties of mixtures of Gaussians in modeling galaxy
@@ -101,15 +101,15 @@ morphologies in imaging data, where the true or
 high-angular-resolution intensity field is convolved with the
 point-spread function (PSF) before being observed.  This is
 particularly useful in data sets in which the PSF itself has also been
-modeled as a mixture of Gaussians, which is not uncommon.  For
-example, the \project{Sloan Digital Sky Survey} (\sdss; [HOGG cite
-  York]) imaging pipelines [HOGG cite Lupton] makes such models for
-every imaging field.
+modeled as a mixture of Gaussians, which is not uncommon (for example,
+the \project{Sloan Digital Sky Survey} imaging pipelines
+make approximate mixture-of-Gaussian PSF models for
+every imaging field; \citealt{lupton}).
 
 We are not the first in this space deconvolution and modeling of
 galaxy images with mixtures of Gaussians has been done very
-successfully before \citep[for example,][]{bendinelli, emsellem,
-  bendinelli2, cappellari}.  However, the idea behind those projects
+successfully before (for example, \citealt{bendinelli, emsellem,
+  bendinelli2, cappellari}).  However, the idea behind those projects
 was to use the mixture of Gaussians to provide a very free form for
 the isophotes or morphologies of resolved galaxies or other complex
 scenes.  Here our goals are very limited: We want to improve the
@@ -133,7 +133,7 @@ they usually are.
 ...Limit scope of this document to just what we need for the
 \tractor...
 
-...somehow have to cite GALFIT \citep{galfit} in this section...
+...somehow have to cite GALFIT (\citealt{galfit}) in this section...
 
 ...We need to put somewhere Lupton-like comments about sampling the
 pixel-convolved-PSF-convolved scene...
@@ -151,8 +151,10 @@ vectors are column vectors.  A \emph{mixture of Gaussians} is a linear
 superposition of Gaussians.  Any positive two-dimensional function
 with finite support and finite total integral---including as a special
 case any two-dimensional probability distribution function---can be
-represented as a mixture of Gaussians to arbitrary accuracy (DSTN: It
-would be nice to have a reference here).
+represented as a mixture of Gaussians to arbitrary accuracy; that is
+\begin{eqnarray}
+foo
+\end{eqnarray}
 
 We wish to make an approximation $Q_{\exp}(\cdot)$ to the
 two-dimensional circular exponential profile
@@ -198,7 +200,7 @@ Q_{\dev}(\spos) &=& \sum_{m=1}^{M_h} h_m\,\normal(\spos\given\zero,\Hm_m)
 \quad .
 \end{eqnarray}
 
-...Cite \citep{ciotti} re half-light radius constants...
+...Cite (\citealt{ciotti}) re half-light radius constants...
 
 ...Lupton profile as different from de~Vaucouleurs...Sersic profiles...
 
@@ -311,6 +313,8 @@ Cappellari,~M., 2002, \mnras, 333, 400
 Ciotti,~L. \& Bertin,~G., 1999, \aa, 352, 447
 \bibitem[Emsellem \etal(1994)]{emsellem}
 Emsellem,~E., Monnet,~G., Bacon,~R., \& Nieto,~J.-L., 1994, \aap, 285, 739
+\bibitem[Lupton \etal(2001)]{lupton}
+Lupton,~R., Gunn,~J.~E., Ivezic,~Z., Knapp,~G.~R., Kent,~S.~M., \& Yasuda,~N., 2001, ASPC, 238, 269
 \bibitem[Peng \etal(2002)]{galfit}
 Peng,~C.~Y., Ho, L.~C., Impey,~C.~D., \& Rix,~H.-W., 2002, \aj, 124, 266
 \end{thebibliography}
