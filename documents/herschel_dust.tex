@@ -4,7 +4,8 @@
 
 % to-do
 % -----
-% - outline
+% - write first draft
+% - run cross-validation (ugh)
 % - make figures
 % - write
 % - get comments
@@ -18,8 +19,10 @@
 \newcommand{\documentname}{\textsl{Note}}
 \newcommand{\project}[1]{\textsl{#1}}
 \newcommand{\TheTractor}{\project{The~Tractor}}
-\newcommand{\sdss}{\project{SDSS}}
 \newcommand{\Herschel}{\project{Herschel}}
+\newcommand{\PACS}{\project{PACS}}
+\newcommand{\SPIRE}{\project{SPIRE}}
+\newcommand{\PHAT}{\project{PHAT}}
 
 \newcommand{\tmatrix}[1]{\boldsymbol{#1}}
 \newcommand{\inverse}[1]{{#1}^{-1}}
@@ -46,11 +49,17 @@
 \begin{document}
 
 \title{High angular resolution dust density and temperature maps from \Herschel\ imaging data}
-\author{Lang, Hogg, etc}
-\altaffiltext{1}{To whom correspondence should be addressed; \texttt{foo@bar.edu}}
-\altaffiltext{2}{New York University}
+\author{
+  Dustin~Lang\altaffilmark{4,5},
+  David~W.~Hogg\altaffilmark{1,2,3},
+  Brent~Groves\altaffilmark{3},
+  Hans-Walter~Rix\altaffilmark{3},
+  Karin~Sandstrom\altaffilmark{3}}
+\altaffiltext{1}{To whom correspondence should be addressed; \texttt{david.hogg@nyu.edu}}
+\altaffiltext{2}{Center for Cosmology and Particle Physics, New York University}
 \altaffiltext{3}{Max-Planck-Institut f\"ur Astronomie}
 \altaffiltext{4}{Princeton University Observatory}
+\altaffiltext{5}{Carnegie Mellon University}
 
 \begin{abstract}
 The \Herschel\ Observatory takes images at wavelengths
@@ -72,31 +81,179 @@ data from other observatories.  All the code is available under an
 open-source license as part of \TheTractor\ image-modeling project.
 \end{abstract}
 
-This paper is a stub.  You can edit it and help \TheTractor, so long
-as you are either Hogg or Lang!
+How do you obtain reliable multi-wavelength information about a source
+or a set of sources when your imaging data span a huge range of
+angular scales?
 
-\acknowledgements
-It is a pleasure to thank...
+\section{model}
+
+The model consists of a \emph{physical emission model}, a
+\emph{spatial model}, a set of \emph{priors} and a \emph{likelihood
+  function}.  The physical emission model we choose is a toy model for
+emitting dust grains with a range of temperatures and sizes.  This toy
+model is that a tiny unresolved blob of dust $\Omega_k$ at temperature
+$T_k$ will emit flux density $F_{\nu,k}$ (energy per unit time per
+unit area per unit frequency)
+\begin{eqnarray}\displaystyle
+F_{\nu,k} &=& \Omega_k\,B_{\nu}(T_k)\,\left[\frac{\lambda}{\lambda_0}\right]^{-\beta_k}
+\quad,
+\end{eqnarray}
+where $B_{\nu}(T)$ is the black-body intensity (energy per unit time
+per unit area per unit solid angle per unit frequency), and $\beta_k$
+is an emission parameter accounting for the radiative and
+multi-temperature properties of the dust.  Usually the emission
+parameter $\beta$ is around 2.  In this formulation, the dust
+amplitude $\Omega_k$ has units of solid angle, and ought to be related
+(perhaps not trivially) to the literal solid angle subtended by the
+radiation-absorbing and emitting dust particles.  This model is
+obviously a toy or effective model; much more sophisticated models
+exist (CITATIONS).
+
+The spatial model we choose is a regular grid (on a small
+tangent-plane projection of the the celestial sphere) of
+delta-function pixels.  This is effectively a non-parametric model (in
+the sense that it has an enormous number of parameters).  To meet the
+goals of this project, this grid is made as fine (in an angular sense)
+as the pixel grid of the highest-resolution \Herschel\ \PACS\ images.
+At each two-dimensional pixel location $\theta_k$ on the sky, there is
+a dust solid angle $\Omega_k$, a temperature $T_k$, and an emission
+parameter $\beta_k$.  For any real image taken at some effective
+wavelength $\lambda$ there is an effective point-spread function
+$\psi(\Delta\theta\given\lambda)$ with which the grid of emitting
+pixels is convolved.  Thus the model intensity for an image is
+\begin{eqnarray}\displaystyle
+I_{\nu}(\theta,\lambda) &=& \sum_{k=1}^{K}
+F_{\nu,k}\,\psi(\theta-\theta_k\given\lambda) \quad ,
+\end{eqnarray}
+where the convolution is trivial because the unconvolved intensity
+model is a grid of delta functions.
+
+The likelihood function---the probability of the data given the model parameters---is just the Gaussian
+likelihood function
+\begin{eqnarray}\displaystyle
+-2\,\ln L &\approx& \chi^2
+\\
+\chi^2 &\equiv& \sum_{n=1}^N \frac{\left[d_n - I_{\nu}(\theta_n,\lambda_n)\right]^2}{\sigma_n^2}
+\quad,
+\end{eqnarray}
+where the ``$\approx$'' symbol is used as a reminder that this
+function is not properly normalized, each pixel $n$ has a data value
+$d_n$ that is assumed to be a properly calibrated intensity, and each
+pixel is at a known sky location $\theta_n$, taken in a bandpass at
+effective wavelengths $\lambda_n$, and with an independent Gaussian
+noise variance $\sigma_n^2$.
+
+In non-parametric models like this---even when we only want point
+estimates or optima of an objective function---we cannot avoid using
+prior information to regularize the fit.  There are no extremely good
+priors to put on images, and certainly not images of interstellar
+dust.  For this reason we choose simply ``smoothness'' priors inspired
+by Gaussian processes.  They penalize the sum of squares of
+differences between neighboring pixels.
+\begin{eqnarray}\displaystyle
+-2\,\ln p(\Omega_k) &\approx& \sum_{\mathrm{neighbors}~k'} \epsilon_\Omega\,\left[\Omega_k - \Omega_{k'}\right]^2
+\\
+-2\,\ln p(T_k) &\approx& \sum_{\mathrm{neighbors}~k'} \epsilon_T\,\left[T_k - T_{k'}\right]^2
+\\
+-2\,\ln p(\beta_k) &\approx& \epsilon_2\,\left[\beta_k - 2\right]^2
+                    + \sum_{\mathrm{neighbors}~k'} \epsilon_\beta\,\left[\beta_k - \beta_{k'}\right]^2
+\\
+\alpha &\equiv& \left\{\epsilon_\Omega, \epsilon_T, \epsilon_2, \epsilon_\beta\right\}
+\quad ,
+\end{eqnarray}
+where again the ``$\approx$'' symbols are used as a reminder that
+these priors are not properly normalized as written, the sum over
+``neighbors'' $k'$ is a sum, for each pixel, over its four nearest
+neighbors, the prior ``strength'' or information is set by the list
+$\alpha$ of hyper-parameters $\{\epsilon_\Omega, \epsilon_T,
+\epsilon_2, \epsilon_\beta\}$, and the emission parameter grid
+$\beta_k$ is given the additional prior that we expect values around
+2.
+
+The posterior probability is proportional to the likelihood times the
+prior; its logarithm is sum sum of the log likelihood and the log
+prior.  Dust map inference---the determination of the solid-angle
+parameters $\Omega_k$, the temperature parameters $T_k$, and the
+emissivity parameters $\beta_k$ proceeds by optimization of the log
+posterior probability.  The parameters so derived---maximum \foreign{a
+  posteriori} or MAP---are taken to be the ``best-fit'' parameters in
+what follows.  The MAP dust-map parameters depend on the data, the
+spatial grid $\theta_k$, the data $d_n$, and the data noise variances
+$\sigma_n$.  Given the large number of parameters---three per pixel in
+the dust map model---optimization is challenging.  However, the
+problem is very sparse: Most parameters do not affect most data
+pixels.  We use a brutal hand-built sparse optimizer that is part of
+our image modeling project \TheTractor (CITATION); more about this
+below.
+
+The hyperparameters $\alpha$---parameters of the priors---set the
+strictness or information content of the priors.  We want to give
+these hyperparameters values that have been dervied objectively from
+the data, so that the collection of \emph{all} data informs the prior
+probability for the parameters $\Omega_k, T_k, \beta_k$ affecting any
+small part of the data.  The best methods for such hyperparameter
+inference is hierarchical Bayesian inference (for example,
+\citealt{eccentricity}, MORE REFERENCES), which is too computationally
+costly for the present effort.  The approximation to hierarchical
+inference adopted here is that of leave-some-out cross-validation: We
+drop randomly chosen small subsets of the data, perform the inference
+of the dust-map parameters $\Omega_k, T_k, \beta_k$ using the
+remaining (the non-left-out) data, predict the left-out data, and base
+the hyperparameter settings on the quality of the predictions.
+
+In detail, this works by choosing a random integer $s$ with $1\leq
+s\leq S$ (where $S$ is the number of leave-some-out trials, $S=8$ in
+what follows) for every data pixel $n$.  For each value of $s$---say
+3---MAP values for the dust-map parameters are obtained given all the
+data \emph{except} that marked with integer $s=3$.  The data marked
+with integer $s=3$ are predicted by this model, and a prediction
+$\chi_s^2$ value is computed for the left-out $s=3$ data.  This is
+repeated for all values of $s$ and all $S$ prediction $\chi_s^2$
+values are summed.  This total prediction leave-some-out $\chi^2$ is a
+function of the hyperparameters; the hyperparameters $\alpha$ at which
+it is minimized are chosen as the best hyperparameters.
+
+One extremely valuable side-effect of the leave-one-out trials is that
+they also provide uncertainty estimates on the dust-map parameters.
+The leave-some-out trials are effectively also a set of jackknife
+trials.  The variance (mean squared deviation) in the map parameters
+across the $S$ leave-some-out trials is multiplied by (HOGG: FORMULA
+HERE) to give a conservative empirical (bootstrap-like) estimate of
+the variance (mean squared error) in the map parameters.
+
+\section{experiments and results}
+
+...details of $\theta_k$, small patch, and so-on...
+
+...(in detail, sky level)...
+
+...what happened in the cross-validation...
+
+...results and jackknifes...
+
+...comparison to \PHAT\ extinction maps...
+
+\section{discussion}
+
+...Successes.
+
+...Limitations of the emission model.
+
+...Limitations of the spatial model, especially the PSFs.
+
+...Limitations of the priors.
+
+\acknowledgements It is a pleasure to thank Thomas Henning (MPIA) and
+Ben Weiner (Arizona).  This project made use of the NASA
+\project{Astrophysics Data System}, the Python \project{numpy},
+\project{scipy}, and \project{matplotlib} open-source software
+projects, and the \project{Astrometry.net} codebase.  All the code and
+documentation used in this project is available as part of
+\TheTractor\ at \url{http://TheTractor.org/}.
 
 \begin{thebibliography}{70}
-\bibitem[Bendinelli(1991)]{bendinelli}
-Bendinelli,~O., 1991, \apj, 366, 599
-\bibitem[Bendinelli \& Parmeggiani(1995)]{bendinelli2}
-Bendinelli,~O. \& Parmeggiani,~G., 1995, \aj, 109, 572
-\bibitem[Bovy \etal(2011a)]{xd}
-Bovy,~J., Hogg,~D.~W., \& Roweis,~S., 2011, Ann. Appl. Stat., 5, 1657
-\bibitem[Bovy \etal(2011b)]{xdqso}
-Bovy,~J., \etal, 2011, \apj, 729, 141
-\bibitem[Bovy \etal(2012)]{xdqsoz}
-Bovy,~J. \etal, 2012, \aj, 749, 41
-\bibitem[Cappellari(2002)]{cappellari}
-Cappellari,~M., 2002, \mnras, 333, 400
-\bibitem[Ciotti \& Bertin(1999)]{ciotti}
-Ciotti,~L. \& Bertin,~G., 1999, \aa, 352, 447
-\bibitem[Emsellem \etal(1994)]{emsellem}
-Emsellem,~E., Monnet,~G., Bacon,~R., \& Nieto,~J.-L., 1994, \aap, 285, 739
-\bibitem[Peng \etal(2002)]{galfit}
-Peng,~C.~Y., Ho, L.~C., Impey,~C.~D., \& Rix,~H.-W., 2002, \aj, 124, 266
+\bibitem[Hogg \etal(2010)]{eccentricity}
+Hogg,~D.~W., Myers,~A.~D., \& Bovy,~J., 2010, \apj, 725, 2166
 \end{thebibliography}
 
 \end{document}

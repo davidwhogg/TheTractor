@@ -49,7 +49,7 @@ def hogg_dev(x):
     """
     return np.exp(-7.66924944 * ((x * x)**0.125 - 1.))
 
-def hogg_lup(x):
+def hogg_luv(x):
     """
     One-dimensional Lupton approximation to DeVaucouleurs profile.
 
@@ -58,13 +58,13 @@ def hogg_lup(x):
     """
     inner = 7.
     outer = 8.
-    lup = np.exp(-7.66925 * ((x * x + 0.0004)**0.125 - 1.))
-    lup[x > outer] *= 0.
+    luv = np.exp(-7.66925 * ((x * x + 0.0004)**0.125 - 1.))
+    luv[x > outer] *= 0.
     middle = (x >= inner) * (x <= outer)
-    lup[middle] *= (1. - ((x[middle] - inner) / (outer - inner)) ** 2) ** 2
-    return lup
+    luv[middle] *= (1. - ((x[middle] - inner) / (outer - inner)) ** 2) ** 2
+    return luv
 
-def hogg_lue(x):
+def hogg_lux(x):
     """
     One-dimensional Lupton approximation to exponential profile.
 
@@ -73,11 +73,11 @@ def hogg_lue(x):
     """
     inner = 3.
     outer = 4.
-    lue = np.exp(-1.67835 * (x - 1.))
-    lue[x > outer] *= 0.
+    lux = np.exp(-1.67835 * (x - 1.))
+    lux[x > outer] *= 0.
     middle = (x >= inner) * (x <= outer)
-    lue[middle] *= (1. - ((x[middle] - inner) / (outer - inner)) ** 2) ** 2
-    return lue
+    lux[middle] *= (1. - ((x[middle] - inner) / (outer - inner)) ** 2) ** 2
+    return lux
 
 def hogg_ser2(x):
     """
@@ -114,10 +114,10 @@ def hogg_model(x, model):
         return hogg_exp(x)
     if model == 'dev':
         return hogg_dev(x)
-    if model == 'lup':
-        return hogg_lup(x)
-    if model == 'lue':
-        return hogg_lue(x)
+    if model == 'luv':
+        return hogg_luv(x)
+    if model == 'lux':
+        return hogg_lux(x)
     if model == 'ser2':
         return hogg_ser2(x)
     if model == 'ser3':
@@ -313,10 +313,10 @@ if __name__ == '__main__':
     inputs = [
         ('exp', 8.),
         ('dev', 8.),
-        ('lup', 8.),
-        ('lue', 4.),
-        # ('ser2', 8.),
-        # ('ser3', 8.),
-        # ('ser5', 8.),
+        ('luv', 8.),
+        ('lux', 4.),
+        ('ser2', 8.),
+        ('ser3', 8.),
+        ('ser5', 8.),
         ]
     pmap(main, inputs)
