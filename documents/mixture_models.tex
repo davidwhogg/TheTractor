@@ -102,7 +102,7 @@ high-angular-resolution intensity field is convolved with the
 point-spread function (PSF) before being observed.  This is
 particularly useful in data sets in which the PSF itself has also been
 modeled as a mixture of Gaussians, which is not uncommon (for example,
-the \project{Sloan Digital Sky Survey} imaging pipelines
+the \project{Sloan Digital Sky Survey} (\sdss) imaging pipelines
 make approximate mixture-of-Gaussian PSF models for
 every imaging field; \citealt{lupton}).
 
@@ -130,8 +130,13 @@ convolution; it produces profiles that are approximate but very high
 performance when all real uses of the profiles are PSF-convolved, as
 they usually are.
 
-...Limit scope of this document to just what we need for the
-\tractor...
+We need good performance in two-dimensional image fitting because,
+with \thetractor (Lang \etal, forthcoming), we are building a
+comprehensive model of all the imaging data we can; this will have
+models of many millions of galaxies in imaging that contains on the
+order of $10^{13}$ pixels.  We are basing our models on the
+\sdss\ models (\citealt{lupton})...Limit scope of this document to
+just what we need for the \tractor...
 
 ...somehow have to cite GALFIT (\citealt{galfit}) in this section...
 
@@ -153,8 +158,17 @@ with finite support and finite total integral---including as a special
 case any two-dimensional probability distribution function---can be
 represented as a mixture of Gaussians to arbitrary accuracy; that is
 \begin{eqnarray}
-foo
+p(\pos) &\approx& \sum_{k=1}^K a_k\,\normal(\pos\given\mean_k,\var_k)
+\\
+1 &=& \sum_{k=1}^K a_k
+\quad ,
 \end{eqnarray}
+where $p(\pos)$ is any probability distribution of a two-dimensional
+quantity $\pos$, the $\approx$ symbol implies approximation, $K$ is
+the number of Gaussians used in the mixture, and the $K$ Gaussians
+have amplitudes $a_k$, means $\mean_k$, and variance tensors $\var_k$.
+The sum-to-one condition ensures that the probability distribution
+approximation is properly normalized.
 
 We wish to make an approximation $Q_{\exp}(\cdot)$ to the
 two-dimensional circular exponential profile
