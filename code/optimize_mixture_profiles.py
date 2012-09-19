@@ -307,7 +307,7 @@ def main(input):
 
 if __name__ == '__main__':
     if True: # use multiprocessing
-        pmap = Pool(6).map
+        pmap = Pool(8).map
     else: # don't use multiprocessing
         pmap = map
     inputs = [
