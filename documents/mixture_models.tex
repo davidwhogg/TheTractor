@@ -4,12 +4,11 @@
 
 % to-do
 % -----
-% - Brewer suggestion about KLD and ack Brewer
-%   - need to discuss this and show results from it
 % - decide which models will make it in
 % - make useful figures
 % - make figures showing use of the models in a real situation
 % - make sure we are consistent about normalization! (do the profiles sum to unity or are they unity at \xi = 1?)
+% - does the Lupton paper give the profiles, or should we cite the code directly?
 % - send to Jim Bosch and Kevin Bundy for comments
 
 \documentclass[12pt,pdftex,preprint]{aastex}
@@ -30,8 +29,6 @@
 \newcommand{\spos}{\tvector{\xi}}
 \newcommand{\mean}{\tvector{m}}
 \newcommand{\var}{\tmatrix{V}\!}
-\newcommand{\Gm}{\tmatrix{G}}
-\newcommand{\Hm}{\tmatrix{H}}
 \newcommand{\affine}{\tmatrix{R}}
 \newcommand{\uv}{\tvector{u}}
 \newcommand{\zero}{\tmatrix{0}}
@@ -40,6 +37,9 @@
 \newcommand{\given}{\,|\,}
 \renewcommand{\star}{\mathrm{star}}
 \newcommand{\dev}{\mathrm{dev}}
+\newcommand{\ser}{\mathrm{ser}}
+\newcommand{\lux}{\mathrm{lux}}
+\newcommand{\luv}{\mathrm{luv}}
 
 \newlength{\figwidth}
 \setlength{\figwidth}{0.49\textwidth}
@@ -69,7 +69,7 @@ advocate), the PSF-convolved, affine-transformed galaxy models are
 themselves mixtures of Gaussians and therefore very fast to compute
 precisely.  We present worked examples that can be directly used in
 image fitting; we are using them ourselves.  We discuss extensions to
-Sersic models and applications of these ideas to three-dimensional
+S\'ersic models and applications of these ideas to three-dimensional
 deprojection.
 \end{abstract}
 
@@ -142,7 +142,7 @@ resulting mixture at the pixel centers).
 
 We need good performance in two-dimensional image synthesis (for
 fitting) because, with \thetractor\ (Lang \etal, forthcoming), we are
-building a comprehensive model of all the imaging data we can; this
+building a comprehensive model of all the imaging data we have; this
 will have models of many millions of galaxies in imaging that contains
 on the order of $10^{13}$ pixels.  We are basing our models on the
 \sdss\ Catalog galaxy models, which only include exponential,
@@ -151,9 +151,10 @@ In detail, in fact, the \sdss\ Catalog models are small modifications
 of these (\citealt{lupton}); details below.  So our goal here is to
 provide replacements for these models in order to improve the
 performance of galaxy image modeling and analysis software.  Some of
-the models we present have been used previously in the study of XXX
-(\cite{bundy}); they could also be used to speed other image-fitting
-systems, like the very successful \project{GALFIT} (\citealt{galfit}).
+the models we present have been used previously in tools for precise
+photometry (Bundy \etal, forthcoming); they could also be used to
+speed other image-fitting systems, like the very successful
+\project{GALFIT} (\citealt{galfit}).
 
 Because we are thinking about two-dimensional imaging, we use here
 two-dimensional Gaussian or Normal distributions, which look like
@@ -182,56 +183,140 @@ have amplitudes $a_k$, means $\mean_k$, and variance tensors $\var_k$.
 The sum-to-one condition ensures that the probability distribution
 approximation is properly normalized.
 
-We wish to make an approximation $Q_{\exp}(\cdot)$ to the
-two-dimensional circular exponential profile
+We wish to make an approximation to the two-dimensional circular
+exponential profile $Q_{\exp}(\cdot)$
 \begin{eqnarray}\displaystyle
-Q_{\exp}(\spos) &\approx& \exp(-\alpha_{\exp}\,|\spos|)
+Q_{\exp}(\spos) &\equiv& \exp(-\alpha_{\exp}\,[|\spos| - 1])
 \\
-\alpha_{\exp} &=& -1.67834699
+\alpha_{\exp} &\equiv& 1.67834699
 \quad ,
 \end{eqnarray}
 where $\spos$ is a dimensionless focal-plane position, and
 $\alpha_{\exp}$ ensures that the profile has unit half-light radius.
 The position $\spos$ is dimensionless because it parameterizes the
-unit-size and unit-flux dimensionless function.  We seek the best
-(where ``best'' will be defined below) $M_g$-Gaussian mixture
-approximation
+unit-size dimensionless function.  We seek the best (where ``best''
+will be defined below) $M_{\exp}$-Gaussian mixture approximation
 \begin{eqnarray}\displaystyle
-Q_{\exp}(\spos) &=& \sum_{m=1}^{M_g} g_m\,\normal(\spos\given\zero,\Gm_m)
+Q_{\exp}(\spos) &\approx& \sum_{m=1}^{M_{\exp}} a_{\exp,m}\,\normal(\spos\given\zero,\var_{\exp,m})
 \\
-\Gm_m &=& \sigma^2_{\exp,m}\,\identity
+\var_{\exp,m} &\equiv& \sigma^2_{\exp,m}\,\identity
 \quad ,
 \end{eqnarray}
 where all of the means are exactly zero and all of the variances
-$\Gm_m$ in the mixture are scalar multiples of the identity matrix
-$\identity$ because we are requiring this dimensionless function to be
-precisely circular (so every component is itself circular and
-concentric).  Similarly for the de~Vaucouleurs profile
+$\var_{\exp,m}$ in the mixture are scalar multiples of the identity
+matrix $\identity$ because we are requiring this dimensionless
+function to be precisely circular (so every component is itself
+circular and concentric).  Similarly for the de~Vaucouleurs profile
 \begin{eqnarray}\displaystyle
-Q_{\dev}(\spos) &\approx& \frac{1}{Z_{\dev}}\,\exp(-\alpha_{\dev}\,|\spos|^{1/4})
+Q_{\dev}(\spos) &\equiv& \exp(-\alpha_{\dev}\,[|\spos|^{1/4} - 1])
 \\
-\alpha_{\dev} &=& -7.66924944
+\alpha_{\dev} &\equiv& 7.66924944
 \\
-Q_{\dev}(\spos) &=& \sum_{m=1}^{M_h} h_m\,\normal(\spos\given\zero,\Hm_m)
+Q_{\dev}(\spos) &\approx& \sum_{m=1}^{M_{\dev}} a_{\dev,m}\,\normal(\spos\given\zero,\var_{\dev,m})
 \\
-\Hm_m &=& \sigma^2_{\dev,m}\,\identity
+\var_{\dev,m} &\equiv& \sigma^2_{\dev,m}\,\identity
 \quad .
 \end{eqnarray}
-The half-light radius parameters $\alpha_{\exp}$ and $\alpha_{\dev}$
-are from \cite{ciotti}.
+(The half-light radius parameters $\alpha_{\exp}$ and $\alpha_{\dev}$
+are taken from \citealt{ciotti}.)  The challenge we meet below is to
+determine the parameters
+\begin{eqnarray}
+\{a_{\exp,m},\sigma^2_{\exp,m}\}_{m=1}^{M_{\exp}}~,~\{a_{\dev,m},\sigma^2_{\dev,m}\}_{m=1}^{M_{\dev}}
+\end{eqnarray}
+to best approximate the traditional galaxy profile functions, under
+some sensible definiton of the word ``best'', as a function of the
+model complexity parameters (numbers of components) $(M_{\exp},
+M_{\dev})$.
 
-The Lupton profiles are...
+In addition to these, there are general S\'ersic profiles, of which
+the exponential and de~Vaucouleurs profiles are special cases.  The
+general S\'ersic profile has one parameter (the ``index'') $n$:
+\begin{eqnarray}\displaystyle
+Q_{\ser}(\spos\given n) &\equiv& \exp(-\alpha_{\ser}(n)\,[|\spos|^{1/n} - 1])
+\\
+\{\alpha_{\ser}(2), \alpha_{\ser}(3), \alpha_{\ser}(5)\} &\equiv& \{3.67206075, 5.67016119, 9.66871461\}
+\quad ,
+\end{eqnarray}
+where we have given the constant $\alpha_{\ser}(n)$ for just a few
+values of $n$ (\citealt{ciotti}; the $\exp$ and $\dev$ profiles give
+the $n=1$ and $n=4$ values).
 
-...Lupton profiles as different from de~Vaucouleurs...Sersic profiles...Discuss the cutoffs and regularization used by PHOTO and adjust $Z$ and $r$ accordingly...
+The \sdss\ pipelines make use of modified profiles, which have been
+truncated smoothly at large radius and (in the case of the
+de~Vaucouleurs profile) ``softened'' at the center (\citealt{lupton}).
+The \sdss\ form of the exponential profile is
+\begin{eqnarray}\displaystyle
+Q_{\lux}(\spos) &\equiv& \left\{\begin{array}{ll}
+  \exp(-\alpha_{\lux}\,[|\spos| - 1]) & \mbox{for~}|\spos| < 3 \\
+  \exp(-\alpha_{\lux}\,[|\spos| - 1])
+  \,\left[1 - [|\spos| - 3]^2\right]^2 & \mbox{for~}3 < |\spos| < 4 \\
+  0                                   & \mbox{for~}4 < |\spos|
+\end{array}\right.
+\\
+\alpha_{\lux} &\equiv& 1.67835
+\quad ,
+\end{eqnarray}
+and the \sdss\ form of the de~Vaucouleurs profile is
+\begin{eqnarray}\displaystyle
+Q_{\luv}(\spos) &\equiv& \left\{\begin{array}{ll}
+  \exp(-\alpha_{\luv}\,\left[[|\spos|^2 + 0.0004]^{1/8} - 1\right]) & \mbox{for~}|\spos| < 7 \\
+  \exp(-\alpha_{\luv}\,\left[[|\spos|^2 + 0.0004]^{1/8} - 1\right])
+  \,\left[1 - [|\spos| - 7]^2\right]^2 & \mbox{for~}7 < |\spos| < 8 \\
+  0                                   & \mbox{for~}8 < |\spos|
+\end{array}\right.
+\\
+\alpha_{\luv} &\equiv& 7.66925
+\quad .
+\end{eqnarray}
+(The half-light radius parameters $\alpha_{\exp}$ and
+$\alpha_{\dev}$---and the softening and cutoff radius parameters---are
+taken from the \sdss\ codebase.)
 
 ...Note normalization issues and how easy it is to normalize the mixture-of-Gaussian model...
 
-...If we wanted to approximate these models, what objective function
-would we use?  What tolerances are okay?...Define a sensible scalar
-objective...Give fitting procedure...give actual values for the
-parameters...
+We seek the \emph{best} mixture-of-Gaussian approximations.  This
+necessitates definition of the word ``best''.  If we think of the
+profiles as being two-dimensional probability distribution functions
+(for, say, the arrivals of photons), then one natural choice is the
+K-L divergence or similar cross-entropy or information-theoretic
+measure.  However, in typical astronomical imaging, the galaxy is
+superimposed on a substantial, flat sky level, and the noise in the
+data is close to Gaussian.  This suggests more chi-squared-like
+objectives.  We adopt the latter, in part because they are most
+appropriate for our specific proposed application (modeling \sdss-like
+astronomical imaging), but experiments we have performed suggest that
+information-theoretic objectives also lead to good results.
+
+In detail, the chi-squared objective we minimize---the
+\emph{badness}---is a squared residual between the exact profile
+function $Q(\spos)$ and its mixture-of-Gaussian approximation.  It is
+designed to be equivalent to a chi-squared statistic in a
+homoskedastic two-dimensional image of the profile taken with
+extremely high angular resolution (pixels of size 0.001 the half-light
+radius) and vanishing point-spread function.  Quantitatively the
+badness is defined to be the mean squared residual in the $Q(\spos)$
+functions, which are normalized to have unit intensity at the
+half-light radius, averaged over a two-dimensional circular region in
+the $\spos$ plane centered on the (circularly symmetric) profile and
+extending out to radius $\xi_{\max}$.  We use $\xi_{\max}=8$ for all
+profiles except the $\lux$ profile, for which we use $\xi_{\max}=4$.
+In practice, the badness is computed in a one-dimensional numerical
+integral but the integral is weighted in radius (weight increasing
+linearly with radius) to make it equivalent to the two-dimensional
+chi-squared.
+
+Optimization (minimization) of the badness is performed by the
+\project{scipy} implementation of the BFGS algorithm, with many
+initializations to explore multiple local minima.  Further details are
+available in the code, which is publicly
+available.\footnote{\url{https://github.com/davidwhogg/TheTractor/}}
 
 ...Show plots demonstrating quality of fit, one-d and two-d plots...
+
+...give tables of results, including Bundy versions and recommended versions...
+
+...show dependence of amplitudes and variances on sersic n for some
+M...be sure to synchronize $\xi_{\max}$...
 
 The value of these mixture-of-Gaussian galaxy components comes when
 they are to be convolved with a PSF (usually in fact a pixel-convolved
@@ -250,9 +335,9 @@ the PSF can have arbitrarily non-trivial structure (think speckles and
 the like) and the variances $\var_k$ will not in general be
 proportional to the identity or even diagonal because the PSF will not
 in general be round.  An example that illustrates the use of this PSF
-is the following: It implies that a star of flux $S_s$ at focal-plane
-position $\pos_s$ will lead to an image (PSF-convolved intensity map)
-of the form
+is the following: A star of flux $S_s$ at focal-plane position
+$\pos_s$ will lead to an image (PSF-convolved intensity map) of the
+form
 \begin{eqnarray}\displaystyle
 I(\pos\given\star,S_s,\pos_s) &=& \sum_{k=1}^K S_s\,p_k\,\normal(\pos\given\pos_s+\mean_k,\var_k)
 \quad .
@@ -267,18 +352,18 @@ $S_g$ and a central position $\pos_g$; it also has a shape.  Because
 we are only considering these simple galaxies, we are only permitting
 ellipsoidal shapes, which can be represented by a semi-major axis $a$,
 a semi-minor axis $b$, and a position angle $\phi$, or equivalently by
-eigenvalues $a, b$ and eigenvectors $\uv_1, \uv_2$, or by a symmetric
-variance tensor $\var_g$ (which is a general representation of an
-ellipse).  The galaxy is distorted by this variance tensor
-\emph{prior} to PSF convolution, so the focal-plane image
-(PSF-convolved intensity field) for a general exponential galaxy is
-given by
+eigenvalues $a, b$ and eigenvectors $\uv_1, \uv_2$, or equivalently by
+an affine transformation $\affine_g$ that takes a circle to the
+relevant ellipse (and is a therefore a general representation of an
+ellipse; it is also the matrix square root of the symmetric variance
+tensor describing the ellipse).  The galaxy is distorted by this
+affine transformation \emph{prior} to PSF convolution, so the
+focal-plane image (PSF-convolved intensity field) for a general (say)
+$\exp$ galaxy is given by
 \begin{eqnarray}\displaystyle
-I(\pos\given\exp,S_g,\pos_g,\var_g) &=& \sum_{k=1}^K \sum_{m=1}^{M_g} S_g\,g_m\,p_k\,\normal(\pos\given\pos_g+\mean_k,\var_{gm}+\var_k)
+I(\pos\given\exp,S_g,\pos_g,\affine_g) &=& \sum_{k=1}^K \sum_{m=1}^{M_{\exp}} S_g\,a_{\exp,m}\,p_k\,\normal(\pos\given\pos_g+\mean_k,\var_{gm}+\var_k)
 \\
-\var_{gm} &\equiv& \affine_g\cdot\Gm_m\cdot\transpose{\affine_g}
-\\
-\var_g &\equiv& \affine_g\cdot\transpose{\affine_g}
+\var_{gm} &\equiv& \affine_g\cdot\var_{\exp,m}\cdot\transpose{\affine_g}
 \\
 \affine_g &=& \left[a\,\uv_1 , b\,\uv_2 \right]
 \quad ,
@@ -286,33 +371,23 @@ I(\pos\given\exp,S_g,\pos_g,\var_g) &=& \sum_{k=1}^K \sum_{m=1}^{M_g} S_g\,g_m\,
 where $a$ and $b$ are the major and minor axis lengths of the galaxy
 ellipse (in appropriate units) and $\uv_1$ and $\uv_2$ are the
 eigenvectors on the sky pointing in the major-axis and minor-axis
-directions respectively.  Since implicitly all vectors are
-two-dimensional column vectors, this makes $\affine_g$ a $2\times 2$
-affine transformation matrix and $\var_g$ a symmetric $2\times 2$
-variance tensor.  Similarly, the general de~Vaucouleurs galaxy is
-given by
-\begin{eqnarray}\displaystyle
-I(\pos\given\dev,S_h,\pos_h,\var_h) &=& \sum_{k=1}^K \sum_{m=1}^{M_h} S_h\,h_m\,p_k\,\normal(\pos\given\pos_h+\mean_k,\var_{hn}+\var_k)
-\\
-\var_{hn} &\equiv& \affine_h\cdot\Hm_m\cdot\transpose{\affine_h}
-\\
-\var_h &\equiv& \affine_h\cdot\transpose{\affine_h}
-\quad ,
-\end{eqnarray}
-where the matrix mathematics is the same as that in the exponential
-case.  Note the important and key result of this \documentname, to
-wit, that a mixture-of-Gaussian galaxy model (with $M$ components)
-convolved with a mixture-of-Gaussian PSF model (with $K$ components)
-yields a mixture-of-Gaussian image (with $[M\,K]$ components).
+directions respectively.  Implicitly all vectors are two-dimensional
+column vectors, and $\affine_g$ is a $2\times 2$ affine transformation
+matrix that contains the ``shape'' (position angle, major-axis, and
+ellipticity) information about the galaxy.  The $\dev$, $\luv$, and
+$\lux$ cases are all similar.  Note the important and key result of
+this \documentname, to wit, that a mixture-of-Gaussian galaxy model
+(with $M$ components) convolved with a mixture-of-Gaussian PSF model
+(with $K$ components) yields a mixture-of-Gaussian image (with
+$[M\,K]$ components).
 
 ...pegagogical figure demonstrating these operations and their results...
 
-...what would you want to do to generalize to Sersic profiles?...
-
 ...what about mixtures of exponentials and de~Vaucouleurs:  No problem!...
 
-\acknowledgements
-It is a pleasure to thank...
+\acknowledgements It is a pleasure to thank Brendon Brewer (Auckland)
+and Kevin Bundy (IPMU) for valuable comments.  This work was supported
+in part by NASA (grant NNX12AI50G) and the NSF (grant IIS-1124794).
 
 \begin{thebibliography}{70}
 \bibitem[Bendinelli(1991)]{bendinelli}
