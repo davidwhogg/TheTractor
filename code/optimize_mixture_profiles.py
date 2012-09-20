@@ -315,7 +315,7 @@ def main(input):
         txtfile = open(prefix + '.txt', "w")
         txtfile.write("%s\n" % repr(pars))
         txtfile.close()
-        if log10_squared_deviation < -5.5 and K > 11:
+        if K > 11:
             break
     return None
 
