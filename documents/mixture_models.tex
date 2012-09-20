@@ -39,6 +39,7 @@
 \newcommand{\given}{\,|\,}
 \renewcommand{\star}{\mathrm{star}}
 \newcommand{\dev}{\mathrm{dev}}
+\newcommand{\ser}{\mathrm{ser}}
 \newcommand{\lux}{\mathrm{lux}}
 \newcommand{\luv}{\mathrm{luv}}
 
@@ -70,7 +71,7 @@ advocate), the PSF-convolved, affine-transformed galaxy models are
 themselves mixtures of Gaussians and therefore very fast to compute
 precisely.  We present worked examples that can be directly used in
 image fitting; we are using them ourselves.  We discuss extensions to
-Sersic models and applications of these ideas to three-dimensional
+S\'ersic models and applications of these ideas to three-dimensional
 deprojection.
 \end{abstract}
 
@@ -189,7 +190,7 @@ exponential profile $Q_{\exp}(\cdot)$
 \begin{eqnarray}\displaystyle
 Q_{\exp}(\spos) &\equiv& \exp(-\alpha_{\exp}\,[|\spos| - 1])
 \\
-\alpha_{\exp} &\equiv& -1.67834699
+\alpha_{\exp} &\equiv& 1.67834699
 \quad ,
 \end{eqnarray}
 where $\spos$ is a dimensionless focal-plane position, and
@@ -211,7 +212,7 @@ circular and concentric).  Similarly for the de~Vaucouleurs profile
 \begin{eqnarray}\displaystyle
 Q_{\dev}(\spos) &\equiv& \exp(-\alpha_{\dev}\,[|\spos|^{1/4} - 1])
 \\
-\alpha_{\dev} &\equiv& -7.66924944
+\alpha_{\dev} &\equiv& 7.66924944
 \\
 Q_{\dev}(\spos) &\approx& \sum_{m=1}^{M_{\dev}} a_{\dev,m}\,\normal(\spos\given\zero,\var_{\dev,m})
 \\
@@ -222,15 +223,25 @@ Q_{\dev}(\spos) &\approx& \sum_{m=1}^{M_{\dev}} a_{\dev,m}\,\normal(\spos\given\
 are taken from \citealt{ciotti}.)  The challenge we meet below is to
 determine the parameters
 \begin{eqnarray}
-\{a_{\exp,m},\sigma_{\exp,m}\}_{m=1}^{M_{\exp}} \mbox{~and~} \{a_{\dev,m},\sigma_{\dev,m}\}_{m=1}^{M_{\dev}}
+\{a_{\exp,m},\sigma^2_{\exp,m}\}_{m=1}^{M_{\exp}}~,~\{a_{\dev,m},\sigma^2_{\dev,m}\}_{m=1}^{M_{\dev}}
 \end{eqnarray}
 to best approximate the traditional galaxy profile functions, under
 some sensible definiton of the word ``best'', as a function of the
 model complexity parameters (numbers of components) $(M_{\exp},
 M_{\dev})$.
 
-...In addition to these there are general Sersi\'c profiles, of which
-the exponential and de~Vaucouleurs profiles are special cases...
+In addition to these, there are general S\'ersic profiles, of which
+the exponential and de~Vaucouleurs profiles are special cases.  The
+general S\'ersic profile has one parameter (the ``index'') $n$:
+\begin{eqnarray}\displaystyle
+Q_{\ser}(\spos\given n) &\equiv& \exp(-\alpha_{\ser}(n)\,[|\spos|^{1/n} - 1])
+\\
+\{\alpha_{\ser}(2), \alpha_{\ser}(3), \alpha_{\ser}(5)\} &\equiv& \{3.67206075, 5.67016119, 9.66871461\}
+\quad ,
+\end{eqnarray}
+where we have given the constant $\alpha_{\ser}(n)$ for just a few
+values of $n$ (\citealt{ciotti}; the $\exp$ and $\dev$ profiles give
+the $n=1$ and $n=4$ values).
 
 The \sdss\ pipelines make use of modified profiles, which have been
 truncated smoothly at large radius and (in the case of the
@@ -244,7 +255,7 @@ Q_{\lux}(\spos) &\equiv& \left\{\begin{array}{ll}
   0                                   & \mbox{for~}4 < |\spos|
 \end{array}\right.
 \\
-\alpha_{\lux} &\equiv& -1.67835
+\alpha_{\lux} &\equiv& 1.67835
 \quad ,
 \end{eqnarray}
 and the \sdss\ form of the de~Vaucouleurs profile is
@@ -256,7 +267,7 @@ Q_{\luv}(\spos) &\equiv& \left\{\begin{array}{ll}
   0                                   & \mbox{for~}8 < |\spos|
 \end{array}\right.
 \\
-\alpha_{\luv} &\equiv& -7.66925
+\alpha_{\luv} &\equiv& 7.66925
 \quad .
 \end{eqnarray}
 (The half-light radius parameters $\alpha_{\exp}$ and
@@ -335,7 +346,7 @@ $[M\,K]$ components).
 
 ...pegagogical figure demonstrating these operations and their results...
 
-...what would you want to do to generalize to Sersic profiles?...
+...what would you want to do to generalize to S\'ersic profiles?...
 
 ...what about mixtures of exponentials and de~Vaucouleurs:  No problem!...
 
