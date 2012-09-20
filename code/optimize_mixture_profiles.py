@@ -17,6 +17,7 @@ import numpy as np
 import scipy.optimize as op
 from multiprocessing import Pool
 import cPickle as pickle
+import os as os
 
 def not_normal(x, V):
     """
@@ -268,40 +269,53 @@ def main(input):
     bestbadness = badness
     for K in range(2, 20):
         prefix = '%s_K%02d_MR%02d' % (model, K, int(round(max_radius) + 0.01))
-        print 'working on %s at K = %d (%s)' % (model, K, prefix)
-        newvar = 2.0 * np.max(np.append(var, 1.0))
-        newamp = 1.0 * newvar
-        amp = np.append(newamp, amp)
-        var = np.append(newvar, var)
-        pars = np.append(amp, var)
-        for i in range(2 * K):
-            (badness, pars) = optimize_mixture(K, pars, model, max_radius, log10_squared_deviation, bad_fn)
-            if (badness < bestbadness) or (i == 0):
-                print '%s %d %d improved' % (model, K, i)
-                bestpars = rearrange_pars(pars)
-                bestbadness = badness
-                while bestbadness < 1. and log10_squared_deviation > -5.5:
-                    bestbadness *= 10.
-                    log10_squared_deviation = np.round(log10_squared_deviation - 1.)
-            else:
-                print '%s %d %d not improved' % (model, K, i)
-                amp = 1. * bestpars[0:K]
-                var = 1. * bestpars[K:K+K]
-                var[0] = 2.0 * var[np.mod(i, K)]
-                amp[0] = 0.5 * amp[np.mod(i, K)]
-                pars = np.append(amp, var)
-        lastKbadness = bestbadness
-        pars = rearrange_pars(bestpars)
+        picklefn = prefix + '.pickle'
+        if os.path.exists(picklefn):
+            print 'not working on %s at K = %d (%s); just reading %s' % (model, K, prefix, picklefn)
+            picklefile = open(picklefn, "r")
+            pars = pickle.load(picklefile)
+            picklefile.close()
+            bestbadness = bad_fn(np.log(pars), model, max_radius, log10_squared_deviation)
+            while bestbadness < 1. and log10_squared_deviation > -7.5:
+                bestbadness *= 10.
+                log10_squared_deviation = np.round(log10_squared_deviation - 1.)
+                print "K, bestbadness, log10_squared_deviation", K, bestbadness, log10_squared_deviation
+        else:
+            print 'working on %s at K = %d (%s)' % (model, K, prefix)
+            newvar = 2.0 * np.max(np.append(var, 1.0))
+            newamp = 1.0 * newvar
+            amp = np.append(newamp, amp)
+            var = np.append(newvar, var)
+            pars = np.append(amp, var)
+            for i in range(2 * K):
+                (badness, pars) = optimize_mixture(K, pars, model, max_radius, log10_squared_deviation, bad_fn)
+                if (badness < bestbadness) or (i == 0):
+                    print '%s %d %d improved' % (model, K, i)
+                    bestpars = rearrange_pars(pars)
+                    bestbadness = badness
+                    while bestbadness < 1. and log10_squared_deviation > -7.5:
+                        bestbadness *= 10.
+                        log10_squared_deviation = np.round(log10_squared_deviation - 1.)
+                        print "K, bestbadness, log10_squared_deviation", K, bestbadness, log10_squared_deviation
+                else:
+                    print '%s %d %d not improved' % (model, K, i)
+                    amp = 1. * bestpars[0:K]
+                    var = 1. * bestpars[K:K+K]
+                    var[0] = 2.0 * var[np.mod(i, K)]
+                    amp[0] = 0.5 * amp[np.mod(i, K)]
+                    pars = np.append(amp, var)
+            lastKbadness = bestbadness
+            pars = rearrange_pars(bestpars)
+            picklefile = open(picklefn, "wb")
+            pickle.dump(pars, picklefile)
+            picklefile.close()
         amp = pars[0:K]
         var = pars[K:K+K]
         plot_mixture(pars, prefix, model, max_radius, log10_squared_deviation, bad_fn)
         txtfile = open(prefix + '.txt', "w")
         txtfile.write("%s\n" % repr(pars))
         txtfile.close()
-        picklefile = open(prefix + '.pickle', "wb")
-        pickle.dump(pars, picklefile)
-        picklefile.close()
-        if bestbadness < 10. and log10_squared_deviation < -5.5 and K > 11:
+        if log10_squared_deviation < -5.5 and K > 11:
             break
     return None
 
