@@ -276,12 +276,38 @@ taken from the \sdss\ codebase.)
 
 ...Note normalization issues and how easy it is to normalize the mixture-of-Gaussian model...
 
-...If we wanted to approximate these models, what objective function
-would we use?  What tolerances are okay?...Define a sensible scalar
-objective...Give fitting procedure...give actual values for the
-parameters...
+We seek the best mixture-of-Gaussian approximations.  This
+necessitates definition of the word ``best''.  If we think of the
+profiles as being two-diensional probability distribution functions
+(for, say, the arrivals of photons), then one natural choice is the
+K-L divergence or similar cross-entropy or information-theoretic
+measure.  However, in typical astronomical imaging, the galaxy is
+superimposed on a substantial, flat sky level, and the noise in the
+data is close to Gaussian.  This suggests more chi-squared-like
+objectives.  We adopt the latter, in part because it is most
+appropriate for our specific proposed application (modeling \sdss-like
+astronomical imaging), but experiments we have performed suggest that
+information-theoretic objectives also lead to good results.
+
+In detail, the chi-squared objective we minimize---the
+\emph{badness}---is a squared residual between function and
+approximation.  It is designed to be equivalent to a chi-squared
+statistic in a homoskedastic two-dimensional image of the profile
+taken with extremely high angular resolution (pixels of size 0.001 the
+half-light radius) and vanishing point-spread function.  The badness
+is computed in one dimension but weighted in radius (weight increasing
+linearly with radius) to make it equivalent to the two-dimensional
+chi-squared.  Optimization is performed by the \project{scipy}
+implementation of the BFGS algorithm, with many initializations to
+explore multiple local minima.  Further details are available in the
+code, which is publicly
+available.\footnote{\url{https://github.com/davidwhogg/TheTractor/}}
 
 ...Show plots demonstrating quality of fit, one-d and two-d plots...
+
+...give tables of results, including Bundy versions and recommended versions...
+
+...show dependence of amplitudes and variances on sersic n for some M...
 
 The value of these mixture-of-Gaussian galaxy components comes when
 they are to be convolved with a PSF (usually in fact a pixel-convolved
@@ -317,12 +343,14 @@ $S_g$ and a central position $\pos_g$; it also has a shape.  Because
 we are only considering these simple galaxies, we are only permitting
 ellipsoidal shapes, which can be represented by a semi-major axis $a$,
 a semi-minor axis $b$, and a position angle $\phi$, or equivalently by
-eigenvalues $a, b$ and eigenvectors $\uv_1, \uv_2$, or by a symmetric
-variance tensor $\var_g$ (which is a general representation of an
-ellipse).  The galaxy is distorted by this variance tensor
-\emph{prior} to PSF convolution, so the focal-plane image
-(PSF-convolved intensity field) for a general exponential galaxy is
-given by
+eigenvalues $a, b$ and eigenvectors $\uv_1, \uv_2$, or equivalently by
+an affine transformation $\affine_g$ that takes a circle to the
+relevant ellipse (and is a therefore a general representation of an
+ellipse; it is also the matrix square root of the symmetric variance
+tensor describing the ellipse).  The galaxy is distorted by this
+affine transformation \emph{prior} to PSF convolution, so the
+focal-plane image (PSF-convolved intensity field) for a general (say)
+$\exp$ galaxy is given by
 \begin{eqnarray}\displaystyle
 I(\pos\given\exp,S_g,\pos_g,\affine_g) &=& \sum_{k=1}^K \sum_{m=1}^{M_{\exp}} S_g\,a_{\exp,m}\,p_k\,\normal(\pos\given\pos_g+\mean_k,\var_{gm}+\var_k)
 \\
@@ -346,12 +374,11 @@ $[M\,K]$ components).
 
 ...pegagogical figure demonstrating these operations and their results...
 
-...what would you want to do to generalize to S\'ersic profiles?...
-
 ...what about mixtures of exponentials and de~Vaucouleurs:  No problem!...
 
-\acknowledgements
-It is a pleasure to thank...
+\acknowledgements It is a pleasure to thank Brendon Brewer (Auckland)
+and Kevin Bundy (IPMU) for valuable comments.  This work was supported
+in part by NASA (grant NNX12AI50G) and the NSF (grant IIS-1124794).
 
 \begin{thebibliography}{70}
 \bibitem[Bendinelli(1991)]{bendinelli}
