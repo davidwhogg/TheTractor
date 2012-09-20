@@ -4,8 +4,6 @@
 
 % to-do
 % -----
-% - Brewer suggestion about KLD and ack Brewer
-%   - need to discuss this and show results from it
 % - decide which models will make it in
 % - make useful figures
 % - make figures showing use of the models in a real situation
@@ -276,38 +274,49 @@ taken from the \sdss\ codebase.)
 
 ...Note normalization issues and how easy it is to normalize the mixture-of-Gaussian model...
 
-We seek the best mixture-of-Gaussian approximations.  This
+We seek the \emph{best} mixture-of-Gaussian approximations.  This
 necessitates definition of the word ``best''.  If we think of the
-profiles as being two-diensional probability distribution functions
+profiles as being two-dimensional probability distribution functions
 (for, say, the arrivals of photons), then one natural choice is the
 K-L divergence or similar cross-entropy or information-theoretic
 measure.  However, in typical astronomical imaging, the galaxy is
 superimposed on a substantial, flat sky level, and the noise in the
 data is close to Gaussian.  This suggests more chi-squared-like
-objectives.  We adopt the latter, in part because it is most
+objectives.  We adopt the latter, in part because they are most
 appropriate for our specific proposed application (modeling \sdss-like
 astronomical imaging), but experiments we have performed suggest that
 information-theoretic objectives also lead to good results.
 
 In detail, the chi-squared objective we minimize---the
-\emph{badness}---is a squared residual between function and
-approximation.  It is designed to be equivalent to a chi-squared
-statistic in a homoskedastic two-dimensional image of the profile
-taken with extremely high angular resolution (pixels of size 0.001 the
-half-light radius) and vanishing point-spread function.  The badness
-is computed in one dimension but weighted in radius (weight increasing
+\emph{badness}---is a squared residual between the exact profile
+function $Q(\spos)$ and its mixture-of-Gaussian approximation.  It is
+designed to be equivalent to a chi-squared statistic in a
+homoskedastic two-dimensional image of the profile taken with
+extremely high angular resolution (pixels of size 0.001 the half-light
+radius) and vanishing point-spread function.  Quantitatively the
+badness is defined to be the mean squared residual in the $Q(\spos)$
+functions, which are normalized to have unit intensity at the
+half-light radius, averaged over a two-dimensional circular region in
+the $\spos$ plane centered on the (circularly symmetric) profile and
+extending out to radius $\xi_{\max}$.  We use $\xi_{\max}=8$ for all
+profiles except the $\lux$ profile, for which we use $\xi_{\max}=4$.
+In practice, the badness is computed in a one-dimensional numerical
+integral but the integral is weighted in radius (weight increasing
 linearly with radius) to make it equivalent to the two-dimensional
-chi-squared.  Optimization is performed by the \project{scipy}
-implementation of the BFGS algorithm, with many initializations to
-explore multiple local minima.  Further details are available in the
-code, which is publicly
+chi-squared.
+
+Optimization (minimization) of the badness is performed by the
+\project{scipy} implementation of the BFGS algorithm, with many
+initializations to explore multiple local minima.  Further details are
+available in the code, which is publicly
 available.\footnote{\url{https://github.com/davidwhogg/TheTractor/}}
 
 ...Show plots demonstrating quality of fit, one-d and two-d plots...
 
 ...give tables of results, including Bundy versions and recommended versions...
 
-...show dependence of amplitudes and variances on sersic n for some M...
+...show dependence of amplitudes and variances on sersic n for some
+M...be sure to synchronize $\xi_{\max}$...
 
 The value of these mixture-of-Gaussian galaxy components comes when
 they are to be convolved with a PSF (usually in fact a pixel-convolved
