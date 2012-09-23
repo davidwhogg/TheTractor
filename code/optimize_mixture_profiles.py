@@ -182,8 +182,13 @@ def negative_score(lnpars, model, max_radius, log10_squared_deviation):
     return extrabadness - score
 
 def optimize_mixture(K, pars, model, max_radius, log10_squared_deviation, badness_fn):
-    newlnpars = op.fmin_bfgs(badness_fn, np.log(pars), args=(model, max_radius, log10_squared_deviation))
+    newlnpars = op.fmin_bfgs(badness_fn, np.log(pars), args=(model, max_radius, log10_squared_deviation), maxiter=128)
     return (badness_fn(newlnpars, model, max_radius, log10_squared_deviation), np.exp(newlnpars))
+
+def hogg_savefig(prefix):
+    fn = prefix + '.png'
+    print "writing %s" % fn
+    return plt.savefig(fn)
 
 def plot_mixture(pars, prefix, model, max_radius, log10_squared_deviation, badness_fn):
     x2 = np.arange(0.0005, np.sqrt(5. * max_radius), 0.001)**2 # note non-linear spacing
@@ -191,6 +196,7 @@ def plot_mixture(pars, prefix, model, max_radius, log10_squared_deviation, badne
     badness = badness_fn(np.log(pars), model, max_radius, log10_squared_deviation)
     K = len(pars) / 2
     y2 = mixture_of_not_normals(x2, pars)
+    plt.figure(figsize=(5,5))
     plt.clf()
     plt.plot(x2, y1, 'k-')
     plt.plot(x2, y2, 'k-', lw=6, alpha=0.25)
@@ -198,23 +204,23 @@ def plot_mixture(pars, prefix, model, max_radius, log10_squared_deviation, badne
         plt.plot(x2, pars[k] * not_normal(x2, pars[k + K]), 'k-', alpha=0.5)
     plt.axvline(max_radius, color='k', alpha=0.25)
     badname = "badness"
-    title = r"%s / $K=%d$ / max radius = $%.1f$ / %s = $%.3f\times 10^{%d}$" % (
+    title = r"%s / $K=%d$ / $\xi_{\max} = %d$ / %s $= %.2f\times 10^{%d}$" % (
         model, len(pars) / 2, max_radius, badname, badness, log10_squared_deviation)
     plt.title(title)
-    plt.xlim(0., 1.2 * max_radius)
+    plt.xlim(0., 8.5)
     xlim1 = plt.xlim()
     plt.ylim(-0.1 * 8.0, 1.1 * 8.0)
     xlabel = r"dimensionless angular radius $\xi$"
     plt.xlabel(xlabel)
     plt.ylabel(r"intensity (relative to intensity at $\xi = 1$)")
-    plt.savefig(prefix + '_profile.png')
+    hogg_savefig(prefix + '_profile')
     plt.loglog()
     xmin = 0.001
     yint = np.interp([xmin, ], x2, y1)[0]
-    plt.xlim(xmin, 5. * max_radius)
+    plt.xlim(xmin, 12.)
     xlim2 = plt.xlim()
     plt.ylim(1.5e-6 * yint, 1.5 * yint)
-    plt.savefig(prefix + '_profile_log.png')
+    hogg_savefig(prefix + '_profile_log')
     plt.clf()
     plt.plot(x2, y1 - y2, 'k-')
     plt.plot(x2, 0. * x2, 'k-', lw=6, alpha=0.25)
@@ -224,11 +230,11 @@ def plot_mixture(pars, prefix, model, max_radius, log10_squared_deviation, badne
     plt.ylim(-1., 1.)
     plt.xlabel(xlabel)
     plt.ylabel(r"intensity residual (relative to intensity at $\xi = 1$)")
-    plt.savefig(prefix + '_residual.png')
+    hogg_savefig(prefix + '_residual')
     plt.semilogx()
     xmin = 0.001
     plt.xlim(*xlim2)
-    plt.savefig(prefix + '_residual_log.png')
+    hogg_savefig(prefix + '_residual_log')
     plt.clf()
     plt.plot(x2, (y1 - y2) / y1, 'k-')
     plt.plot(x2, 0. * x2, 'k-', lw=6, alpha=0.25)
@@ -238,11 +244,11 @@ def plot_mixture(pars, prefix, model, max_radius, log10_squared_deviation, badne
     plt.ylim(-1., 1.)
     plt.xlabel(xlabel)
     plt.ylabel(r"fractional intensity residual")
-    plt.savefig(prefix + '_fractional.png')
+    hogg_savefig(prefix + '_fractional')
     plt.semilogx()
     xmin = 0.001
     plt.xlim(*xlim2)
-    plt.savefig(prefix + '_fractional_log.png')
+    hogg_savefig(prefix + '_fractional_log')
     return None
 
 def rearrange_pars(pars):
@@ -325,12 +331,12 @@ if __name__ == '__main__':
     else: # don't use multiprocessing
         pmap = map
     inputs = [
-        ('exp', 8.),
         ('dev', 8.),
         ('luv', 8.),
-        ('lux', 4.),
         ('ser2', 8.),
         ('ser3', 8.),
         ('ser5', 8.),
+        ('exp', 8.),
+        ('lux', 4.),
         ]
     pmap(main, inputs)
