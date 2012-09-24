@@ -182,7 +182,12 @@ def negative_score(lnpars, model, max_radius, log10_squared_deviation):
     return extrabadness - score
 
 def optimize_mixture(K, pars, model, max_radius, log10_squared_deviation, badness_fn):
-    newlnpars = op.fmin_bfgs(badness_fn, np.log(pars), args=(model, max_radius, log10_squared_deviation), maxiter=128)
+    lnpars = np.log(pars)
+    newlnpars = op.fmin_powell(badness_fn, lnpars, args=(model, max_radius, log10_squared_deviation), maxfun=16384 * 2)
+    lnpars = 1. * newlnpars
+    newlnpars = op.fmin_bfgs(badness_fn, lnpars, args=(model, max_radius, log10_squared_deviation), maxiter=128 * 2)
+    lnpars = 1. * newlnpars
+    newlnpars = op.fmin_cg(badness_fn, lnpars, args=(model, max_radius, log10_squared_deviation), maxiter=128 * 2)
     return (badness_fn(newlnpars, model, max_radius, log10_squared_deviation), np.exp(newlnpars))
 
 def hogg_savefig(prefix):
@@ -295,7 +300,7 @@ def main(input):
             pars = np.append(amp, var)
             for i in range(2 * K):
                 (badness, pars) = optimize_mixture(K, pars, model, max_radius, log10_squared_deviation, bad_fn)
-                if (badness < bestbadness) or (i == 0):
+                if (badness < (bestbadness - 1.e-7)) or (i == 0):
                     print '%s %d %d improved' % (model, K, i)
                     bestpars = rearrange_pars(pars)
                     bestbadness = badness
