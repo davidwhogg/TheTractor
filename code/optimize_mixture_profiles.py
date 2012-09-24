@@ -212,19 +212,25 @@ def plot_mixture(pars, prefix, model, max_radius, log10_squared_deviation, badne
     title = r"%s / $K=%d$ / $\xi_{\max} = %d$ / %s $= %.2f\times 10^{%d}$" % (
         model, len(pars) / 2, max_radius, badname, badness, log10_squared_deviation)
     plt.title(title)
-    plt.xlim(0., 8.5)
+    plt.xlim(-0.5, 8.5)
     xlim1 = plt.xlim()
     plt.ylim(-0.1 * 8.0, 1.1 * 8.0)
+    ylim1 = plt.ylim()
     xlabel = r"dimensionless angular radius $\xi$"
     plt.xlabel(xlabel)
     plt.ylabel(r"intensity (relative to intensity at $\xi = 1$)")
     hogg_savefig(prefix + '_profile')
-    plt.loglog()
+    plt.semilogy()
     xmin = 0.001
     yint = np.interp([xmin, ], x2, y1)[0]
+    plt.xlim(xlim1)
+    plt.ylim(1.5e-6 * yint, 1.5 * yint)
+    ylim2 = plt.ylim()
+    hogg_savefig(prefix + '_profile_semilog')
+    plt.loglog()
     plt.xlim(xmin, 12.)
     xlim2 = plt.xlim()
-    plt.ylim(1.5e-6 * yint, 1.5 * yint)
+    plt.ylim(ylim2)
     hogg_savefig(prefix + '_profile_log')
     plt.clf()
     plt.plot(x2, y1 - y2, 'k-')
