@@ -10,7 +10,7 @@ Copyright 2011 David W. Hogg.
 import matplotlib
 matplotlib.use('Agg')
 from matplotlib import rc
-rc('font',**{'family':'serif','serif':'Computer Modern Roman','size':12})
+rc('font',**{'family':'serif','size':12})
 rc('text', usetex=True)
 import pylab as plt
 import numpy as np
