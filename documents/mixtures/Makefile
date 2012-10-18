@@ -4,11 +4,11 @@ MIXTURE_MODELS_FIGURES = \
 	exp_K06_MR08_profile.png \
 	exp_K06_MR08_profile_log.png \
 	exp_K06_MR08_residual.png \
-	exp_K06_MR08_residual_log.png\
+	exp_K06_MR08_fractional_log.png\
 	dev_K10_MR08_profile.png \
 	dev_K10_MR08_profile_log.png \
 	dev_K10_MR08_residual.png \
-	dev_K10_MR08_residual_log.png \
+	dev_K10_MR08_fractional_log.png \
 	lux_K06_MR04_profile.png \
 	lux_K06_MR04_profile_log.png \
 	luv_K08_MR08_profile.png \
