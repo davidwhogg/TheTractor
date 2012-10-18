@@ -4,7 +4,6 @@
 
 % to-do
 % -----
-% - decide which models will make it in
 % - make pickles_to_latex_table.py function
 % - make figures showing use of the models in a real situation
 % - does the Lupton paper give the profiles, or should we cite the code directly?
@@ -12,6 +11,9 @@
 
 \documentclass[12pt,pdftex,preprint]{aastex}
 \usepackage{amssymb,amsmath,mathrsfs}
+
+\newlength{\figurewidth}
+\setlength{\figurewidth}{0.49\textwidth}
 
 \newcommand{\foreign}[1]{\textit{#1}}
 \newcommand{\etal}{\foreign{et\,al.}}
@@ -398,9 +400,11 @@ $[M\,K]$ components).
 
 ...what about mixtures of exps and devs:  No problem!...
 
-\acknowledgements It is a pleasure to thank Brendon Brewer (Auckland)
-and Kevin Bundy (IPMU) for valuable comments.  This work was supported
-in part by NASA (grant NNX12AI50G) and the NSF (grant IIS-1124794).
+\acknowledgements It is a pleasure to thank
+      Brendon Brewer (Auckland)
+  and Kevin Bundy (IPMU)
+for valuable comments.  This work was supported in part by NASA (grant
+NNX12AI50G) and the NSF (grant IIS-1124794).
 
 \begin{thebibliography}{70}
 \bibitem[Bendinelli(1991)]{bendinelli}
@@ -439,6 +443,10 @@ S\'ersic,~X., 19xx, whatever
 
 \clearpage
 \begin{figure}
+\includegraphics[width=\figurewidth]{exp_K06_MR08_profile.png}%
+\includegraphics[width=\figurewidth]{exp_K06_MR08_profile_log.png}\\
+\includegraphics[width=\figurewidth]{exp_K06_MR08_residual.png}%
+\includegraphics[width=\figurewidth]{exp_K06_MR08_residual_log.png}
 \caption{\textsl{top-left:} The true exp profile (thin black line),
   the best $M^{\exp}=6$ mixture-of-Gaussian approximation (thick grey
   line), and the component Gaussians (multiplied by their
@@ -452,13 +460,24 @@ S\'ersic,~X., 19xx, whatever
 
 \clearpage
 \begin{figure}
-\caption{The dev profile and the best $M^{\dev}=8$ approximation.
-  The panels are equivalent to those in \figurename~\ref{fig:exp}.}
+\includegraphics[width=\figurewidth]{dev_K10_MR08_profile.png}%
+\includegraphics[width=\figurewidth]{dev_K10_MR08_profile_log.png}\\
+\includegraphics[width=\figurewidth]{dev_K10_MR08_residual.png}%
+\includegraphics[width=\figurewidth]{dev_K10_MR08_residual_log.png}
+\caption{The dev profile and the best $M^{\dev}=10$ approximation.
+  The panels are equivalent to those in \figurename~\ref{fig:exp}.
+  The residuals look bad in the logarithmic plot, but they are only
+  bad very near the profile center (as expected), where the effect of
+  any realistic point-spread function will average them away.}
 \end{figure}
 
 \clearpage
 \begin{figure}
-\caption{The luv and lux profiles and approximations.  The panels are
+\includegraphics[width=\figurewidth]{lux_K06_MR04_profile.png}%
+\includegraphics[width=\figurewidth]{lux_K06_MR04_profile_log.png}\\
+\includegraphics[width=\figurewidth]{luv_K08_MR08_profile.png}%
+\includegraphics[width=\figurewidth]{luv_K08_MR08_profile_log.png}
+\caption{The lux and luv profiles and approximations.  The panels are
   equivalent to those in the top-row of \figurename~\ref{fig:exp}.}
 \end{figure}
 
