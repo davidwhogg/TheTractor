@@ -1,4 +1,4 @@
-all: mixture_models.pdf herschel_dust.pdf
+all: herschel_dust.pdf
 
 %.pdf: %.tex
 	pdflatex $<
