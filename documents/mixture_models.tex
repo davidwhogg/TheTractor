@@ -5,9 +5,8 @@
 % to-do
 % -----
 % - decide which models will make it in
-% - make useful figures
+% - make pickles_to_latex_table.py function
 % - make figures showing use of the models in a real situation
-% - make sure we are consistent about normalization! (do the profiles sum to unity or are they unity at \xi = 1?)
 % - does the Lupton paper give the profiles, or should we cite the code directly?
 % - send to Jim Bosch and Kevin Bundy for comments
 
@@ -28,7 +27,7 @@
 \newcommand{\pos}{\tvector{x}}
 \newcommand{\spos}{\tvector{\xi}}
 \newcommand{\mean}{\tvector{m}}
-\newcommand{\var}{\tmatrix{V}\!}
+\newcommand{\var}{\tmatrix{V}}
 \newcommand{\affine}{\tmatrix{R}}
 \newcommand{\uv}{\tvector{u}}
 \newcommand{\zero}{\tmatrix{0}}
@@ -121,15 +120,15 @@ profiles---as rigid mixtures of Gaussians.
 The performance advantages we will obtain from using mixtures of
 Gaussians are not simply that convolution itself is trivial.  The
 standard unconvolved galaxy models, especially the de~Vaucouleurs and
-S\'ersic models, are very ill-behaved near the galaxy center.
-Rendering these profiles precisely near the center can be very
-challenging numerically.  In addition, most of the rendering time is
-spent at very small radii, where PSF convolution is going to erase all
-structure anyway.  That is, a mixture-of-Gaussians description of the
-de~Vaucouleurs profile saves time both in rendering \emph{and} in PSF
-convolution; it produces profiles that are approximate but very high
-performance when all real uses of the profiles are PSF-convolved, as
-they usually are.
+S\'ersic models (\citealt{dev}, \citealt{ser}), are very ill-behaved
+near the galaxy center.  Rendering these profiles precisely near the
+center can be very challenging numerically.  In addition, most of the
+rendering time is spent at very small radii, where PSF convolution is
+going to erase all structure anyway.  That is, a mixture-of-Gaussians
+description of the de~Vaucouleurs profile saves time both in rendering
+\emph{and} in PSF convolution; it produces profiles that are
+approximate but very high performance when all real uses of the
+profiles are PSF-convolved, as they usually are.
 
 Along those lines, it is important in any image-modeling situation to
 think of the PSF as the \emph{pixel-convolved} point-spread function.
@@ -184,95 +183,107 @@ The sum-to-one condition ensures that the probability distribution
 approximation is properly normalized.
 
 We wish to make an approximation to the two-dimensional circular
-exponential profile $Q_{\exp}(\cdot)$
+exponential (exp) profile $Q^{\exp}(\cdot)$
 \begin{eqnarray}\displaystyle
-Q_{\exp}(\spos) &\equiv& \exp(-\alpha_{\exp}\,[|\spos| - 1])
+Q^{\exp}(\spos) &\equiv& \exp(-\alpha^{\exp}\,[|\spos| - 1])
 \\
-\alpha_{\exp} &\equiv& 1.67834699
+\alpha^{\exp} &\equiv& 1.67834699
 \quad ,
 \end{eqnarray}
 where $\spos$ is a dimensionless focal-plane position, and
-$\alpha_{\exp}$ ensures that the profile has unit half-light radius.
-The position $\spos$ is dimensionless because it parameterizes the
-unit-size dimensionless function.  We seek the best (where ``best''
-will be defined below) $M_{\exp}$-Gaussian mixture approximation
+$\alpha^{\exp}$ is a dimensionless inverse length set to ensure that
+the profile has unit half-light radius.  The position $\spos$ is
+dimensionless because it parameterizes the unit-size dimensionless
+function.  We seek the best (where ``best'' will be defined below)
+$M^{\exp}$-Gaussian mixture (where $M^{\exp}$ is an integer)
+approximation
 \begin{eqnarray}\displaystyle
-Q_{\exp}(\spos) &\approx& \sum_{m=1}^{M_{\exp}} a_{\exp,m}\,\normal(\spos\given\zero,\var_{\exp,m})
+Q^{\exp}(\spos) &\approx& \sum_{m=1}^{M^{\exp}} a^{\exp}_m\,\normal(\spos\given\zero,\var^{\exp}_m)
 \\
-\var_{\exp,m} &\equiv& \sigma^2_{\exp,m}\,\identity
+\var^{\exp}_m &\equiv& v^{\exp}_m\,\identity
 \quad ,
 \end{eqnarray}
 where all of the means are exactly zero and all of the variances
-$\var_{\exp,m}$ in the mixture are scalar multiples of the identity
-matrix $\identity$ because we are requiring this dimensionless
-function to be precisely circular (so every component is itself
-circular and concentric).  Similarly for the de~Vaucouleurs profile
+$\var^{\exp}_m$ in the mixture can be represented as a scalar
+$v^{\exp}_m$ multiplied by the identity matrix $\identity$
+because we are requiring this dimensionless function to be precisely
+circular (so every component is itself circular and concentric).
+Similarly for the de~Vaucouleurs (dev) profile
 \begin{eqnarray}\displaystyle
-Q_{\dev}(\spos) &\equiv& \exp(-\alpha_{\dev}\,[|\spos|^{1/4} - 1])
+Q^{\dev}(\spos) &\equiv& \exp(-\alpha^{\dev}\,[|\spos|^{1/4} - 1])
 \\
-\alpha_{\dev} &\equiv& 7.66924944
+\alpha^{\dev} &\equiv& 7.66924944
 \\
-Q_{\dev}(\spos) &\approx& \sum_{m=1}^{M_{\dev}} a_{\dev,m}\,\normal(\spos\given\zero,\var_{\dev,m})
+Q^{\dev}(\spos) &\approx& \sum_{m=1}^{M^{\dev}} a^{\dev}_m\,\normal(\spos\given\zero,\var^{\dev}_m)
 \\
-\var_{\dev,m} &\equiv& \sigma^2_{\dev,m}\,\identity
+\var^{\dev}_m &\equiv& v^{\dev}_m\,\identity
 \quad .
 \end{eqnarray}
-(The half-light radius parameters $\alpha_{\exp}$ and $\alpha_{\dev}$
-are taken from \citealt{ciotti}.)  The challenge we meet below is to
-determine the parameters
+The half-light inverse-radius parameters $\alpha^{\exp}$ and
+$\alpha^{\dev}$ are from \citet{ciotti}.  The challenge we
+meet below is to determine the parameters
 \begin{eqnarray}
-\{a_{\exp,m},\sigma^2_{\exp,m}\}_{m=1}^{M_{\exp}}~,~\{a_{\dev,m},\sigma^2_{\dev,m}\}_{m=1}^{M_{\dev}}
+\{a^{\exp}_m,v^{\exp}_m\}_{m=1}^{M^{\exp}}~,~\{a^{\dev}_m,v^{\dev}_m\}_{m=1}^{M^{\dev}}
 \end{eqnarray}
 to best approximate the traditional galaxy profile functions, under
 some sensible definiton of the word ``best'', as a function of the
-model complexity parameters (numbers of components) $(M_{\exp},
-M_{\dev})$.
+model complexity parameters (numbers of components) $(M^{\exp},
+M^{\dev})$.
 
-In addition to these, there are general S\'ersic profiles, of which
-the exponential and de~Vaucouleurs profiles are special cases.  The
-general S\'ersic profile has one parameter (the ``index'') $n$:
+In addition to these, there are general S\'ersic (ser) profiles, of
+which the exp and dev profiles are special cases.  The general ser
+profile has one parameter (the ``index'') $n$:
 \begin{eqnarray}\displaystyle
-Q_{\ser}(\spos\given n) &\equiv& \exp(-\alpha_{\ser}(n)\,[|\spos|^{1/n} - 1])
+Q^{\ser}(\spos\given n) &\equiv& \exp(-\alpha^{\ser}(n)\,[|\spos|^{1/n} - 1])
 \\
-\{\alpha_{\ser}(2), \alpha_{\ser}(3), \alpha_{\ser}(5)\} &\equiv& \{3.67206075, 5.67016119, 9.66871461\}
+\{\alpha^{\ser}(2), \alpha^{\ser}(3), \alpha^{\ser}(5)\} &\equiv& \{3.67206075, 5.67016119, 9.66871461\}
 \quad ,
 \end{eqnarray}
-where we have given the constant $\alpha_{\ser}(n)$ for just a few
+where we have given the constant $\alpha^{\ser}(n)$ for just a few
 values of $n$ (\citealt{ciotti}; the $\exp$ and $\dev$ profiles give
 the $n=1$ and $n=4$ values).
 
 The \sdss\ pipelines make use of modified profiles, which have been
 truncated smoothly at large radius and (in the case of the
 de~Vaucouleurs profile) ``softened'' at the center (\citealt{lupton}).
-The \sdss\ form of the exponential profile is
+The \sdss\ form of the exponential (lux) profile is
 \begin{eqnarray}\displaystyle
-Q_{\lux}(\spos) &\equiv& \left\{\begin{array}{ll}
-  \exp(-\alpha_{\lux}\,[|\spos| - 1]) & \mbox{for~}|\spos| < 3 \\
-  \exp(-\alpha_{\lux}\,[|\spos| - 1])
+Q^{\lux}(\spos) &\equiv& \left\{\begin{array}{ll}
+  \exp(-\alpha^{\lux}\,[|\spos| - 1]) & \mbox{for~}|\spos| < 3 \\
+  \exp(-\alpha^{\lux}\,[|\spos| - 1])
   \,\left[1 - [|\spos| - 3]^2\right]^2 & \mbox{for~}3 < |\spos| < 4 \\
   0                                   & \mbox{for~}4 < |\spos|
 \end{array}\right.
 \\
-\alpha_{\lux} &\equiv& 1.67835
+\alpha^{\lux} &\equiv& 1.67835
 \quad ,
 \end{eqnarray}
-and the \sdss\ form of the de~Vaucouleurs profile is
+and the \sdss\ form of the de~Vaucouleurs (luv) profile is
 \begin{eqnarray}\displaystyle
-Q_{\luv}(\spos) &\equiv& \left\{\begin{array}{ll}
-  \exp(-\alpha_{\luv}\,\left[[|\spos|^2 + 0.0004]^{1/8} - 1\right]) & \mbox{for~}|\spos| < 7 \\
-  \exp(-\alpha_{\luv}\,\left[[|\spos|^2 + 0.0004]^{1/8} - 1\right])
+Q^{\luv}(\spos) &\equiv& \left\{\begin{array}{ll}
+  \exp(-\alpha^{\luv}\,\left[[|\spos|^2 + 0.0004]^{1/8} - 1\right]) & \mbox{for~}|\spos| < 7 \\
+  \exp(-\alpha^{\luv}\,\left[[|\spos|^2 + 0.0004]^{1/8} - 1\right])
   \,\left[1 - [|\spos| - 7]^2\right]^2 & \mbox{for~}7 < |\spos| < 8 \\
   0                                   & \mbox{for~}8 < |\spos|
 \end{array}\right.
 \\
-\alpha_{\luv} &\equiv& 7.66925
+\alpha^{\luv} &\equiv& 7.66925
 \quad .
 \end{eqnarray}
-(The half-light radius parameters $\alpha_{\exp}$ and
-$\alpha_{\dev}$---and the softening and cutoff radius parameters---are
-taken from the \sdss\ codebase.)
+The half-light inverse-radius parameters $\alpha^{\exp}$ and
+$\alpha^{\dev}$---and the softening and cutoff radius parameters---are
+taken from the \sdss\ codebase.
 
-...Note normalization issues and how easy it is to normalize the mixture-of-Gaussian model...
+The profiles above are normalized to have unit intensity
+(approximately) at their half-light radii.  In many cases, the
+investigator wants profiles that are normalized to have unit total
+flux (intensity integrated over solid angle).  Although there is an
+analytic result for the dev profile, numerical integration of the
+concentrated profiles dev and luv to determine total fluxes can be
+challenging.  This is not true for the mixture-of-Gaussian
+approximations: Each Gaussian is normalized, so the sum of the
+amplitudes $\sum_m a^{\luv}_m$ (for the luv profile, say) gives the
+total flux for the mixture-of-Gaussians approximation to that profile.
 
 We seek the \emph{best} mixture-of-Gaussian approximations.  This
 necessitates definition of the word ``best''.  If we think of the
@@ -313,7 +324,9 @@ available.\footnote{\url{https://github.com/davidwhogg/TheTractor/}}
 
 ...Show plots demonstrating quality of fit, one-d and two-d plots...
 
-...give tables of results, including Bundy versions and recommended versions...
+...give tables of results, including Bundy versions and recommended
+versions...Why are we giving and plotting root-variances not
+variances?...
 
 ...show dependence of amplitudes and variances on sersic n for some
 M...be sure to synchronize $\xi_{\max}$...
@@ -346,12 +359,12 @@ That is, when the PSF is represented as a mixture of Gaussians, any
 image of a star---or indeed any image of any set of stars---is also
 represented as a mixture of Gaussians.
 
-Applying this PSF to an exponential or de~Vaucouleurs galaxy is
-slightly more complicated, because the galaxy has not just a flux
-$S_g$ and a central position $\pos_g$; it also has a shape.  Because
-we are only considering these simple galaxies, we are only permitting
-ellipsoidal shapes, which can be represented by a semi-major axis $a$,
-a semi-minor axis $b$, and a position angle $\phi$, or equivalently by
+Applying this PSF to an exp or dev galaxy is slightly more
+complicated, because the galaxy has not just a flux $S_g$ and a
+central position $\pos_g$; it also has a shape.  Because we are only
+considering these simple galaxies, we are only permitting ellipsoidal
+shapes, which can be represented by a semi-major axis $a$, a
+semi-minor axis $b$, and a position angle $\phi$, or equivalently by
 eigenvalues $a, b$ and eigenvectors $\uv_1, \uv_2$, or equivalently by
 an affine transformation $\affine_g$ that takes a circle to the
 relevant ellipse (and is a therefore a general representation of an
@@ -361,9 +374,9 @@ affine transformation \emph{prior} to PSF convolution, so the
 focal-plane image (PSF-convolved intensity field) for a general (say)
 $\exp$ galaxy is given by
 \begin{eqnarray}\displaystyle
-I(\pos\given\exp,S_g,\pos_g,\affine_g) &=& \sum_{k=1}^K \sum_{m=1}^{M_{\exp}} S_g\,a_{\exp,m}\,p_k\,\normal(\pos\given\pos_g+\mean_k,\var_{gm}+\var_k)
+I(\pos\given\exp,S_g,\pos_g,\affine_g) &=& \sum_{k=1}^K \sum_{m=1}^{M^{\exp}} S_g\,a^{\exp}_m\,p_k\,\normal(\pos\given\pos_g+\mean_k,\var_{gm}+\var_k)
 \\
-\var_{gm} &\equiv& \affine_g\cdot\var_{\exp,m}\cdot\transpose{\affine_g}
+\var_{gm} &\equiv& \affine_g\cdot\var^{\exp}_m\cdot\transpose{\affine_g}
 \\
 \affine_g &=& \left[a\,\uv_1 , b\,\uv_2 \right]
 \quad ,
@@ -383,7 +396,7 @@ $[M\,K]$ components).
 
 ...pegagogical figure demonstrating these operations and their results...
 
-...what about mixtures of exponentials and de~Vaucouleurs:  No problem!...
+...what about mixtures of exps and devs:  No problem!...
 
 \acknowledgements It is a pleasure to thank Brendon Brewer (Auckland)
 and Kevin Bundy (IPMU) for valuable comments.  This work was supported
@@ -404,20 +417,68 @@ Bovy,~J. \etal, 2012, \aj, 749, 41
 Cappellari,~M., 2002, \mnras, 333, 400
 \bibitem[Ciotti \& Bertin(1999)]{ciotti}
 Ciotti,~L. \& Bertin,~G., 1999, \aa, 352, 447
+\bibitem[de~Vaucouleurs(19xx)]{dev}
+de~Vaucouleurs,~G., 19xx, whatever
 \bibitem[Emsellem \etal(1994)]{emsellem}
 Emsellem,~E., Monnet,~G., Bacon,~R., \& Nieto,~J.-L., 1994, \aap, 285, 739
 \bibitem[Lupton \etal(2001)]{lupton}
 Lupton,~R., Gunn,~J.~E., Ivezic,~Z., Knapp,~G.~R., Kent,~S.~M., \& Yasuda,~N., 2001, ASPC, 238, 269
 \bibitem[Peng \etal(2002)]{galfit}
 Peng,~C.~Y., Ho, L.~C., Impey,~C.~D., \& Rix,~H.-W., 2002, \aj, 124, 266
+\bibitem[S\'ersic(19xx)]{ser}
+S\'ersic,~X., 19xx, whatever
 \end{thebibliography}
 
 \clearpage
+\begin{table}
+\caption{The amplitudes and root-variances for the best
+  mixture-of-Gaussian approximations to the various profiles, for
+  different mixture sizes.  The badness and total (dimensionless) flux
+  are given for each approximation.}
+\end{table}
+
+\clearpage
 \begin{figure}
-\includegraphics[width=\figwidth]{K08_MR08_LSD04_dev.png}
-\includegraphics[width=\figwidth]{K08_MR08_LSD04_dev_log.png} \\
-\includegraphics[width=\figwidth]{K08_MR08_LSD04_lup.png}
-\includegraphics[width=\figwidth]{K08_MR08_LSD04_lup_log.png}
+\caption{\textsl{top-left:} The true exp profile (thin black line),
+  the best $M^{\exp}=6$ mixture-of-Gaussian approximation (thick grey
+  line), and the component Gaussians (multiplied by their
+  corresponding amplitudes) contributing to the approximation (thin
+  grey lines).  The plot title text gives $\xi_{\max}$ and the
+  badness. \textsl{top-right:} The same but shown logarithmically.
+  \textsl{bottom-left:} A representation of the residual or devation,
+  on which the badness is computed.  \textsl{bottom-right:} The same
+  but shown logarithmically.\label{fig:exp}}
+\end{figure}
+
+\clearpage
+\begin{figure}
+\caption{The dev profile and the best $M^{\dev}=8$ approximation.
+  The panels are equivalent to those in \figurename~\ref{fig:exp}.}
+\end{figure}
+
+\clearpage
+\begin{figure}
+\caption{The luv and lux profiles and approximations.  The panels are
+  equivalent to those in the top-row of \figurename~\ref{fig:exp}.}
+\end{figure}
+
+\clearpage
+\begin{figure}
+\caption{Three ser profiles and approximations.  The top-left,
+  top-right, and bottom-left panels are equivalent to those in the
+  top-right of \figurename~\ref{fig:exp}.  \textsl{bottom-right:} The
+  dependence on the amplitudes $a^{\ser}_m$ and root-variances
+  $\sqrt{v^{\ser}_m}$ on ser index $n$.}
+\end{figure}
+
+\clearpage
+\begin{figure}
+\caption{Comparisons of approximations.  \textsl{top-left:} The
+  dependence of amplitude $a^{\exp}_m$ and root-variance
+  $\sqrt{v^{\exp}_m}$ on $M^{\exp}$ for the exp profile.
+  \textsl{top-right:} The same but for the dev profile.
+  \textsl{bottom-left:} The same but for the lux profile.
+  \textsl{bottom-right:} The same but for the luv profile.}
 \end{figure}
 
 \end{document}
