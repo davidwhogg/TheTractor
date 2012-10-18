@@ -209,8 +209,8 @@ def plot_mixture(pars, prefix, model, max_radius, log10_squared_deviation, badne
         plt.plot(x2, pars[k] * not_normal(x2, pars[k + K]), 'k-', alpha=0.5)
     plt.axvline(max_radius, color='k', alpha=0.25)
     badname = "badness"
-    title = r"%s / $K=%d$ / $\xi_{\max} = %d$ / %s $= %.2f\times 10^{%d}$" % (
-        model, len(pars) / 2, max_radius, badname, badness, log10_squared_deviation)
+    title = r"%s / $M^{\mathrm{%s}}=%d$ / $\xi_{\max} = %d$ / %s $= %.2f\times 10^{%d}$" % (
+        model, model, len(pars) / 2, max_radius, badname, badness, log10_squared_deviation)
     plt.title(title)
     plt.xlim(-0.5, 8.5)
     xlim1 = plt.xlim()
