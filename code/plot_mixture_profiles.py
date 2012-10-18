@@ -41,15 +41,17 @@ def plot_mixtures_vs_model(K):
         amps = pars[0:K]
         sigmas = np.sqrt(pars[K:2 * K])
         plt.plot(sigmas, amps, 'k-', alpha=0.5)
-        plt.plot(sigmas, amps, 'ko', ms=4.0)
+        plt.plot(sigmas, amps, 'ko', ms=3.0)
         label = model
         tweak = 0.
         if model == 'ser5': tweak = 5.
         if model == 'dev': tweak = 1.
         plt.annotate(label, [sigmas[0], amps[0]], xytext=[-2,-10], textcoords="offset points", va="baseline", ha="center")
         plt.annotate(label, [sigmas[-1], amps[-1]], xytext=[4,-4+tweak], textcoords="offset points", va="baseline", ha="left")
-    plt.xlabel(r"root-variance $\sigma$ (units of half-light radii)")
-    plt.ylabel(r"amplitude")
+    model = "ser"
+    plt.xlabel(r"root-variance $\sqrt{v^{\mathrm{%s}}_m}$ (units of half-light radii)" % model)
+    plt.ylabel(r"amplitudes $a^{\mathrm{%s}}_m$" % model)
+    plt.title(r"approximations to ser profiles at $M^{\mathrm{ser}}=%d$" % K)
     plt.loglog()
     plt.xlim(0.5e-4, 2.e1)
     plt.ylim(0.5e-4, 2.e1)
@@ -66,14 +68,15 @@ def plot_mixtures_vs_K(model):
         amps = pars[0:K]
         sigmas = np.sqrt(pars[K:2 * K])
         plt.plot(sigmas, amps, 'k-', alpha=0.5)
-        plt.plot(sigmas, amps, 'ko')
+        plt.plot(sigmas, amps, 'ko', ms=3.0)
         label = r"%d" % K
         tweak = 0.
         if model == 'dev': tweak = 4
         plt.annotate(label, [sigmas[0], amps[0]], xytext=[-4,-4], textcoords="offset points", va="baseline", ha="right")
         plt.annotate(label, [sigmas[-1], amps[-1]], xytext=[4,-4+tweak], textcoords="offset points", va="baseline", ha="left")
-    plt.xlabel(r"root-variance $\sigma$ (units of half-light radii)")
-    plt.ylabel(r"amplitude")
+    plt.xlabel(r"root-variance $\sqrt{v^{\mathrm{%s}}_m}$ (units of half-light radii)" % model)
+    plt.ylabel(r"amplitudes $a^{\mathrm{%s}}_m$" % model)
+    plt.title(r"approximations to %s" % model)
     plt.loglog()
     plt.xlim(0.5e-4, 2.e1)
     plt.ylim(0.5e-4, 2.e1)
