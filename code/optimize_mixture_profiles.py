@@ -240,7 +240,7 @@ def plot_mixture(pars, prefix, model, max_radius, log10_squared_deviation, badne
     plt.xlim(*xlim1)
     plt.ylim(-1., 1.)
     plt.xlabel(xlabel)
-    plt.ylabel(r"intensity residual (relative to intensity at $\xi = 1$)")
+    plt.ylabel(r"intensity residual (units of intensity at $\xi = 1$)")
     hogg_savefig(prefix + '_residual')
     plt.semilogx()
     xmin = 0.001
@@ -254,7 +254,7 @@ def plot_mixture(pars, prefix, model, max_radius, log10_squared_deviation, badne
     plt.xlim(*xlim1)
     plt.ylim(-1., 1.)
     plt.xlabel(xlabel)
-    plt.ylabel(r"fractional intensity residual ([true$-$approx] / [true])")
+    plt.ylabel(r"fractional intensity residual (residual / intensity)")
     hogg_savefig(prefix + '_fractional')
     plt.semilogx()
     xmin = 0.001
