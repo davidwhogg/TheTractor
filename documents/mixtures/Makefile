@@ -1,4 +1,4 @@
-all: mixture_models.pdf herschel_dust.pdf
+all: mixture_models.pdf
 
 MIXTURE_MODELS_FIGURES = \
 	exp_K06_MR08_profile.png \
