@@ -254,7 +254,7 @@ def plot_mixture(pars, prefix, model, max_radius, log10_squared_deviation, badne
     plt.xlim(*xlim1)
     plt.ylim(-1., 1.)
     plt.xlabel(xlabel)
-    plt.ylabel(r"fractional intensity residual")
+    plt.ylabel(r"fractional intensity residual ([true$-$approx] / [true])")
     hogg_savefig(prefix + '_fractional')
     plt.semilogx()
     xmin = 0.001
