@@ -105,7 +105,7 @@ high-angular-resolution intensity field is convolved with the
 point-spread function (PSF) before being observed.  This is
 particularly useful in data sets in which the PSF itself has also been
 modeled as a mixture of Gaussians, which is not uncommon (for example,
-the \project{Sloan Digital Sky Survey} (\sdss) imaging pipelines
+the \project{Sloan Digital Sky Survey} imaging pipelines
 make approximate mixture-of-Gaussian PSF models for
 every imaging field; \citealt{lupton}).
 
@@ -147,16 +147,16 @@ fitting) because, with \thetractor\ (Lang \etal, forthcoming), we are
 building a comprehensive model of all the imaging data we have; this
 will have models of many millions of galaxies in imaging that contains
 on the order of $10^{13}$ pixels.  We are basing our models on the
-\sdss\ Catalog galaxy models, which only include exponential,
-de~Vaucouleurs, and composite (mixture of the two) radial profiles.
-In detail, in fact, the \sdss\ Catalog models are small modifications
-of these (\citealt{lupton}); details below.  So our goal here is to
-provide replacements for these models in order to improve the
-performance of galaxy image modeling and analysis software.  Some of
-the models we present have been used previously in tools for precise
-photometry (Bundy \etal, forthcoming); they could also be used to
-speed other image-fitting systems, like the very successful
-\project{GALFIT} (\citealt{galfit}).
+\project{Sloan Digital Sky Survey} (\sdss) Catalog galaxy models,
+which only include exponential, de~Vaucouleurs, and composite (mixture
+of the two) radial profiles.  In detail, in fact, the \sdss\ Catalog
+models are small modifications of these (\citealt{lupton}); details
+below.  So our goal here is to provide replacements for these models
+in order to improve the performance of galaxy image modeling and
+analysis software.  Some of the models we present have been used
+previously in tools for precise photometry (Bundy \etal, forthcoming);
+they could also be used to speed other image-fitting systems, like the
+very successful \project{GALFIT} (\citealt{galfit}).
 
 Because we are thinking about two-dimensional imaging, we use here
 two-dimensional Gaussian or Normal distributions, which look like
