@@ -502,7 +502,28 @@ S{\'e}rsic,~J.~L., 1963, Boletin de la Asociacion Argentina de Astronomia La Pla
   $\sqrt{v^{\exp}_m}$ on $M^{\exp}$ for the exp profile.
   \textsl{top-right:} The same but for the dev profile.
   \textsl{bottom-left:} The same but for the lux profile.
-  \textsl{bottom-right:} The same but for the luv profile.}
+  \textsl{bottom-right:} The same but for the luv profile.\label{fig:M}}
+\end{figure}
+
+\clearpage
+\begin{figure}
+% DSTN:  This should be a 3-across by 2-down figure,
+\caption{Demonstration of use of the profiles, or the implicit
+  generative model in this \documentname.  \textsl{top-left:} The
+  circular dimensionless $M^{\luv}=8$ mixture-of-Gaussian
+  approximation to the luv profile, represented on a very fine pixel
+  grid. \textsl{top-middle:} The ellipse representing the non-trivial
+  affine transformation to be applied to the circular, dimensionless
+  profile.  \textsl{top-right:} The sheared profile.
+  \textsl{bottom-left:} A $K=3$ mixture-of-Gaussian model of the
+  pixel-convolved point-spread function, represented on the very fine
+  pixel grid.  \textsl{bottom-middle:} The sheared profile convolved
+  with the PSF, represented on the very fine pixel grid.
+  \textsl{bottom-right:} The sheared luv convolved with the PSF, but
+  now shown on a realistic pixel grid.  Because by assumption the PSF
+  is a pixel-convolved PSF, the representation on the realistic grid
+  is found simply by interpolating the convolved high-resolution
+  model.\label{fig:example}}
 \end{figure}
 
 \end{document}
