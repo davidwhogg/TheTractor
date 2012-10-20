@@ -122,18 +122,21 @@ performance of standard galaxy image model fitting by expressing the
 standard galaxy models---the exponential and de~Vaucouleurs
 profiles---as rigid mixtures of Gaussians.
 
-The performance advantages we will obtain from using mixtures of
-Gaussians are not simply that convolution itself is trivial.  The
-standard unconvolved galaxy models, especially the de~Vaucouleurs and
-S\'ersic models (\citealt{dev}, \citealt{ser}), are very ill-behaved
-near the galaxy center.  Rendering these profiles precisely near the
-center can be very challenging numerically.  In addition, most of the
-rendering time is spent at very small radii, where PSF convolution is
-going to erase all structure anyway.  That is, a mixture-of-Gaussians
-description of the de~Vaucouleurs profile saves time both in rendering
-\emph{and} in PSF convolution; it produces profiles that are
-approximate but very high performance when all real uses of the
-profiles are PSF-convolved, as they usually are.
+... insert here a paragraph about the \emph{wisdom} of fitting these
+standard profiles: When is it scientifically okay?...
+
+The performance advantages we will obtain from using
+mixture-of-Gaussian approximations are not simply that convolution
+itself is trivial.  The standard unconvolved galaxy models, especially
+the de~Vaucouleurs and S\'ersic models (\citealt{dev}, \citealt{ser}),
+are very ill-behaved near the galaxy center.  Rendering these profiles
+precisely near the center can be very challenging numerically.  In
+addition, most of the rendering time is spent at very small radii,
+where PSF convolution is going to erase all structure anyway.  That
+is, a mixture-of-Gaussians description of the de~Vaucouleurs profile
+saves time both in rendering \emph{and} in PSF convolution; it
+produces profiles that are approximate but very high performance when
+all real uses of the profiles are PSF-convolved, as they usually are.
 
 Along those lines, it is important in any image-modeling situation to
 think of the PSF as the \emph{pixel-convolved} point-spread function.
@@ -336,7 +339,7 @@ root-variances rather than variances because these have units of
 half-light radii; they are simple standard deviations for the Gaussian
 components.
 
-...make recommendations: Use the $M^{\lux}=6$ lux and the $M^{\luv}=8$
+... make recommendations: Use the $M^{\lux}=6$ lux and the $M^{\luv}=8$
 luv!...
 
 The value of these mixture-of-Gaussian galaxy components comes when
@@ -402,9 +405,12 @@ this \documentname, to wit, that a mixture-of-Gaussian galaxy model
 (with $K$ components) yields a mixture-of-Gaussian image (with
 $[M\,K]$ components).
 
-...pegagogical figure demonstrating these operations and their results...
+... pegagogical figure demonstrating these operations and their results...
 
-...what about mixtures of exps and devs:  No problem!...
+... what about mixtures of exps and devs:  No problem!...
+
+... finally: The insights that \emph{could} be gained by interrogating
+these profile approximations in three dimensions...!
 
 \acknowledgements It is a pleasure to thank
       Brendon Brewer (Auckland)
