@@ -4,12 +4,10 @@
 
 % to-do
 % -----
-% - add introduction comments about *why* people fit these profiles -- an opportunity to get on the soapbox
-% - make pickles_to_latex_table.py function
-% - make figures showing use of the models in a real situation
+% - URGENT: badness has another term in it -- the regularization term
+% - DSTN: make figures showing use of the models in a real situation; see last figure
 % - does the Lupton paper give the profiles, or should we cite the code directly?
 % - send to Jim Bosch and Kevin Bundy for comments
-% - fix symbols on figures to match text or vice versa (K, M, v, sigma)
 
 \documentclass[12pt,pdftex,preprint]{aastex}
 \usepackage{amssymb,amsmath,mathrsfs}
@@ -59,22 +57,23 @@
 \altaffiltext{5}{Department of Physics, Carnegie Mellon University, Pittsburgh, PA 15213, USA}
 
 \begin{abstract}
-Exponential and de~Vaucouleurs profiles are simple and successful
-models for fitting two-dimensional images of galaxies.  One numerical
-issue encountered in this kind of fitting is the pixel rendering and
-convolution (or correlation) of the models with the telescope
-point-spread function (PSF); these operations are slow, and easy to
-get slightly wrong at small radii.  Here we exploit the realization
-that these models can be approximated to arbitrary accuracy with a
-mixture (linear superposition) of two-dimensional Gaussians.  Mixtures
-of Gaussians are fast to render and fast to affine-transform.  Most
-importantly, if you have a mixture-of-Gaussian PSF model (which we
-advocate), the PSF-convolved, affine-transformed galaxy models are
-themselves mixtures of Gaussians and therefore very fast to compute
-precisely.  We present worked examples that can be directly used in
-image fitting; we are using them ourselves.  We discuss extensions to
-S\'ersic models and applications of these ideas to three-dimensional
-deprojection.
+Exponential, de~Vaucouleurs, and S\'ersic profiles are simple and
+successful models for fitting two-dimensional images of galaxies.  One
+numerical issue encountered in this kind of fitting is the pixel
+rendering and convolution (or correlation) of the models with the
+telescope point-spread function (PSF); these operations are slow, and
+easy to get slightly wrong at small radii.  Here we exploit the
+realization that these models can be approximated to arbitrary
+accuracy with a mixture (linear superposition) of two-dimensional
+Gaussians.  Mixtures of Gaussians are fast to render and fast to
+affine-transform.  Most importantly, if you have a mixture-of-Gaussian
+PSF model (which we advocate), the PSF-convolved, affine-transformed
+galaxy models are themselves mixtures of Gaussians and therefore very
+fast to compute, integrate, and render precisely.  We present worked
+examples that can be directly used in image fitting; we are using them
+ourselves.  The mixture profiles we provide can be swapped in to
+replace the standard models in any image-fitting code; they ought to
+make that code faster at very little cost in accuracy.
 \end{abstract}
 
 Gaussians are remarkable distribution functions.  They have the
@@ -122,18 +121,21 @@ performance of standard galaxy image model fitting by expressing the
 standard galaxy models---the exponential and de~Vaucouleurs
 profiles---as rigid mixtures of Gaussians.
 
-The performance advantages we will obtain from using mixtures of
-Gaussians are not simply that convolution itself is trivial.  The
-standard unconvolved galaxy models, especially the de~Vaucouleurs and
-S\'ersic models (\citealt{dev}, \citealt{ser}), are very ill-behaved
-near the galaxy center.  Rendering these profiles precisely near the
-center can be very challenging numerically.  In addition, most of the
-rendering time is spent at very small radii, where PSF convolution is
-going to erase all structure anyway.  That is, a mixture-of-Gaussians
-description of the de~Vaucouleurs profile saves time both in rendering
-\emph{and} in PSF convolution; it produces profiles that are
-approximate but very high performance when all real uses of the
-profiles are PSF-convolved, as they usually are.
+... insert here a paragraph about the \emph{wisdom} of fitting these
+standard profiles: When is it scientifically okay?...
+
+The performance advantages we will obtain from using
+mixture-of-Gaussian approximations are not simply that convolution
+itself is trivial.  The standard unconvolved galaxy models, especially
+the de~Vaucouleurs and S\'ersic models (\citealt{dev}, \citealt{ser}),
+are very ill-behaved near the galaxy center.  Rendering these profiles
+precisely near the center can be very challenging numerically.  In
+addition, most of the rendering time is spent at very small radii,
+where PSF convolution is going to erase all structure anyway.  That
+is, a mixture-of-Gaussians description of the de~Vaucouleurs profile
+saves time both in rendering \emph{and} in PSF convolution; it
+produces profiles that are approximate but very high performance when
+all real uses of the profiles are PSF-convolved, as they usually are.
 
 Along those lines, it is important in any image-modeling situation to
 think of the PSF as the \emph{pixel-convolved} point-spread function.
@@ -328,11 +330,15 @@ available in the code, which is publicly
 available.\footnote{\url{https://github.com/davidwhogg/TheTractor/}}
 
 The results of the optimizations are shown in \tablename
-s~\ref{tab:exp} through \ref{tab:luv} and \figurename s~\ref{fig:exp}
-through \ref{fig:M}... Discuss briefly the import of it all... Why in
-the tables are we giving and plotting root-variances not variances?...
+s~\ref{tab:exp} and \ref{tab:lux} and \figurename s~\ref{fig:exp}
+through \ref{fig:M}.  All the results shown in these figures and
+tables and more are available in machine-readable form from author DWH
+upon request.  In the \tablename s and \figurename s we show
+root-variances rather than variances because these have units of
+half-light radii; they are simple standard deviations for the Gaussian
+components.
 
-...make recommendations: Use the $M^{\lux}=6$ lux and the $M^{\luv}=8$
+... make recommendations: Use the $M^{\lux}=6$ lux and the $M^{\luv}=8$
 luv!...
 
 The value of these mixture-of-Gaussian galaxy components comes when
@@ -398,15 +404,20 @@ this \documentname, to wit, that a mixture-of-Gaussian galaxy model
 (with $K$ components) yields a mixture-of-Gaussian image (with
 $[M\,K]$ components).
 
-...pegagogical figure demonstrating these operations and their results...
+... pegagogical figure demonstrating these operations and their results...
 
-...what about mixtures of exps and devs:  No problem!...
+... what about mixtures of exps and devs:  No problem!...
+
+... finally: The insights that \emph{could} be gained by interrogating
+these profile approximations in three dimensions...!
 
 \acknowledgements It is a pleasure to thank
       Brendon Brewer (Auckland)
   and Kevin Bundy (IPMU)
 for valuable comments.  This work was supported in part by NASA (grant
-NNX12AI50G) and the NSF (grant IIS-1124794).
+NNX12AI50G) and the NSF (grant IIS-1124794).  All the results shown in
+the figures and tables and more are available in machine-readable form
+from author DWH upon request.
 
 \begin{thebibliography}{70}
 \bibitem[Bendinelli(1991)]{bendinelli}
@@ -437,29 +448,22 @@ S{\'e}rsic,~J.~L., 1963, Boletin de la Asociacion Argentina de Astronomia La Pla
 
 \clearpage
 \begin{table}
-\input{table_exp}
-\caption{The amplitudes and root-variances for the best
-  mixture-of-Gaussian approximations to the exp profile, for
-  different mixture sizes.  The total (dimensionless) flux and the
-  badness are given for each approximation.\label{tab:exp}}
-\end{table}
-
-\clearpage
-\begin{table}
+\input{table_exp}\\
+\vspace{2ex}\\
 \input{table_dev}
-\caption{Same as \tablename~\ref{tab:exp} but for the dev profile.}
+\caption{The amplitudes and root-variances for the best
+  mixture-of-Gaussian approximations to the exp and dev profiles, for
+  different mixture sizes.  The total (dimensionless) fluxes and the
+  badnesses are given for each approximation.\label{tab:exp}}
 \end{table}
 
 \clearpage
 \begin{table}
-\input{table_lux}
-\caption{Same as \tablename~\ref{tab:exp} but for the lux profile.}
-\end{table}
-
-\clearpage
-\begin{table}
+\input{table_lux}\\
+\vspace{2ex}\\
 \input{table_luv}
-\caption{Same as \tablename~\ref{tab:exp} but for the luv profile.\label{tab:luv}}
+\caption{Same as \tablename~\ref{tab:exp} but for the lux and luv
+  profiles.\label{tab:lux}}
 \end{table}
 
 \clearpage
