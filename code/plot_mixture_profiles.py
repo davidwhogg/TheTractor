@@ -14,10 +14,7 @@ rc("font",**{"family":"serif","size":12})
 rc("text", usetex=True)
 import pylab as plt
 import numpy as np
-import scipy.optimize as op
-from multiprocessing import Pool
 import cPickle as pickle
-import os as os
 
 models = ["exp", "ser2", "ser3", "dev", "ser5", "lux", "luv"]
 Ks = [4, 6, 8, 10]
