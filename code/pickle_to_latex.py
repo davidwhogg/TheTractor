@@ -14,6 +14,7 @@ rc("font",**{"family":"serif","size":12})
 rc("text", usetex=True)
 import numpy as np
 import cPickle as pickle
+from optimize_mixture_profiles import badness_of_fit
 
 def get_pars(model, K):
     MR = 8
@@ -59,14 +60,26 @@ def write_table(model):
                 aks += [r"%7.5f" % pars[i][k]]
                 svks += [r"%7.5f" % np.sqrt(pars[i][K + k])]
             else:
-                aks += [r"\cdots"]
-                svks += [r"\cdots"]
+                aks += [r"~"] # [r"\cdots"]
+                svks += [r"~"] # [r"\cdots"]
         write_table_line(fd, [r"$%s$ & $%s$" % (a, sv) for a, sv in zip(aks, svks)])
     fd.write(r"\hline" + "\n")
     fd.write(r"$\sum_m a^{\%s}_m=$ &" % model + "\n")
-    write_table_line(fd, [r"\multicolumn{2}{|c|}{$%7.5f$}" % q for q in [np.sum(pars[i][0:K]) for i,K in enumerate(Ks)]])
+    write_table_line(fd, [r"\multicolumn{2}{|c|}{$%6.3f$}" % q for q in [np.sum(pars[i][0:K]) for i, K in enumerate(Ks)]])
     fd.write(r"badness~$=$ &" + "\n")
-    write_table_line(fd, [r"\multicolumn{2}{|c|}{$%5.3f\times 10^{%d}$}" % (0, 0) for K in Ks])
+    MR = 8.
+    if model == "lux": MR = 4.
+    badbases = []
+    badcoeffs = []
+    for i, K in enumerate(Ks):
+        LSD = 0
+        badness = 0.9
+        while badness < 1.:
+            LSD += np.floor(np.log10(badness)).astype(int)
+            badness = badness_of_fit(np.log(pars[i]), model, MR, LSD)
+        badbases += [LSD]
+        badcoeffs += [badness]
+    write_table_line(fd, [r"\multicolumn{2}{|c|}{$%4.2f\times 10^{%d}$}" % (c, b) for c, b in zip(badcoeffs, badbases)])
     fd.write(r"\end{tabular}" + "\n")
     fd.close()
     return None
