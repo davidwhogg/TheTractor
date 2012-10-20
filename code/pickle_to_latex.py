@@ -65,7 +65,7 @@ def write_table(model):
     fd.write(r"\hline" + "\n")
     fd.write(r"$\sum_m a^{\%s}_m=$ &" % model + "\n")
     write_table_line(fd, [r"\multicolumn{2}{|c|}{$%7.5f$}" % q for q in [np.sum(pars[i][0:K]) for i,K in enumerate(Ks)]])
-    fd.write(r"badness\,$=$ &" + "\n")
+    fd.write(r"badness~$=$ &" + "\n")
     write_table_line(fd, [r"\multicolumn{2}{|c|}{$%5.3f\times 10^{%d}$}" % (0, 0) for K in Ks])
     fd.write(r"\end{tabular}" + "\n")
     fd.close()
