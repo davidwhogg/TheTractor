@@ -7,6 +7,7 @@
 % - URGENT: badness has another term in it -- the regularization term
 % - DSTN: make figures showing use of the models in a real situation; see last figure
 % - does the Lupton paper give the profiles, or should we cite the code directly?
+% - make sure the technical issues about convolution and interpolation don't exist *only* in the figure caption
 % - send to Jim Bosch and Kevin Bundy for comments
 
 \documentclass[12pt,pdftex,preprint]{aastex}
@@ -547,8 +548,8 @@ S{\'e}rsic,~J.~L., 1963, Boletin de la Asociacion Argentina de Astronomia La Pla
   \textsl{bottom-right:} The sheared luv convolved with the PSF, but
   now shown on a realistic pixel grid.  Because by assumption the PSF
   is a pixel-convolved PSF, the representation on the realistic grid
-  is found simply by interpolating the convolved high-resolution
-  model.\label{fig:example}}
+  is found simply by interpolating to the pixel centers the convolved
+  high-resolution model.\label{fig:example}}
 \end{figure}
 
 \end{document}
