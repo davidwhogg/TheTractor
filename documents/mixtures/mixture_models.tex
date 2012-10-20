@@ -327,10 +327,10 @@ initializations to explore multiple local minima.  Further details are
 available in the code, which is publicly
 available.\footnote{\url{https://github.com/davidwhogg/TheTractor/}}
 
-The results of the optimizations are shown in the \tablename\ and
-\figurename s~\ref{fig:exp} through \ref{fig:M}... Discuss briefly the
-import of it all... Why in the tables are we giving and plotting
-root-variances not variances?...
+The results of the optimizations are shown in \tablename
+s~\ref{tab:exp} through \ref{tab:luv} and \figurename s~\ref{fig:exp}
+through \ref{fig:M}... Discuss briefly the import of it all... Why in
+the tables are we giving and plotting root-variances not variances?...
 
 ...make recommendations: Use the $M^{\lux}=6$ lux and the $M^{\luv}=8$
 luv!...
@@ -437,64 +437,29 @@ S{\'e}rsic,~J.~L., 1963, Boletin de la Asociacion Argentina de Astronomia La Pla
 
 \clearpage
 \begin{table}
-\begin{tabular}{c|cc|cc|cc|}
-&
-\multicolumn{6}{|c|}{exp} \\
-\hline
-$M^{\exp}=$ &
-\multicolumn{2}{|c|}{$4$} &
-\multicolumn{2}{|c|}{$6$} &
-\multicolumn{2}{|c|}{$8$} \\
-$m$ &
-$a^{\exp}_m$ & $\sqrt{v^{\exp}_m}$ &
-$a^{\exp}_m$ & $\sqrt{v^{\exp}_m}$ &
-$a^{\exp}_m$ & $\sqrt{v^{\exp}_m}$ \\
-$1$ &
- $0.001$ & $0.003$ &
- $0.001$ & $0.003$ &
- $0.001$ & $0.003$ \\
-$2$ &
- $0.001$ & $0.003$ &
- $0.001$ & $0.003$ &
- $0.001$ & $0.003$ \\
-$3$ &
- $0.001$ & $0.003$ &
- $0.001$ & $0.003$ &
- $0.001$ & $0.003$ \\
-$4$ &
- $0.001$ & $0.003$ &
- $0.001$ & $0.003$ &
- $0.001$ & $0.003$ \\
-$5$ &
- $\cdots$ & $\cdots$ &
- $0.001$ & $0.003$ &
- $0.001$ & $0.003$ \\
-$6$ &
- $\cdots$ & $\cdots$ &
- $0.001$ & $0.003$ &
- $0.001$ & $0.003$ \\
-$7$ &
- $\cdots$ & $\cdots$ &
- $\cdots$ & $\cdots$ &
- $0.001$ & $0.003$ \\
-$8$ &
- $\cdots$ & $\cdots$ &
- $\cdots$ & $\cdots$ &
- $0.001$ & $0.003$ \\
-\hline
-$\sum_m a^{\exp}_m=$ &
-\multicolumn{2}{|c|}{$2.55$} &
-\multicolumn{2}{|c|}{$2.59$} &
-\multicolumn{2}{|c|}{$2.60$} \\
-badness\,$=$ &
-\multicolumn{2}{|c|}{$1.55\times 10^{-4}$} &
-\multicolumn{2}{|c|}{$1.55\times 10^{-4}$} &
-\multicolumn{2}{|c|}{$1.55\times 10^{-4}$} \\
-\end{tabular}
+\input{table_exp}
 \caption{The amplitudes and root-variances for the best
-  mixture-of-Gaussian approximations to the various profiles, for
-  different mixture sizes.  The badness and total (dimensionless) flux
-  are given for each approximation.}
+  mixture-of-Gaussian approximations to the exp profile, for
+  different mixture sizes.  The total (dimensionless) flux and the
+  badness are given for each approximation.\label{tab:exp}}
+\end{table}
+
+\clearpage
+\begin{table}
+\input{table_dev}
+\caption{Same as \tablename~\ref{tab:exp} but for the dev profile.}
+\end{table}
+
+\clearpage
+\begin{table}
+\input{table_lux}
+\caption{Same as \tablename~\ref{tab:exp} but for the lux profile.}
+\end{table}
+
+\clearpage
+\begin{table}
+\input{table_luv}
+\caption{Same as \tablename~\ref{tab:exp} but for the luv profile.\label{tab:luv}}
 \end{table}
 
 \clearpage

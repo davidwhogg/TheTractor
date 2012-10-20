@@ -22,7 +22,19 @@ MIXTURE_MODELS_FIGURES = \
 	mixtures_vs_K_lux.png \
 	mixtures_vs_K_luv.png
 
-mixture_models.pdf: $(MIXTURE_MODELS_FIGURES)
+MIXTURE_MODELS_TABLES = \
+	table_exp.tex \
+	table_ser2.tex \
+	table_ser3.tex \
+	table_dev.tex \
+	table_ser5.tex \
+	table_lux.tex \
+	table_luv.tex
+
+mixture_models.pdf: $(MIXTURE_MODELS_FIGURES) $(MIXTURE_MODELS_TABLES)
+
+table_%.tex:
+	curl -O "http://broiler.astrometry.net/~dwh2/Tractor/code/$@"
 
 %.png:
 	curl -O "http://broiler.astrometry.net/~dwh2/Tractor/code/$@"
