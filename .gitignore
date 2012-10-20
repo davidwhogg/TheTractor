@@ -4,5 +4,6 @@
 *.pdf
 code/*.png
 code/*.txt
+code/*.tex
 code/*.pickle
 documents/*/*.png
