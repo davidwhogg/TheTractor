@@ -1,4 +1,5 @@
 *~
+*.pyc
 *.aux
 *.log
 *.pdf
@@ -7,3 +8,4 @@ code/*.txt
 code/*.tex
 code/*.pickle
 documents/*/*.png
+data/dstn
