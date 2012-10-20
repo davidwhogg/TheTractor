@@ -58,22 +58,23 @@
 \altaffiltext{5}{Department of Physics, Carnegie Mellon University, Pittsburgh, PA 15213, USA}
 
 \begin{abstract}
-Exponential and de~Vaucouleurs profiles are simple and successful
-models for fitting two-dimensional images of galaxies.  One numerical
-issue encountered in this kind of fitting is the pixel rendering and
-convolution (or correlation) of the models with the telescope
-point-spread function (PSF); these operations are slow, and easy to
-get slightly wrong at small radii.  Here we exploit the realization
-that these models can be approximated to arbitrary accuracy with a
-mixture (linear superposition) of two-dimensional Gaussians.  Mixtures
-of Gaussians are fast to render and fast to affine-transform.  Most
-importantly, if you have a mixture-of-Gaussian PSF model (which we
-advocate), the PSF-convolved, affine-transformed galaxy models are
-themselves mixtures of Gaussians and therefore very fast to compute
-precisely.  We present worked examples that can be directly used in
-image fitting; we are using them ourselves.  We discuss extensions to
-S\'ersic models and applications of these ideas to three-dimensional
-deprojection.
+Exponential, de~Vaucouleurs, and S\'ersic profiles are simple and
+successful models for fitting two-dimensional images of galaxies.  One
+numerical issue encountered in this kind of fitting is the pixel
+rendering and convolution (or correlation) of the models with the
+telescope point-spread function (PSF); these operations are slow, and
+easy to get slightly wrong at small radii.  Here we exploit the
+realization that these models can be approximated to arbitrary
+accuracy with a mixture (linear superposition) of two-dimensional
+Gaussians.  Mixtures of Gaussians are fast to render and fast to
+affine-transform.  Most importantly, if you have a mixture-of-Gaussian
+PSF model (which we advocate), the PSF-convolved, affine-transformed
+galaxy models are themselves mixtures of Gaussians and therefore very
+fast to compute, integrate, and render precisely.  We present worked
+examples that can be directly used in image fitting; we are using them
+ourselves.  The mixture profiles we provide can be swapped in to
+replace the standard models in any image-fitting code; they ought to
+make that code faster at very little cost in accuracy.
 \end{abstract}
 
 Gaussians are remarkable distribution functions.  They have the
