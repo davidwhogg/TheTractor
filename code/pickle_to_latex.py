@@ -36,6 +36,8 @@ def write_table(model):
     tablefn = r"table_%s.tex" % model
     if model == "exp" or model == "lux":
         Ks = [4, 6, 8]
+    else:
+        Ks = [6, 8, 10]
     pars = [get_pars(model, K) for K in Ks]
     clist = "c|"
     for K in Ks: clist += "cc|"
@@ -71,3 +73,9 @@ def write_table(model):
 
 if __name__ == "__main__":
     write_table("exp")
+    write_table("ser2")
+    write_table("ser3")
+    write_table("dev")
+    write_table("ser5")
+    write_table("lux")
+    write_table("luv")
