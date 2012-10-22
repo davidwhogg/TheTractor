@@ -4,7 +4,7 @@
 
 % to-do
 % -----
-% - DSTN: we need *some* estimate of the speed-up this delivers to The Tractor in the abstract and in the text -- of course this is bullshit because we get to decide how precisely we were doing things prior to using the mixtures -- but we need it since it is our main point.
+% - DSTN: check sentences I say about ``ten times faster''.
 % - HOGG: can we drop the regularization in the badness and still succeeed?  If so, let's do that (and drop it in the text).
 % - DSTN: make figures showing use of the models in a real situation; see last figure
 % - HOGG: does the Lupton paper give the profiles, or should we cite the code directly?
@@ -79,8 +79,8 @@ integrate, and render precisely.  We present worked examples that can
 be directly used in image fitting; we are using them ourselves.  The
 MoG profiles we provide can be swapped in to replace the standard
 models in any image-fitting code; they sped up model fitting in our
-projects by XXX; they ought to make any code faster at very little
-cost in accuracy.
+projects by an order of magnitude; they ought to make any code faster
+at very little cost in accuracy.
 \end{abstract}
 
 Gaussians are remarkable distribution functions.  They have the
@@ -450,8 +450,18 @@ PSF-convolved profile becomes in this case just a mixture of
 Gaussian-convolved PSFs.
 
 The speed-ups that can be obtained by using MoG approximations can be
-very large... DSTN: How much did we benefit when we switched to MoGs
-in \project{The Tractor}?...
+very large.  In our image-modeling project \project{The Tractor}, we
+were PSF-convolving by rendering the profiles (especially the profile
+centers) at very high resolution (hundreds to thousands of resolution
+elements in the central pixel are necessary for good precision on the
+dev profile).  We were then convolving that high-resolution model with
+a low-resolution PSF and rendering to a low-resolution image pixel
+grid.  These expensive operations were obviated by the MoG profiles,
+which involve only rendering a small number of Gaussians at the pixel
+centers on the low-resolution pixel grid.  The MoG approximations
+saved us more than an order of magnitude in compute time, especially
+in optimization, where derivatives have to be taken with respect to
+the unconvolved model properties.
 
 In the \project{SDSS}, \project{GALFIT}, and much of our own work, the
 models that are fit are (effectively) mixtures of exp and dev or exp
