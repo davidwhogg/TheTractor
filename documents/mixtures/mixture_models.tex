@@ -4,10 +4,12 @@
 
 % to-do
 % -----
-% - URGENT: badness has another term in it -- the regularization term
+% - HOGG: can we drop the regularization in the badness and still succeeed?  If so, let's do that (and drop it in the text).
 % - DSTN: make figures showing use of the models in a real situation; see last figure
-% - does the Lupton paper give the profiles, or should we cite the code directly?
+% - HOGG: does the Lupton paper give the profiles, or should we cite the code directly?
 % - make sure the technical issues about convolution and interpolation don't exist *only* in the figure caption
+% - HOGG: need Bundy reference
+% - HOGG: make what I say about M=6 lux and M=8 lux true -- ie, edit the Tractor code!
 % - send to Jim Bosch and Kevin Bundy for comments
 
 \documentclass[12pt,pdftex,preprint]{aastex}
@@ -104,12 +106,13 @@ the noise before being observed.  Here we are going to capitalize on
 the convolution properties of mixtures of Gaussians in modeling galaxy
 morphologies in imaging data, where the true or
 high-angular-resolution intensity field is convolved with the
-point-spread function (PSF) before being observed.  This is
-particularly useful in data sets in which the PSF itself has also been
-modeled as a mixture of Gaussians, which is not uncommon (for example,
-the \project{Sloan Digital Sky Survey} imaging pipelines
-make approximate mixture-of-Gaussian PSF models for
-every imaging field; \citealt{lupton}).
+point-spread function (PSF) before being observed.  This is always
+easier with Gaussians than cuspy profiles, but is \emph{particularly}
+useful in data sets in which the PSF itself has also been modeled as a
+mixture of Gaussians, which is not uncommon (for example, the
+\project{Sloan Digital Sky Survey} imaging pipelines make approximate
+mixture-of-Gaussian PSF models for every imaging field;
+\citealt{lupton}).
 
 We are not the first in this space:  Deconvolution and modeling of
 galaxy images with mixtures of Gaussians has been done very
@@ -122,8 +125,18 @@ performance of standard galaxy image model fitting by expressing the
 standard galaxy models---the exponential and de~Vaucouleurs
 profiles---as rigid mixtures of Gaussians.
 
-... insert here a paragraph about the \emph{wisdom} of fitting these
-standard profiles: When is it scientifically okay?...
+Whenever an investigator is fitting PSF-convolved exponential or
+de~Vaucouleurs profiles, the models presented here will improve code
+performance.  That doesn't mean that doing such fitting is a Good
+Idea.  These profiles are effective models for galaxies at low
+signal-to-noise (as they are used in the \project{SDSS}) and they are
+useful templates for performing consistent photometry across
+morphologically diverse objects (as we use them in \citealt{bundy}).
+They are sometimes used to distinguish disk and bulge light; these
+uses are very prone to over-interpretation: There is no theoretical
+argument and only weak observational arguments that the
+rotation-supported parts of galaxies are always exponential and that
+the kinematically hot components are de~Vaucouleurs.
 
 The performance advantages we will obtain from using
 mixture-of-Gaussian approximations are not simply that convolution
@@ -159,9 +172,9 @@ models are small modifications of these (\citealt{lupton}); details
 below.  So our goal here is to provide replacements for these models
 in order to improve the performance of galaxy image modeling and
 analysis software.  Some of the models we present have been used
-previously in tools for precise photometry (Bundy \etal, forthcoming);
-they could also be used to speed other image-fitting systems, like the
-very successful \project{GALFIT} (\citealt{galfit}).
+previously in tools for precise photometry (\citealt{bundy}); they
+could also be used to speed other image-fitting systems, like the very
+successful \project{GALFIT} (\citealt{galfit}).
 
 Because we are thinking about two-dimensional imaging, we use here
 two-dimensional Gaussian or Normal distributions, which look like
@@ -322,7 +335,10 @@ profiles except the $\lux$ profile, for which we use $\xi_{\max}=4$.
 In practice, the badness is computed in a one-dimensional numerical
 integral but the integral is weighted in radius (weight increasing
 linearly with radius) to make it equivalent to the two-dimensional
-chi-squared.
+chi-squared.  We also add to the badness a very tiny coefficient (on
+the order of $10^{-3}$ of the best-fit badness) times the sum of the
+variances $v_m$ for regularization.  In practice, this term doesn't
+have much effect and could be dropped.
 
 Optimization (minimization) of the badness is performed by the
 \project{scipy} implementation of the BFGS algorithm, with many
@@ -339,8 +355,16 @@ root-variances rather than variances because these have units of
 half-light radii; they are simple standard deviations for the Gaussian
 components.
 
-... make recommendations: Use the $M^{\lux}=6$ lux and the $M^{\luv}=8$
-luv!...
+In our work on \project{The Tractor}, we use the $M^{\lux}=6$ lux and
+the $M^{\luv}=8$ luv profiles.  Our advice to users would be to do the
+same.  We use the lux and luv over the exp and dev partly because of
+their better behaviors numerically, and partly because they and we are
+both part of the \project{SDSS} tradition.  These---$M^{\lux}=6$ and
+$M^{\luv}=8$ are good compromises between mixture complexity ($M$) and
+quality of fit.  Also, even the best-fitting late-type and early-type
+galaxies deviate from exponential and de~Vaucouleurs fits by more than
+do these high-quality mixture-of-Gaussian approxmations; no precision
+is lost.
 
 The value of these mixture-of-Gaussian galaxy components comes when
 they are to be convolved with a PSF (usually in fact a pixel-convolved
@@ -405,7 +429,7 @@ this \documentname, to wit, that a mixture-of-Gaussian galaxy model
 (with $K$ components) yields a mixture-of-Gaussian image (with
 $[M\,K]$ components).
 
-... pegagogical figure demonstrating these operations and their results...
+DSTN... pegagogical figure demonstrating these operations and their results...
 
 ... what about mixtures of exps and devs:  No problem!...
 
@@ -431,6 +455,8 @@ Bovy,~J., Hogg,~D.~W., \& Roweis,~S., 2011, Ann. Appl. Stat., 5, 1657
 Bovy,~J., \etal, 2011, \apj, 729, 141
 \bibitem[Bovy \etal(2012)]{xdqsoz}
 Bovy,~J. \etal, 2012, \aj, 749, 41
+\bibitem[Bundy \etal(2012)]{bundy}
+Bundy,~K.~??
 \bibitem[Cappellari(2002)]{cappellari}
 Cappellari,~M., 2002, \mnras, 333, 400
 \bibitem[Ciotti \& Bertin(1999)]{ciotti}
