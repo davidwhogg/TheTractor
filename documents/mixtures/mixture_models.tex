@@ -7,10 +7,12 @@
 % - HOGG: can we drop the regularization in the badness and still succeeed?  If so, let's do that (and drop it in the text).
 % - DSTN: make figures showing use of the models in a real situation; see last figure
 % - HOGG: does the Lupton paper give the profiles, or should we cite the code directly?
-% - make sure the technical issues about convolution and interpolation don't exist *only* in the figure caption
 % - HOGG: need Bundy reference
 % - HOGG: make what I say about M=6 lux and M=8 lux true -- ie, edit the Tractor code!
-% - send to Jim Bosch and Kevin Bundy for comments
+% - HOGG: send to Lupton and Bundy for comments
+% - DSTN: can we be more specific about how Bosch is using them? I would like to cite users.
+% - DSTN: is there anyone we need to ack on your side, or granting agencies?
+% - HOGG: should we make Machine Readable Tables for PASP?
 
 \documentclass[12pt,pdftex,preprint]{aastex}
 \usepackage{amssymb,amsmath,mathrsfs}
@@ -360,11 +362,11 @@ the $M^{\luv}=8$ luv profiles.  Our advice to users would be to do the
 same.  We use the lux and luv over the exp and dev partly because of
 their better behaviors numerically, and partly because they and we are
 both part of the \project{SDSS} tradition.  These---$M^{\lux}=6$ and
-$M^{\luv}=8$ are good compromises between mixture complexity ($M$) and
-quality of fit.  Also, even the best-fitting late-type and early-type
-galaxies deviate from exponential and de~Vaucouleurs fits by more than
-do these high-quality mixture-of-Gaussian approxmations; no precision
-is lost.
+$M^{\luv}=8$---are good compromises between mixture complexity ($M$)
+and quality of fit (badness).  Also, even the best-fitting late-type
+and early-type galaxies deviate from exponential and de~Vaucouleurs
+fits by more than do these high-quality mixture-of-Gaussian
+approxmations; no precision is lost.
 
 The value of these mixture-of-Gaussian galaxy components comes when
 they are to be convolved with a PSF (usually in fact a pixel-convolved
@@ -431,10 +433,26 @@ $[M\,K]$ components).
 
 DSTN... pegagogical figure demonstrating these operations and their results...
 
-... what about mixtures of exps and devs:  No problem!...
+In the \project{SDSS}, \project{GALFIT}, and much of our own work, the
+models that are fit are (effectively) mixtures of exp and dev or exp
+and ser or lux and luv profiles.  Mixtures of profiles that are each
+themselves mixtures of Gaussians are no harder to render than either
+profile separately.  There is some book-keeping, of course, because
+each component gets affine-transformed separately before they are both
+PSF-convolved.
 
-... finally: The insights that \emph{could} be gained by interrogating
-these profile approximations in three dimensions...!
+One amusing aspect of mixture-of-Gaussian profiles has to do with
+projection from three to two dimensions.  The projection of a
+three-dimensional Gaussian is a two-dimensional Gaussian; the
+two-dimensional, rigid, circular approximations we have made for the
+ser profiles can be deprojected to rigid, spherical approximations to
+the three-dimensional profiles trivially.  The two-dimensional models
+we have started with are not accurate models of galaxies in
+detail---no galaxy follows exactly any ser profile---so deprojection
+of our approximations are are not that interesting in themselves.
+However, the general program of fitting two-dimensional sources with
+mixtures of Gaussians may have strong implications in the future for
+three-dimensional modeling and deprojection.
 
 \acknowledgements It is a pleasure to thank
       Brendon Brewer (Auckland)
