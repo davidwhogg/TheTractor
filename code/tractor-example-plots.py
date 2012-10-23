@@ -31,7 +31,7 @@ from astrometry.util.plotutils import antigray
 
 from matplotlib.ticker import FixedFormatter
 
-ps = PlotSequence('trdemo')
+ps = PlotSequence('trdemo', suffixes=['png','pdf'])
 
 ra,dec = 0.,0.
 rd = RaDecPos(ra, dec)
@@ -143,7 +143,7 @@ o = np.array([[2.,0.],[0.,0.3]])
 V2 = np.dot(R.T, np.dot(o, R))
 print 'V', V2
 
-V1 = np.eye(2) * 3.
+V1 = np.eye(2) * 2.
 print 'V', V1
 
 V3 = np.array([[4., -0.5],[-0.5,3.]])
@@ -151,8 +151,9 @@ V3 = np.array([[4., -0.5],[-0.5,3.]])
 VV = np.array([V1, V2, V3])
 print 'VV', VV
 
-psf2 = GaussianMixturePSF(np.array([0.6, 0.6, 0.6]),
-						  np.array([[0.,0.], [-.5,0.], [1.,-0.5]]), VV)
+psf2 = GaussianMixturePSF(np.array([0.6, 0.4, 0.6]),
+						  np.array([[0.,0.5], [-.5,0.], [1.,-0.5]]), VV)
+psf2.computeRadius()
 im1.psf = psf2
 
 p = psf2.getPointSourcePatch(0., 0.,)
