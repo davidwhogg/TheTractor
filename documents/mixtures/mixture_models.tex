@@ -249,11 +249,11 @@ meet below is to determine the parameters
 \{a^{\exp}_m,v^{\exp}_m\}_{m=1}^{M^{\exp}}~,~\{a^{\dev}_m,v^{\dev}_m\}_{m=1}^{M^{\dev}}
 \end{eqnarray}
 to best approximate the traditional galaxy profile functions, under
-some sensible definiton of the word ``best'', as a function of the
+some sensible definition of the word ``best'', as a function of the
 model complexity parameters (numbers of components) $(M^{\exp},
 M^{\dev})$.
 
-In addition to these, there are general S\'ersic (ser) profiles, of
+In addition to these, there are general S\'ersic (``ser'') profiles, of
 which the exp and dev profiles are special cases.  The general ser
 profile has one parameter (the ``index'') $n$:
 \begin{eqnarray}\displaystyle
@@ -365,7 +365,7 @@ both part of the \project{SDSS} tradition.  These---$M^{\lux}=6$ and
 $M^{\luv}=8$---are good compromises between mixture complexity ($M$)
 and quality of fit (badness).  Also, even the best-fitting late-type
 and early-type galaxies deviate from exponential and de~Vaucouleurs
-fits by more than do these high-quality MoG approxmations; no
+fits by more than do these high-quality MoG approximations; no
 precision is lost.
 
 The value of these MoG galaxy components comes when they are to be
@@ -435,7 +435,7 @@ modeling images, it is valuable to use the pixel-convolved PSF.  With
 this definition of the PSF, the pixelized image is the PSF-convolved
 true model evaluated at the pixel centers.  This operation is fast.
 Other definitions for the PSF (the non-pixel-convolved, for example)
-require that the user to \emph{two} convolutions, the first withe the
+require that the user do \emph{two} convolutions, the first with the
 PSF and the second with the square (or worse) pixel.  Our advice: Only
 fit and use pixel-convolved PSFs.
 
@@ -479,7 +479,7 @@ deprojected to rigid, spherical approximations to the
 three-dimensional profiles trivially.  The two-dimensional models we
 have started with are not accurate models of galaxies in detail---no
 galaxy follows exactly any ser profile---so deprojection of our
-approximations are are not that interesting in themselves.  However,
+approximations are not that interesting in themselves.  However,
 the general program of fitting two-dimensional sources with MoGs may
 have strong implications in the future for three-dimensional modeling
 and deprojection.
@@ -607,7 +607,16 @@ S{\'e}rsic,~J.~L., 1963, Boletin de la Asociacion Argentina de Astronomia La Pla
 
 \clearpage
 \begin{figure}
+\setlength{\figurewidth}{0.33\textwidth}
 % DSTN:  This should be a 3-across by 2-down figure,
+\begin{tabular}{@{}c@{}c@{}c@{}}
+\includegraphics[width=\figurewidth]{trdemo-01} &
+\includegraphics[width=\figurewidth]{trdemo-02} &
+\includegraphics[width=\figurewidth]{trdemo-03} \\
+\includegraphics[width=\figurewidth]{trdemo-06} &
+\includegraphics[width=\figurewidth]{trdemo-08} &
+\includegraphics[width=\figurewidth]{trdemo-09}
+\end{tabular}
 \caption{Demonstration of use of the profiles, or the implicit
   generative model in this \documentname.  \textsl{top-left:} The
   circular dimensionless $M^{\luv}=8$ mixture-of-Gaussian
