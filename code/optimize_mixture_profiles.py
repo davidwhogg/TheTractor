@@ -193,7 +193,10 @@ def optimize_mixture(K, pars, model, max_radius, log10_squared_deviation, badnes
 def hogg_savefig(prefix):
     fn = prefix + '.png'
     print "writing %s" % fn
-    return plt.savefig(fn)
+    plt.savefig(fn)
+    fn = prefix + '.pdf'
+    print "writing %s" % fn
+    plt.savefig(fn)
 
 def plot_mixture(pars, prefix, model, max_radius, log10_squared_deviation, badness_fn):
     x2 = np.arange(0.0005, np.sqrt(5. * max_radius), 0.001)**2 # note non-linear spacing
