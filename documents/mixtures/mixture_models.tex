@@ -173,8 +173,11 @@ below.  So our goal here is to provide replacements for these models
 in order to improve the performance of galaxy image modeling and
 analysis software.  Some of the models we present have been used
 previously in tools for precise photometry (\citealt{bundy}), and are
-being used in the Large Synoptic Survey Telescope (LSST) analysis
-codes along with shapelet representations for the PSF
+being used in the Large Synoptic Survey Telescope (LSST) prototype
+galaxy photometry pipeline (\citealt{shaw}), in which these models are
+convolved with a shapelet representation of the PSF; because shapelets
+are simply polynomial perturbations on a Gaussian, they can also be
+convolved analytically with mixture-of-Gaussian galaxy models
 (\citealt{bosch}).  These models could also be used to speed other
 image-fitting systems, like the very successful \project{GALFIT}
 (\citealt{galfit}).
@@ -525,6 +528,8 @@ Lupton,~R., Gunn,~J.~E., Ivezic,~Z., Knapp,~G.~R., Kent,~S.~M., \& Yasuda,~N., 2
 Peng,~C.~Y., Ho, L.~C., Impey,~C.~D., \& Rix,~H.-W., 2002, \aj, 124, 266
 \bibitem[S{\'e}rsic(1963)]{ser}
 S{\'e}rsic,~J.~L., 1963, Boletin de la Asociacion Argentina de Astronomia La Plata Argentina, 6, 41
+\bibitem[Shaw(2012)]{shaw}
+Shaw,~R.~A., ed., 2012, LSST Data Challenge Handbook (Version 2.0; Tucson, AZ: LSST Corp.)
 \end{thebibliography}
 
 \clearpage
