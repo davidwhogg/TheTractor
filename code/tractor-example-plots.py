@@ -31,6 +31,8 @@ from astrometry.util.plotutils import antigray
 
 from matplotlib.ticker import FixedFormatter
 
+plt.figure(figsize=(4,4))
+
 ps = PlotSequence('trdemo', suffixes=['png','pdf'])
 
 ra,dec = 0.,0.
@@ -70,17 +72,23 @@ mod = np.maximum(mod, 1e-42)
 logmrange = np.max(np.log10(mod)) - np.min(np.log10(mod))
 logmrange = 6.
 
-def plog(mod):
+def clfpos():
 	plt.clf()
+	plt.gca().set_position([0.01, 0.01, 0.98, 0.98])
+
+def plog(mod):
+	clfpos()
 	lm = np.log10(mod + 1e-42)
 	mx = lm.max()
 	plt.imshow(lm-mx, vmax=0., vmin=-logmrange,
 			   extent=galext, **ima)
 	#plt.gray()
-	ticks = np.arange(-6, 1)
-	plt.colorbar(ticks=ticks,
-				 format=FixedFormatter(
-					 ['$10^{%i}$'%i for i in ticks[:-1]] + ['$1$']))
+	#ticks = np.arange(-6, 1)
+	#plt.colorbar(ticks=ticks,
+	#			 format=FixedFormatter(
+	#				 ['$10^{%i}$'%i for i in ticks[:-1]] + ['$1$']))
+	plt.xticks([])
+	plt.yticks([])
 	ps.savefig()
 
 plt.clf()
@@ -103,21 +111,11 @@ print G.shape
 dradec = np.dot(G, uv.T).T
 print 'G', G
 print dradec.shape
-#S = 4.
-#dradec *= S
 dra  = dradec[:,0]
 ddec = dradec[:,1]
-# xy = np.array([wcs1.positionToPixel(RaDecPos(ra + idra, dec + iddec))
-# 			   for idra,iddec in zip(dra,ddec)])
-# xx,yy = xy[:,0], xy[:,1]
-# 
-# plt.clf()
-# plt.plot(xx, yy, 'k-')
-# plt.axis(ax)
-# ps.savefig()
 
 S = 3600.
-plt.clf()
+clfpos()
 plt.plot(dra * S, ddec * S, 'k-')
 for i in [i0, i90]:
 	L = 0.3/4
@@ -127,6 +125,8 @@ for i in [i0, i90]:
 plt.axvline(0., color='k', alpha=0.3)
 plt.axhline(0., color='k', alpha=0.3)
 plt.axis('equal')
+plt.xticks([])
+plt.yticks([])
 ps.savefig()
 
 mod0 = mod
@@ -190,12 +190,14 @@ print 'PSF3:', psf3
 p = psf3.getPointSourcePatch(0., 0.)
 print 'psf3 patch', p
 
-plt.clf()
+clfpos()
 ext = p.getExtent()
 ext = [x-0.5 for x in ext]
 plt.imshow(p.patch, extent=ext, **ima)
 plt.axis([x * S for x in ax0])
-plt.colorbar()
+#plt.colorbar()
+plt.xticks([])
+plt.yticks([])
 ps.savefig()
 
 plt.clf()
@@ -210,6 +212,12 @@ tanwcs.scale(S)
 wcs3 = FitsWcs(tanwcs)
 im1.wcs = wcs3
 im1.psf = psf3
+
+nre = 4.
+pixscale = re * 8. * nre / float(W) / 3600.
+wcs4 = FitsWcs(Tan(ra, dec, W/2. + 0.5, H/2. + 0.5,
+				   pixscale, 0., 0., pixscale, W, H))
+im1.wcs = wcs4
 
 mod = tractor.getModelImage(0)
 plog(mod)
