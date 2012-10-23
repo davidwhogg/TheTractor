@@ -1,16 +1,16 @@
-% This file is part of the Tractor project.
-% Copyright 2012 David W. Hogg (NYU) and Dustin Lang (Princeton->CMU).
+% This file is part of The Tractor.
+% Copyright 2012 David W. Hogg (NYU) and Dustin Lang (Princeton, CMU).
 % All rights reserved.
 
 % to-do
 % -----
-% - HOGG: can we drop the regularization in the badness and still succeeed?  If so, let's do that (and drop it in the text).
 % - HOGG: need Bundy reference
+% - HOGG: send to Rix and Peng and Lupton and Bundy for comments
+% - HOGG: submit!
+% - HOGG: can we drop the regularization in the badness and still succeeed?  If so, let's do that (and drop it in the text).
 % - HOGG: make what I say about M=6 lux and M=8 lux true -- ie, edit the Tractor code!
-% - HOGG: send to Lupton and Bundy for comments
 % - DSTN: can we be more specific about how Bosch is using them? I would like to cite users.
-% - HOGG: Cite paper mentioned by Bosch?
-% - HOGG: should we make Machine Readable Tables for PASP?
+% - HOGG: should we make Machine Readable Tables for PASP?  Yes.
 
 \documentclass[12pt,pdftex,preprint]{aastex}
 \usepackage{amssymb,amsmath,mathrsfs}
@@ -428,7 +428,11 @@ ellipticity) information about the galaxy.  The $\dev$, $\luv$, and
 $\lux$ cases are all similar.  Note the important and key result of
 this \documentname, to wit, that a MoG galaxy model (with $M$
 components) convolved with a MoG PSF model (with $K$ components)
-yields a MoG model image (with $[M\,K]$ components).
+yields a MoG model image (with $[M\,K]$ components).  In
+\figurename~\ref{fig:example} we show how we are using these MoG
+approximations in \project{The Tractor}---a generative modeling
+framework for measuring astronomical objects---to render PSF-convolved
+galaxy images.
 
 In the above we said ``pixel-convolved PSF''.  In every context, when
 modeling images, it is valuable to use the pixel-convolved PSF.  With
@@ -438,11 +442,6 @@ Other definitions for the PSF (the non-pixel-convolved, for example)
 require that the user do \emph{two} convolutions, the first with the
 PSF and the second with the square (or worse) pixel.  Our advice: Only
 fit and use pixel-convolved PSFs.
-
-In \figurename~\ref{fig:example} we show how we are using these MoG
-approximations in \project{The Tractor}---a generative modeling
-framework for measuring astronomical objects---to render PSF-convolved
-galaxy images.
 
 If your PSF is not in MoG form, it is still the case that convolution
 of a MoG approximation to a dev (say) profile will in general be
@@ -510,7 +509,7 @@ Bovy,~J., \etal, 2011, \apj, 729, 141
 \bibitem[Bovy \etal(2012)]{xdqsoz}
 Bovy,~J. \etal, 2012, \aj, 749, 41
 \bibitem[Bundy \etal(2012)]{bundy}
-Bundy,~K.~??
+Bundy,~K. \etal, \aj, in preparation (arXiv:HOGG)
 \bibitem[Cappellari(2002)]{cappellari}
 Cappellari,~M., 2002, \mnras, 333, 400
 \bibitem[Ciotti \& Bertin(1999)]{ciotti}
