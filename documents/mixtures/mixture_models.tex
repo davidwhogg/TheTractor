@@ -1,16 +1,16 @@
-% This file is part of the Tractor project.
-% Copyright 2012 David W. Hogg (NYU) and Dustin Lang (Princeton->CMU).
+% This file is part of The Tractor.
+% Copyright 2012 David W. Hogg (NYU) and Dustin Lang (Princeton, CMU).
 % All rights reserved.
 
 % to-do
 % -----
+% - HOGG: go through remining github issues and close or fix
+% - HOGG: send to Rix and Peng and Lupton and Bundy for comments
+% - HOGG: submit!
 % - HOGG: can we drop the regularization in the badness and still succeeed?  If so, let's do that (and drop it in the text).
-% - HOGG: need Bundy reference
 % - HOGG: make what I say about M=6 lux and M=8 lux true -- ie, edit the Tractor code!
-% - HOGG: send to Lupton and Bundy for comments
 % - DSTN: can we be more specific about how Bosch is using them? I would like to cite users.
-% - HOGG: Cite paper mentioned by Bosch?
-% - HOGG: should we make Machine Readable Tables for PASP?
+% - HOGG: should we make Machine Readable Tables for PASP?  Yes.
 
 \documentclass[12pt,pdftex,preprint]{aastex}
 \usepackage{amssymb,amsmath,mathrsfs}
@@ -154,10 +154,10 @@ as they usually are.
 Along those lines, it is important in any image-modeling situation to
 think of the PSF as the \emph{pixel-convolved} point-spread function.
 Under this choice, synthesis of a pixelized image involves only
-convolution with the PSF and sampling at the pixel centers.  That is,
-image synthesis (returned to at the end of this \documentname)
-consists of PSF convolution (an arithmetic operation on the two MoGs)
-followed by sampling (evaluation of the resulting MoG at the pixel
+convolution with the PSF and evaluation at the pixel centers.  That
+is, image synthesis (returned to at the end of this \documentname)
+consists of PSF convolution---an arithmetic operation on the two
+MoGs---followed by evaluation of the resulting MoG at the pixel
 centers).
 
 We need good performance in two-dimensional image synthesis (for
@@ -431,7 +431,11 @@ ellipticity) information about the galaxy.  The $\dev$, $\luv$, and
 $\lux$ cases are all similar.  Note the important and key result of
 this \documentname, to wit, that a MoG galaxy model (with $M$
 components) convolved with a MoG PSF model (with $K$ components)
-yields a MoG model image (with $[M\,K]$ components).
+yields a MoG model image (with $[M\,K]$ components).  In
+\figurename~\ref{fig:example} we show how we are using these MoG
+approximations in \project{The Tractor}---a generative modeling
+framework for measuring astronomical objects---to render PSF-convolved
+galaxy images.
 
 In the above we said ``pixel-convolved PSF''.  In every context, when
 modeling images, it is valuable to use the pixel-convolved PSF.  With
@@ -441,11 +445,6 @@ Other definitions for the PSF (the non-pixel-convolved, for example)
 require that the user do \emph{two} convolutions, the first with the
 PSF and the second with the square (or worse) pixel.  Our advice: Only
 fit and use pixel-convolved PSFs.
-
-In \figurename~\ref{fig:example} we show how we are using these MoG
-approximations in \project{The Tractor}---a generative modeling
-framework for measuring astronomical objects---to render PSF-convolved
-galaxy images.
 
 If your PSF is not in MoG form, it is still the case that convolution
 of a MoG approximation to a dev (say) profile will in general be
@@ -513,7 +512,7 @@ Bovy,~J., \etal, 2011, \apj, 729, 141
 \bibitem[Bovy \etal(2012)]{xdqsoz}
 Bovy,~J. \etal, 2012, \aj, 749, 41
 \bibitem[Bundy \etal(2012)]{bundy}
-Bundy,~K.~??
+Bundy,~K. \etal, \aj, in press
 \bibitem[Cappellari(2002)]{cappellari}
 Cappellari,~M., 2002, \mnras, 333, 400
 \bibitem[Ciotti \& Bertin(1999)]{ciotti}
@@ -554,10 +553,10 @@ Shaw,~R.~A., ed., 2012, LSST Data Challenge Handbook (Version 2.0; Tucson, AZ: L
 
 \clearpage
 \begin{figure}
-\includegraphics[width=\figurewidth]{exp_K06_MR08_profile.png}%
-\includegraphics[width=\figurewidth]{exp_K06_MR08_profile_log.png}\\
-\includegraphics[width=\figurewidth]{exp_K06_MR08_residual.png}%
-\includegraphics[width=\figurewidth]{exp_K06_MR08_fractional_log.png}
+\includegraphics[width=\figurewidth]{exp_K06_MR08_profile.pdf}%
+\includegraphics[width=\figurewidth]{exp_K06_MR08_profile_log.pdf}\\
+\includegraphics[width=\figurewidth]{exp_K06_MR08_residual.pdf}%
+\includegraphics[width=\figurewidth]{exp_K06_MR08_fractional_log.pdf}
 \caption{\textsl{top-left:} The true exp profile (thin black line),
   the best $M^{\exp}=6$ mixture-of-Gaussian approximation (thick grey
   line), and the component Gaussians (multiplied by their
@@ -571,30 +570,30 @@ Shaw,~R.~A., ed., 2012, LSST Data Challenge Handbook (Version 2.0; Tucson, AZ: L
 
 \clearpage
 \begin{figure}
-\includegraphics[width=\figurewidth]{dev_K10_MR08_profile.png}%
-\includegraphics[width=\figurewidth]{dev_K10_MR08_profile_log.png}\\
-\includegraphics[width=\figurewidth]{dev_K10_MR08_residual.png}%
-\includegraphics[width=\figurewidth]{dev_K10_MR08_fractional_log.png}
+\includegraphics[width=\figurewidth]{dev_K10_MR08_profile.pdf}%
+\includegraphics[width=\figurewidth]{dev_K10_MR08_profile_log.pdf}\\
+\includegraphics[width=\figurewidth]{dev_K10_MR08_residual.pdf}%
+\includegraphics[width=\figurewidth]{dev_K10_MR08_fractional_log.pdf}
 \caption{The dev profile and the best $M^{\dev}=10$ approximation.
   The panels are equivalent to those in \figurename~\ref{fig:exp}.}
 \end{figure}
 
 \clearpage
 \begin{figure}
-\includegraphics[width=\figurewidth]{lux_K06_MR04_profile.png}%
-\includegraphics[width=\figurewidth]{lux_K06_MR04_profile_log.png}\\
-\includegraphics[width=\figurewidth]{luv_K08_MR08_profile.png}%
-\includegraphics[width=\figurewidth]{luv_K08_MR08_profile_log.png}
+\includegraphics[width=\figurewidth]{lux_K06_MR04_profile.pdf}%
+\includegraphics[width=\figurewidth]{lux_K06_MR04_profile_log.pdf}\\
+\includegraphics[width=\figurewidth]{luv_K08_MR08_profile.pdf}%
+\includegraphics[width=\figurewidth]{luv_K08_MR08_profile_log.pdf}
 \caption{The lux and luv profiles and approximations.  The panels are
   equivalent to those in the top-row of \figurename~\ref{fig:exp}.}
 \end{figure}
 
 \clearpage
 \begin{figure}
-\includegraphics[width=\figurewidth]{ser2_K10_MR08_profile_log.png}%
-\includegraphics[width=\figurewidth]{ser3_K10_MR08_profile_log.png}\\
-\includegraphics[width=\figurewidth]{ser5_K10_MR08_profile_log.png}%
-\includegraphics[width=\figurewidth]{mixtures_vs_model_K10.png}
+\includegraphics[width=\figurewidth]{ser2_K10_MR08_profile_log.pdf}%
+\includegraphics[width=\figurewidth]{ser3_K10_MR08_profile_log.pdf}\\
+\includegraphics[width=\figurewidth]{ser5_K10_MR08_profile_log.pdf}%
+\includegraphics[width=\figurewidth]{mixtures_vs_model_K10.pdf}
 \caption{Three ser profiles---with $n=2$, $3$, and $5$---and
   approximations.  The top-left, top-right, and bottom-left panels are
   equivalent to those in the top-right of \figurename~\ref{fig:exp}.
@@ -604,10 +603,10 @@ Shaw,~R.~A., ed., 2012, LSST Data Challenge Handbook (Version 2.0; Tucson, AZ: L
 
 \clearpage
 \begin{figure}
-\includegraphics[width=\figurewidth]{mixtures_vs_K_exp.png}%
-\includegraphics[width=\figurewidth]{mixtures_vs_K_dev.png}\\
-\includegraphics[width=\figurewidth]{mixtures_vs_K_lux.png}%
-\includegraphics[width=\figurewidth]{mixtures_vs_K_luv.png}
+\includegraphics[width=\figurewidth]{mixtures_vs_K_exp}%
+\includegraphics[width=\figurewidth]{mixtures_vs_K_dev}\\
+\includegraphics[width=\figurewidth]{mixtures_vs_K_lux}%
+\includegraphics[width=\figurewidth]{mixtures_vs_K_luv}
 \caption{Comparisons of approximations.  \textsl{top-left:} The
   dependence of amplitude $a^{\exp}_m$ and root-variance
   $\sqrt{v^{\exp}_m}$ on $M^{\exp}$ for the exp profile.
@@ -641,8 +640,8 @@ Shaw,~R.~A., ed., 2012, LSST Data Challenge Handbook (Version 2.0; Tucson, AZ: L
   \textsl{bottom-right:} The sheared luv convolved with the PSF, but
   now shown on a realistic pixel grid.  Because by assumption the PSF
   is a pixel-convolved PSF, the representation on the realistic grid
-  is found simply by interpolating to the pixel centers the convolved
-  high-resolution model.\label{fig:example}}
+  is found simply by interpolating to the pixel centers the
+  mixture-component Gaussians.\label{fig:example}}
 \end{figure}
 
 \end{document}

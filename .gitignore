@@ -8,4 +8,5 @@ code/*.txt
 code/*.tex
 code/*.pickle
 documents/*/*.png
+documents/*/*.pdf
 data/dstn
