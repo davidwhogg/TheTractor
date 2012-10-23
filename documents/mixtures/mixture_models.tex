@@ -1,17 +1,14 @@
 % This file is part of the Tractor project.
-% Copyright 2012 David W. Hogg (NYU) and Dustin Lang (Princeton).
+% Copyright 2012 David W. Hogg (NYU) and Dustin Lang (Princeton->CMU).
 % All rights reserved.
 
 % to-do
 % -----
-% - DSTN: check sentences I say about ``ten times faster''.
 % - HOGG: can we drop the regularization in the badness and still succeeed?  If so, let's do that (and drop it in the text).
-% - DSTN: make figures showing use of the models in a real situation; see last figure
 % - HOGG: need Bundy reference
 % - HOGG: make what I say about M=6 lux and M=8 lux true -- ie, edit the Tractor code!
 % - HOGG: send to Lupton and Bundy for comments
 % - DSTN: can we be more specific about how Bosch is using them? I would like to cite users.
-% - DSTN: is there anyone we need to ack on your side, or granting agencies?
 % - HOGG: Cite paper mentioned by Bosch?
 % - HOGG: should we make Machine Readable Tables for PASP?
 
@@ -57,10 +54,10 @@
 \author{David W. Hogg\altaffilmark{1,2,3} \&
         Dustin Lang\altaffilmark{4,5}}
 \altaffiltext{1}{To whom correspondence should be addressed; \texttt{david.hogg@nyu.edu}}
-\altaffiltext{2}{Center for Cosmology and Particle Physics, Department of Phyiscs, New York University, 4 Washington Place, New York, NY 10003, USA}
+\altaffiltext{2}{Center for Cosmology and Particle Physics, Department of Physics, New York University, 4 Washington Place, New York, NY 10003, USA}
 \altaffiltext{3}{Max-Planck-Institut f\"ur Astronomie, K\"onigstuhl 17, D-69117 Heidelberg, Germany}
 \altaffiltext{4}{Princeton University Observatory, Princeton, NJ 08544, USA}
-\altaffiltext{5}{Department of Physics, Carnegie Mellon University, Pittsburgh, PA 15213, USA}
+\altaffiltext{5}{McWilliams Center for Cosmology, Carnegie Mellon University, Pittsburgh, PA 15213, USA}
 
 \begin{abstract}
 Exponential, de~Vaucouleurs, and S\'ersic profiles are simple and
@@ -175,9 +172,12 @@ models are small modifications of these (\citealt{lupton}); details
 below.  So our goal here is to provide replacements for these models
 in order to improve the performance of galaxy image modeling and
 analysis software.  Some of the models we present have been used
-previously in tools for precise photometry (\citealt{bundy}); they
-could also be used to speed other image-fitting systems, like the very
-successful \project{GALFIT} (\citealt{galfit}).
+previously in tools for precise photometry (\citealt{bundy}), and are
+being used in the Large Synoptic Survey Telescope (LSST) analysis
+codes along with shapelet representations for the PSF
+(\citealt{bosch}).  These models could also be used to speed other
+image-fitting systems, like the very successful \project{GALFIT}
+(\citealt{galfit}).
 
 Because we are thinking about two-dimensional imaging, we use here
 two-dimensional Gaussian or Normal distributions, which look like
@@ -439,7 +439,10 @@ require that the user do \emph{two} convolutions, the first with the
 PSF and the second with the square (or worse) pixel.  Our advice: Only
 fit and use pixel-convolved PSFs.
 
-DSTN... In \figurename~\ref{fig:example} we show...
+In \figurename~\ref{fig:example} we show how we are using these MoG
+approximations in \project{The Tractor}---a generative modeling
+framework for measuring astronomical objects---to render PSF-convolved
+galaxy images.
 
 If your PSF is not in MoG form, it is still the case that convolution
 of a MoG approximation to a dev (say) profile will in general be
@@ -485,7 +488,8 @@ have strong implications in the future for three-dimensional modeling
 and deprojection.
 
 \acknowledgements It is a pleasure to thank
-      Brendon Brewer (Auckland)
+      Brendon Brewer (Auckland),
+      Jim Bosch (Princeton),
   and Kevin Bundy (IPMU)
 for valuable comments.  This work was supported in part by NASA (grant
 NNX12AI50G) and the NSF (grant IIS-1124794).  All the results shown in
@@ -497,6 +501,8 @@ from author DWH upon request.
 Bendinelli,~O., 1991, \apj, 366, 599
 \bibitem[Bendinelli \& Parmeggiani(1995)]{bendinelli2}
 Bendinelli,~O. \& Parmeggiani,~G., 1995, \aj, 109, 572
+\bibitem[Bosch(2010)]{bosch}
+Bosch,~J., 2010, \aj, 140, 870
 \bibitem[Bovy \etal(2011a)]{xd}
 Bovy,~J., Hogg,~D.~W., \& Roweis,~S., 2011, Ann. Appl. Stat., 5, 1657
 \bibitem[Bovy \etal(2011b)]{xdqso}
@@ -608,7 +614,6 @@ S{\'e}rsic,~J.~L., 1963, Boletin de la Asociacion Argentina de Astronomia La Pla
 \clearpage
 \begin{figure}
 \setlength{\figurewidth}{0.33\textwidth}
-% DSTN:  This should be a 3-across by 2-down figure,
 \begin{tabular}{@{}c@{}c@{}}
 \includegraphics[width=\figurewidth]{trdemo-01} &
 \includegraphics[width=\figurewidth]{trdemo-02} \\

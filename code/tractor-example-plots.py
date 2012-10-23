@@ -87,6 +87,7 @@ def plog(mod):
 	#plt.colorbar(ticks=ticks,
 	#			 format=FixedFormatter(
 	#				 ['$10^{%i}$'%i for i in ticks[:-1]] + ['$1$']))
+	#plt.colorbar()
 	plt.xticks([])
 	plt.yticks([])
 	ps.savefig()
@@ -219,9 +220,10 @@ wcs4 = FitsWcs(Tan(ra, dec, W/2. + 0.5, H/2. + 0.5,
 				   pixscale, 0., 0., pixscale, W, H))
 im1.wcs = wcs4
 
+logmrange = 3
+
 mod = tractor.getModelImage(0)
 plog(mod)
-
 
 H,W = H/S, W/S
 print 'Pix size', W
