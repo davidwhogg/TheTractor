@@ -1,13 +1,16 @@
 % This file is part of the Tractor project.
-% Copyright 2012 David W. Hogg (NYU) and Dustin Lang (Princeton).
+% Copyright 2012 David W. Hogg (NYU) and Dustin Lang (Princeton->CMU).
 % All rights reserved.
 
 % to-do
 % -----
-% - URGENT: badness has another term in it -- the regularization term
-% - DSTN: make figures showing use of the models in a real situation; see last figure
-% - does the Lupton paper give the profiles, or should we cite the code directly?
-% - send to Jim Bosch and Kevin Bundy for comments
+% - HOGG: can we drop the regularization in the badness and still succeeed?  If so, let's do that (and drop it in the text).
+% - HOGG: need Bundy reference
+% - HOGG: make what I say about M=6 lux and M=8 lux true -- ie, edit the Tractor code!
+% - HOGG: send to Lupton and Bundy for comments
+% - DSTN: can we be more specific about how Bosch is using them? I would like to cite users.
+% - HOGG: Cite paper mentioned by Bosch?
+% - HOGG: should we make Machine Readable Tables for PASP?
 
 \documentclass[12pt,pdftex,preprint]{aastex}
 \usepackage{amssymb,amsmath,mathrsfs}
@@ -51,10 +54,10 @@
 \author{David W. Hogg\altaffilmark{1,2,3} \&
         Dustin Lang\altaffilmark{4,5}}
 \altaffiltext{1}{To whom correspondence should be addressed; \texttt{david.hogg@nyu.edu}}
-\altaffiltext{2}{Center for Cosmology and Particle Physics, Department of Phyiscs, New York University, 4 Washington Place, New York, NY 10003, USA}
+\altaffiltext{2}{Center for Cosmology and Particle Physics, Department of Physics, New York University, 4 Washington Place, New York, NY 10003, USA}
 \altaffiltext{3}{Max-Planck-Institut f\"ur Astronomie, K\"onigstuhl 17, D-69117 Heidelberg, Germany}
 \altaffiltext{4}{Princeton University Observatory, Princeton, NJ 08544, USA}
-\altaffiltext{5}{Department of Physics, Carnegie Mellon University, Pittsburgh, PA 15213, USA}
+\altaffiltext{5}{McWilliams Center for Cosmology, Carnegie Mellon University, Pittsburgh, PA 15213, USA}
 
 \begin{abstract}
 Exponential, de~Vaucouleurs, and S\'ersic profiles are simple and
@@ -65,15 +68,16 @@ telescope point-spread function (PSF); these operations are slow, and
 easy to get slightly wrong at small radii.  Here we exploit the
 realization that these models can be approximated to arbitrary
 accuracy with a mixture (linear superposition) of two-dimensional
-Gaussians.  Mixtures of Gaussians are fast to render and fast to
-affine-transform.  Most importantly, if you have a mixture-of-Gaussian
-PSF model (which we advocate), the PSF-convolved, affine-transformed
-galaxy models are themselves mixtures of Gaussians and therefore very
-fast to compute, integrate, and render precisely.  We present worked
-examples that can be directly used in image fitting; we are using them
-ourselves.  The mixture profiles we provide can be swapped in to
-replace the standard models in any image-fitting code; they ought to
-make that code faster at very little cost in accuracy.
+Gaussians (MoGs).  MoGs are fast to render and fast to
+affine-transform.  Most importantly, if you have a MoG model for the
+pixel-convolved PSF, the PSF-convolved, affine-transformed galaxy
+models are themselves MoGs and therefore very fast to compute,
+integrate, and render precisely.  We present worked examples that can
+be directly used in image fitting; we are using them ourselves.  The
+MoG profiles we provide can be swapped in to replace the standard
+models in any image-fitting code; they sped up model fitting in our
+projects by an order of magnitude; they ought to make any code faster
+at essentially no cost in precision.
 \end{abstract}
 
 Gaussians are remarkable distribution functions.  They have the
@@ -95,56 +99,66 @@ in any number of dimensions to any reasonable precision.  Convolution
 represented by a mixture of multivariate Gaussians creates a new
 mixture of Gaussians with simply adjusted amplitudes, means, and
 variance tensors.  The ubiquity of convolution operations in astronomy
-suggests the widespread adoption of mixture-of-Gaussian modeling.  We
-have pioneered this in the area of distribution modeling in large
-numbers of dimensions (\citealt{xd, xdqso, xdqsoz}), where convolution
-occurs because the true or noise-free distribution is convolved with
-the noise before being observed.  Here we are going to capitalize on
-the convolution properties of mixtures of Gaussians in modeling galaxy
+suggests the widespread adoption of mixture-of-Gaussian (MoG)
+modeling.  We have pioneered this in the area of distribution modeling
+in large numbers of dimensions (\citealt{xd, xdqso, xdqsoz}), where
+convolution occurs because the true or noise-free distribution is
+convolved with the noise before being observed.  Here we are going to
+capitalize on the convolution properties of MoGs in modeling galaxy
 morphologies in imaging data, where the true or
 high-angular-resolution intensity field is convolved with the
-point-spread function (PSF) before being observed.  This is
-particularly useful in data sets in which the PSF itself has also been
-modeled as a mixture of Gaussians, which is not uncommon (for example,
-the \project{Sloan Digital Sky Survey} imaging pipelines
-make approximate mixture-of-Gaussian PSF models for
+point-spread function (PSF) before being observed.  This is always
+easier with Gaussians than cuspy profiles, but is \emph{particularly}
+useful in data sets in which the PSF itself has also been modeled as a
+MoG, which is not uncommon (for example, the \project{Sloan Digital
+  Sky Survey} imaging pipelines make approximate MoG PSF models for
 every imaging field; \citealt{lupton}).
 
-We are not the first in this space:  Deconvolution and modeling of
-galaxy images with mixtures of Gaussians has been done very
-successfully before (for example, \citealt{bendinelli, emsellem,
-  bendinelli2, cappellari}).  However, the idea behind those projects
-was to use the mixture of Gaussians to provide a very free form for
-the isophotes or morphologies of resolved galaxies or other complex
-scenes.  Here our goals are very limited: We want to improve the
-performance of standard galaxy image model fitting by expressing the
-standard galaxy models---the exponential and de~Vaucouleurs
-profiles---as rigid mixtures of Gaussians.
+We are not the first in this space: Deconvolution and modeling of
+galaxy images with MoGs has been done very successfully before (for
+example, \citealt{bendinelli, emsellem, bendinelli2, cappellari}; they
+use the name ``multi-Gaussian expansion'' or MGE).  However, the idea
+behind those projects was to use the MoGs to provide a very free form
+for the isophotes or morphologies of resolved galaxies or other
+complex scenes.  Here our goals are very limited: We want to improve
+the performance of standard galaxy image model fitting by expressing
+the standard galaxy models---the exponential and de~Vaucouleurs
+profiles---as rigid MoGs.
 
-... insert here a paragraph about the \emph{wisdom} of fitting these
-standard profiles: When is it scientifically okay?...
+Whenever an investigator is fitting PSF-convolved exponential or
+de~Vaucouleurs profiles, the models presented here will improve code
+performance.  That doesn't mean that doing such fitting is a Good
+Idea.  These profiles are effective models for galaxies at low
+signal-to-noise (as they are used in the \project{SDSS}) and they are
+useful templates for performing consistent photometry across
+morphologically diverse objects (as we use them in \citealt{bundy}).
+They are sometimes used to distinguish disk and bulge light; these
+uses are very prone to over-interpretation: There is no theoretical
+argument and only weak observational arguments that the
+rotation-supported parts of galaxies are always exponential and that
+the kinematically hot components are de~Vaucouleurs.
 
-The performance advantages we will obtain from using
-mixture-of-Gaussian approximations are not simply that convolution
-itself is trivial.  The standard unconvolved galaxy models, especially
-the de~Vaucouleurs and S\'ersic models (\citealt{dev}, \citealt{ser}),
-are very ill-behaved near the galaxy center.  Rendering these profiles
-precisely near the center can be very challenging numerically.  In
-addition, most of the rendering time is spent at very small radii,
-where PSF convolution is going to erase all structure anyway.  That
-is, a mixture-of-Gaussians description of the de~Vaucouleurs profile
-saves time both in rendering \emph{and} in PSF convolution; it
-produces profiles that are approximate but very high performance when
-all real uses of the profiles are PSF-convolved, as they usually are.
+The performance advantages we will obtain from using MoG
+approximations are not simply that convolution itself is trivial.  The
+standard unconvolved galaxy models, especially the de~Vaucouleurs and
+S\'ersic models (\citealt{dev}, \citealt{ser}), are very ill-behaved
+near the galaxy center.  Rendering these profiles precisely near the
+center can be very challenging numerically.  In addition, most of the
+rendering time is spent at very small radii, where PSF convolution is
+going to erase all structure anyway.  That is, a MoG description of
+the de~Vaucouleurs profile saves time both in rendering \emph{and} in
+PSF convolution; it produces profiles that are approximate but very
+high performance when all real uses of the profiles are PSF-convolved,
+as they usually are.
 
 Along those lines, it is important in any image-modeling situation to
 think of the PSF as the \emph{pixel-convolved} point-spread function.
 Under this choice, synthesis of a pixelized image involves only
 convolution with the PSF and sampling at the pixel centers.  That is,
 image synthesis (returned to at the end of this \documentname)
-consists of PSF convolution (an arithmetic operation on the two
-mixtures of Gaussians) followed by sampling (evaluation of the
-resulting mixture at the pixel centers).
+consists of PSF convolution (an arithmetic operation on the two MoGs)
+followed by sampling (evaluation of the resulting MoG at the pixel
+centers).
 
 We need good performance in two-dimensional image synthesis (for
 fitting) because, with \thetractor\ (Lang \etal, forthcoming), we are
@@ -158,9 +172,12 @@ models are small modifications of these (\citealt{lupton}); details
 below.  So our goal here is to provide replacements for these models
 in order to improve the performance of galaxy image modeling and
 analysis software.  Some of the models we present have been used
-previously in tools for precise photometry (Bundy \etal, forthcoming);
-they could also be used to speed other image-fitting systems, like the
-very successful \project{GALFIT} (\citealt{galfit}).
+previously in tools for precise photometry (\citealt{bundy}), and are
+being used in the Large Synoptic Survey Telescope (LSST) analysis
+codes along with shapelet representations for the PSF
+(\citealt{bosch}).  These models could also be used to speed other
+image-fitting systems, like the very successful \project{GALFIT}
+(\citealt{galfit}).
 
 Because we are thinking about two-dimensional imaging, we use here
 two-dimensional Gaussian or Normal distributions, which look like
@@ -171,11 +188,11 @@ two-dimensional Gaussian or Normal distributions, which look like
 where $\pos$ and $\mean$ are two-dimensional vectors (usually in the
 focal plane or on the sky or something like that), and $\var$ is a
 symmetric $2\times 2$ variance tensor or matrix, and implicitly the
-vectors are column vectors.  A \emph{mixture of Gaussians} is a linear
+vectors are column vectors.  A mixture of Gaussians is a linear
 superposition of Gaussians.  Any positive two-dimensional function
 with finite support and finite total integral---including as a special
 case any two-dimensional probability distribution function---can be
-represented as a mixture of Gaussians to arbitrary accuracy; that is
+represented as a MoG to arbitrary accuracy; that is
 \begin{eqnarray}
 p(\pos) &\approx& \sum_{k=1}^K a_k\,\normal(\pos\given\mean_k,\var_k)
 \\
@@ -184,7 +201,7 @@ p(\pos) &\approx& \sum_{k=1}^K a_k\,\normal(\pos\given\mean_k,\var_k)
 \end{eqnarray}
 where $p(\pos)$ is any probability distribution of a two-dimensional
 quantity $\pos$, the $\approx$ symbol implies approximation, $K$ is
-the number of Gaussians used in the mixture, and the $K$ Gaussians
+the number of Gaussians used in the MoG, and the $K$ Gaussians
 have amplitudes $a_k$, means $\mean_k$, and variance tensors $\var_k$.
 The sum-to-one condition ensures that the probability distribution
 approximation is properly normalized.
@@ -202,8 +219,7 @@ $\alpha^{\exp}$ is a dimensionless inverse length set to ensure that
 the profile has unit half-light radius.  The position $\spos$ is
 dimensionless because it parameterizes the unit-size dimensionless
 function.  We seek the best (where ``best'' will be defined below)
-$M^{\exp}$-Gaussian mixture (where $M^{\exp}$ is an integer)
-approximation
+$M^{\exp}$-Gaussian MoG (where $M^{\exp}$ is an integer) approximation
 \begin{eqnarray}\displaystyle
 Q^{\exp}(\spos) &\approx& \sum_{m=1}^{M^{\exp}} a^{\exp}_m\,\normal(\spos\given\zero,\var^{\exp}_m)
 \\
@@ -211,7 +227,7 @@ Q^{\exp}(\spos) &\approx& \sum_{m=1}^{M^{\exp}} a^{\exp}_m\,\normal(\spos\given\
 \quad ,
 \end{eqnarray}
 where all of the means are exactly zero and all of the variances
-$\var^{\exp}_m$ in the mixture can be represented as a scalar
+$\var^{\exp}_m$ in the MoG can be represented as a scalar
 $v^{\exp}_m$ multiplied by the identity matrix $\identity$
 because we are requiring this dimensionless function to be precisely
 circular (so every component is itself circular and concentric).
@@ -233,11 +249,11 @@ meet below is to determine the parameters
 \{a^{\exp}_m,v^{\exp}_m\}_{m=1}^{M^{\exp}}~,~\{a^{\dev}_m,v^{\dev}_m\}_{m=1}^{M^{\dev}}
 \end{eqnarray}
 to best approximate the traditional galaxy profile functions, under
-some sensible definiton of the word ``best'', as a function of the
+some sensible definition of the word ``best'', as a function of the
 model complexity parameters (numbers of components) $(M^{\exp},
 M^{\dev})$.
 
-In addition to these, there are general S\'ersic (ser) profiles, of
+In addition to these, there are general S\'ersic (``ser'') profiles, of
 which the exp and dev profiles are special cases.  The general ser
 profile has one parameter (the ``index'') $n$:
 \begin{eqnarray}\displaystyle
@@ -287,41 +303,44 @@ investigator wants profiles that are normalized to have unit total
 flux (intensity integrated over solid angle).  Although there is an
 analytic result for the dev profile, numerical integration of the
 concentrated profiles dev and luv to determine total fluxes can be
-challenging.  This is not true for the mixture-of-Gaussian
-approximations: Each Gaussian is normalized, so the sum of the
-amplitudes $\sum_m a^{\luv}_m$ (for the luv profile, say) gives the
-total flux for the mixture-of-Gaussians approximation to that profile.
+challenging.  This is not true for the MoG approximations: Each
+Gaussian is normalized, so the sum of the amplitudes $\sum_m
+a^{\luv}_m$ (for the luv profile, say) gives the total flux for the
+MoG approximation to that profile.
 
-We seek the \emph{best} mixture-of-Gaussian approximations.  This
-necessitates definition of the word ``best''.  If we think of the
-profiles as being two-dimensional probability distribution functions
-(for, say, the arrivals of photons), then one natural choice is the
-K-L divergence or similar cross-entropy or information-theoretic
-measure.  However, in typical astronomical imaging, the galaxy is
-superimposed on a substantial, flat sky level, and the noise in the
-data is close to Gaussian.  This suggests more chi-squared-like
-objectives.  We adopt the latter, in part because they are most
-appropriate for our specific proposed application (modeling \sdss-like
-astronomical imaging), but experiments we have performed suggest that
-information-theoretic objectives also lead to good results.
+We seek the \emph{best} MoG approximations.  This necessitates
+definition of the word ``best''.  If we think of the profiles as being
+two-dimensional probability distribution functions (for, say, the
+arrivals of photons), then one natural choice is the K-L divergence or
+similar cross-entropy or information-theoretic measure.  However, in
+typical astronomical imaging, the galaxy is superimposed on a
+substantial, flat sky level, and the noise in the data is close to
+Gaussian.  This suggests more chi-squared-like objectives.  We adopt
+the latter, in part because they are most appropriate for our specific
+proposed application (modeling \sdss-like astronomical imaging), but
+experiments we have performed suggest that information-theoretic
+objectives also lead to good results.
 
 In detail, the chi-squared objective we minimize---the
 \emph{badness}---is a squared residual between the exact profile
-function $Q(\spos)$ and its mixture-of-Gaussian approximation.  It is
-designed to be equivalent to a chi-squared statistic in a
-homoskedastic two-dimensional image of the profile taken with
-extremely high angular resolution (pixels of size 0.001 the half-light
-radius) and vanishing point-spread function.  Quantitatively the
-badness is defined to be the mean squared residual in the $Q(\spos)$
-functions, which are normalized to have unit intensity at the
-half-light radius, averaged over a two-dimensional circular region in
-the $\spos$ plane centered on the (circularly symmetric) profile and
-extending out to radius $\xi_{\max}$.  We use $\xi_{\max}=8$ for all
-profiles except the $\lux$ profile, for which we use $\xi_{\max}=4$.
-In practice, the badness is computed in a one-dimensional numerical
-integral but the integral is weighted in radius (weight increasing
-linearly with radius) to make it equivalent to the two-dimensional
-chi-squared.
+function $Q(\spos)$ and its MoG approximation.  It is designed to be
+equivalent to a chi-squared statistic in a homoskedastic
+two-dimensional image of the profile taken with extremely high angular
+resolution (pixels of size 0.001 the half-light radius) and vanishing
+point-spread function.  Quantitatively the badness is defined to be
+the mean squared residual in the $Q(\spos)$ functions, which are
+normalized to have unit intensity at the half-light radius, averaged
+over a two-dimensional circular region in the $\spos$ plane centered
+on the (circularly symmetric) profile and extending out to radius
+$\xi_{\max}$.  We use $\xi_{\max}=8$ for all profiles except the
+$\lux$ profile, for which we use $\xi_{\max}=4$.  In practice, the
+badness is computed in a one-dimensional numerical integral but the
+integral is weighted in radius (weight increasing linearly with
+radius) to make it equivalent to the two-dimensional chi-squared.  We
+also add to the badness a very tiny coefficient (on the order of
+$10^{-3}$ of the best-fit badness) times the sum of the variances
+$v_m$ for regularization.  In practice, this term doesn't have much
+effect and could be dropped.
 
 Optimization (minimization) of the badness is performed by the
 \project{scipy} implementation of the BFGS algorithm, with many
@@ -338,15 +357,23 @@ root-variances rather than variances because these have units of
 half-light radii; they are simple standard deviations for the Gaussian
 components.
 
-... make recommendations: Use the $M^{\lux}=6$ lux and the $M^{\luv}=8$
-luv!...
+In our work on \project{The Tractor}, we use the $M^{\lux}=6$ lux and
+the $M^{\luv}=8$ luv profiles.  Our advice to users would be to do the
+same.  We use the lux and luv over the exp and dev partly because of
+their better behaviors numerically, and partly because they and we are
+both part of the \project{SDSS} tradition.  These---$M^{\lux}=6$ and
+$M^{\luv}=8$---are good compromises between mixture complexity ($M$)
+and quality of fit (badness).  Also, even the best-fitting late-type
+and early-type galaxies deviate from exponential and de~Vaucouleurs
+fits by more than do these high-quality MoG approximations; no
+precision is lost.
 
-The value of these mixture-of-Gaussian galaxy components comes when
-they are to be convolved with a PSF (usually in fact a pixel-convolved
-PSF) that is itself represented as a mixture of Gaussians.  In this
-scenario, the PSF $\psi(\Delta\pos)$---which is thought of as a
-function of focal-plane displacement $\Delta\pos$ away from, say, a
-true stellar position---is represented as a $K$-Gaussian mixture
+The value of these MoG galaxy components comes when they are to be
+convolved with a PSF (usually in fact a pixel-convolved PSF) that is
+itself also represented as a MoG.  In this scenario, the PSF
+$\psi(\Delta\pos)$---which is thought of as a function of focal-plane
+displacement $\Delta\pos$ away from, say, a true stellar position---is
+represented as a $K$-Gaussian MoG
 \begin{eqnarray}\displaystyle
 \psi(\Delta\pos) &=& \sum_{k=1}^K p_k\,\normal(\Delta\pos\given\mean_k,\var_k)
 \\
@@ -365,9 +392,9 @@ form
 I(\pos\given\star,S_s,\pos_s) &=& \sum_{k=1}^K S_s\,p_k\,\normal(\pos\given\pos_s+\mean_k,\var_k)
 \quad .
 \end{eqnarray}
-That is, when the PSF is represented as a mixture of Gaussians, any
-image of a star---or indeed any image of any set of stars---is also
-represented as a mixture of Gaussians.
+That is, when the PSF is represented as a MoG, any image of a
+star---or indeed any image of any set of stars---is also represented
+as a MoG.
 
 Applying this PSF to an exp or dev galaxy is slightly more
 complicated, because the galaxy has not just a flux $S_g$ and a
@@ -399,20 +426,70 @@ column vectors, and $\affine_g$ is a $2\times 2$ affine transformation
 matrix that contains the ``shape'' (position angle, major-axis, and
 ellipticity) information about the galaxy.  The $\dev$, $\luv$, and
 $\lux$ cases are all similar.  Note the important and key result of
-this \documentname, to wit, that a mixture-of-Gaussian galaxy model
-(with $M$ components) convolved with a mixture-of-Gaussian PSF model
-(with $K$ components) yields a mixture-of-Gaussian image (with
-$[M\,K]$ components).
+this \documentname, to wit, that a MoG galaxy model (with $M$
+components) convolved with a MoG PSF model (with $K$ components)
+yields a MoG model image (with $[M\,K]$ components).
 
-... pegagogical figure demonstrating these operations and their results...
+In the above we said ``pixel-convolved PSF''.  In every context, when
+modeling images, it is valuable to use the pixel-convolved PSF.  With
+this definition of the PSF, the pixelized image is the PSF-convolved
+true model evaluated at the pixel centers.  This operation is fast.
+Other definitions for the PSF (the non-pixel-convolved, for example)
+require that the user do \emph{two} convolutions, the first with the
+PSF and the second with the square (or worse) pixel.  Our advice: Only
+fit and use pixel-convolved PSFs.
 
-... what about mixtures of exps and devs:  No problem!...
+In \figurename~\ref{fig:example} we show how we are using these MoG
+approximations in \project{The Tractor}---a generative modeling
+framework for measuring astronomical objects---to render PSF-convolved
+galaxy images.
 
-... finally: The insights that \emph{could} be gained by interrogating
-these profile approximations in three dimensions...!
+If your PSF is not in MoG form, it is still the case that convolution
+of a MoG approximation to a dev (say) profile will in general be
+easier than convolution of the original dev profile.  The reason is
+that convolution of a Gaussian with any PSF is fast (indeed most
+image-processing languages have such functions built in); the
+PSF-convolved profile becomes in this case just a mixture of
+Gaussian-convolved PSFs.
+
+The speed-ups that can be obtained by using MoG approximations can be
+very large.  In our image-modeling project \project{The Tractor}, we
+were PSF-convolving by rendering the profiles (especially the profile
+centers) at very high resolution (hundreds to thousands of resolution
+elements in the central pixel are necessary for good precision on the
+dev profile).  We were then convolving that high-resolution model with
+a low-resolution PSF and rendering to a low-resolution image pixel
+grid.  These expensive operations were obviated by the MoG profiles,
+which involve only rendering a small number of Gaussians at the pixel
+centers on the low-resolution pixel grid.  The MoG approximations
+saved us more than an order of magnitude in compute time, especially
+in optimization, where derivatives have to be taken with respect to
+the unconvolved model properties.
+
+In the \project{SDSS}, \project{GALFIT}, and much of our own work, the
+models that are fit are (effectively) mixtures of exp and dev or exp
+and ser or lux and luv profiles.  Mixtures of profiles that are each
+themselves mixtures of Gaussians are no harder to render than either
+profile separately.  There is some book-keeping, of course, because
+each component gets affine-transformed separately before they are both
+PSF-convolved.
+
+One amusing aspect of MoG profiles has to do with projection from
+three to two dimensions.  The projection of a three-dimensional
+Gaussian is a two-dimensional Gaussian; the two-dimensional, rigid,
+circular approximations we have made for the ser profiles can be
+deprojected to rigid, spherical approximations to the
+three-dimensional profiles trivially.  The two-dimensional models we
+have started with are not accurate models of galaxies in detail---no
+galaxy follows exactly any ser profile---so deprojection of our
+approximations are not that interesting in themselves.  However,
+the general program of fitting two-dimensional sources with MoGs may
+have strong implications in the future for three-dimensional modeling
+and deprojection.
 
 \acknowledgements It is a pleasure to thank
-      Brendon Brewer (Auckland)
+      Brendon Brewer (Auckland),
+      Jim Bosch (Princeton),
   and Kevin Bundy (IPMU)
 for valuable comments.  This work was supported in part by NASA (grant
 NNX12AI50G) and the NSF (grant IIS-1124794).  All the results shown in
@@ -424,12 +501,16 @@ from author DWH upon request.
 Bendinelli,~O., 1991, \apj, 366, 599
 \bibitem[Bendinelli \& Parmeggiani(1995)]{bendinelli2}
 Bendinelli,~O. \& Parmeggiani,~G., 1995, \aj, 109, 572
+\bibitem[Bosch(2010)]{bosch}
+Bosch,~J., 2010, \aj, 140, 870
 \bibitem[Bovy \etal(2011a)]{xd}
 Bovy,~J., Hogg,~D.~W., \& Roweis,~S., 2011, Ann. Appl. Stat., 5, 1657
 \bibitem[Bovy \etal(2011b)]{xdqso}
 Bovy,~J., \etal, 2011, \apj, 729, 141
 \bibitem[Bovy \etal(2012)]{xdqsoz}
 Bovy,~J. \etal, 2012, \aj, 749, 41
+\bibitem[Bundy \etal(2012)]{bundy}
+Bundy,~K.~??
 \bibitem[Cappellari(2002)]{cappellari}
 Cappellari,~M., 2002, \mnras, 333, 400
 \bibitem[Ciotti \& Bertin(1999)]{ciotti}
@@ -532,23 +613,31 @@ S{\'e}rsic,~J.~L., 1963, Boletin de la Asociacion Argentina de Astronomia La Pla
 
 \clearpage
 \begin{figure}
-% DSTN:  This should be a 3-across by 2-down figure,
+\setlength{\figurewidth}{0.33\textwidth}
+\begin{tabular}{@{}c@{}c@{}}
+\includegraphics[width=\figurewidth]{trdemo-01} &
+\includegraphics[width=\figurewidth]{trdemo-02} \\
+\includegraphics[width=\figurewidth]{trdemo-03} &
+\includegraphics[width=\figurewidth]{trdemo-06} \\
+\includegraphics[width=\figurewidth]{trdemo-08} &
+\includegraphics[width=\figurewidth]{trdemo-09}
+\end{tabular}
 \caption{Demonstration of use of the profiles, or the implicit
   generative model in this \documentname.  \textsl{top-left:} The
   circular dimensionless $M^{\luv}=8$ mixture-of-Gaussian
   approximation to the luv profile, represented on a very fine pixel
-  grid. \textsl{top-middle:} The ellipse representing the non-trivial
+  grid. \textsl{top-right:} The ellipse representing the non-trivial
   affine transformation to be applied to the circular, dimensionless
-  profile.  \textsl{top-right:} The sheared profile.
-  \textsl{bottom-left:} A $K=3$ mixture-of-Gaussian model of the
+  profile.  \textsl{middle-left:} The sheared profile.
+  \textsl{middle-right:} A $K=3$ mixture-of-Gaussian model of the
   pixel-convolved point-spread function, represented on the very fine
-  pixel grid.  \textsl{bottom-middle:} The sheared profile convolved
+  pixel grid.  \textsl{bottom-left:} The sheared profile convolved
   with the PSF, represented on the very fine pixel grid.
   \textsl{bottom-right:} The sheared luv convolved with the PSF, but
   now shown on a realistic pixel grid.  Because by assumption the PSF
   is a pixel-convolved PSF, the representation on the realistic grid
-  is found simply by interpolating the convolved high-resolution
-  model.\label{fig:example}}
+  is found simply by interpolating to the pixel centers the
+  mixture-component Gaussians.\label{fig:example}}
 \end{figure}
 
 \end{document}
