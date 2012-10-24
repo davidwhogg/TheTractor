@@ -4,9 +4,9 @@
 
 % to-do
 % -----
-% - HOGG: go through remining github issues and close or fix
 % - HOGG: send to Bertin and Rix and Peng and Lupton and Bundy for comments
 % - HOGG: submit!
+% - HOGG: post on arXiv
 % - HOGG: can we drop the regularization in the badness and still succeeed?  If so, let's do that (and drop it in the text).
 % - HOGG: make what I say about M=6 lux and M=8 lux true -- ie, edit the Tractor code!
 % - HOGG: should we make Machine Readable Tables for PASP?  Yes.
@@ -441,14 +441,14 @@ minor-axis directions respectively.  Implicitly all vectors are
 two-dimensional column vectors, and $\affine_g$ is a $2\times 2$
 affine transformation matrix that contains the ``shape'' (position
 angle, major-axis, and ellipticity) information about the galaxy.  The
-$\dev$, $\luv$, and $\lux$ cases are all similar.  Note the important
-and key result of this \documentname, to wit, that a MoG galaxy model
-(with $M$ components) convolved with a MoG PSF model (with $K$
-components) yields a MoG model image (with $[M\,K]$ components).  In
-\figurename~\ref{fig:example} we show how we are using these MoG
-approximations in \project{The Tractor}---a generative modeling
-framework for measuring astronomical objects---to render PSF-convolved
-galaxy images.
+$\dev$, $\ser(n)$, $\luv$, and $\lux$ cases are all essentially the
+same.  Note the important and key result of this \documentname, to
+wit, that a MoG galaxy model (with $M$ components) convolved with a
+MoG PSF model (with $K$ components) yields a MoG model image (with
+$[M\,K]$ components).  In \figurename~\ref{fig:example} we show how we
+are using these MoG approximations in \project{The Tractor}---a
+generative modeling framework for measuring astronomical objects---to
+render PSF-convolved galaxy images.
 
 In the above we said ``pixel-convolved PSF''.  In every context, when
 modeling images, it is valuable to use the pixel-convolved PSF.  With
