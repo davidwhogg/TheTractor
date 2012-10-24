@@ -133,11 +133,11 @@ signal-to-noise (as they are used in the \project{SDSS}) and they are
 useful templates for performing consistent photometry across
 morphologically diverse objects (as we use them in \citealt{bundy}).
 More radically, these profiles are sometimes used to distinguish disk
-and bulge light; these uses are very prone to over-interpretation:
-There is no theoretical argument and only weak observational arguments
-that the rotation-supported parts of galaxies are always exponential
-and that the kinematically hot components are always more
-de-Vaucouleurs-like.
+and bulge light (as in \citealt{bulgedisk} and references cited
+therein); these uses are prone to over-interpretation: There is no
+theoretical argument and only weak observational arguments that the
+rotation-supported parts of galaxies are always exponential and that
+the kinematically hot components are always more de-Vaucouleurs-like.
 
 The performance advantages we will obtain from using MoG
 approximations are not simply that convolution itself is trivial.  The
@@ -152,14 +152,14 @@ PSF convolution; it produces profiles that are approximate but very
 high performance when all real uses of the profiles are PSF-convolved,
 as they usually are.
 
-Along those lines, it is important in any image-modeling situation to
-think of the PSF as the \emph{pixel-convolved} point-spread function.
-Under this choice, synthesis of a pixelized image involves only
-convolution with the PSF and evaluation at the pixel centers.  That
-is, image synthesis (returned to at the end of this \documentname)
-consists of PSF convolution---an arithmetic operation on the two
-MoGs---followed by evaluation of the resulting MoG at the pixel
-centers).
+On the subject of PSF-convolution, it is important in any
+image-modeling situation to think of the PSF as the
+\emph{pixel-convolved} point-spread function.  Under this choice,
+synthesis of a pixelized image involves only convolution with the PSF
+and evaluation at the pixel centers.  That is, image synthesis
+(returned to at the end of this \documentname) consists of PSF
+convolution---an arithmetic operation on the two MoGs---followed by
+evaluation of the resulting MoG at the pixel centers).
 
 We need good performance in two-dimensional image synthesis (for
 fitting) because, with \thetractor\ (Lang \etal, forthcoming), we are
@@ -169,19 +169,24 @@ on the order of $10^{13}$ pixels.  We are basing our models on the
 \project{Sloan Digital Sky Survey} (\sdss) Catalog galaxy models,
 which only include exponential, de~Vaucouleurs, and composite (mixture
 of the two) radial profiles.  In detail, in fact, the \sdss\ Catalog
-models are small modifications of these; details
-below.  So our goal here is to provide replacements for these models
-in order to improve the performance of galaxy image modeling and
-analysis software.  Some of the models we present have been used
-previously in tools for precise photometry (\citealt{bundy}), and are
-being used in the Large Synoptic Survey Telescope (LSST) prototype
-galaxy photometry pipeline (\citealt{shaw}), in which these models are
-convolved with a shapelet representation of the PSF; because shapelets
-are simply polynomial perturbations on a Gaussian, they can also be
-convolved analytically with mixture-of-Gaussian galaxy models
-(\citealt{bosch}).  These models could also be used to speed other
-image-fitting systems, like the very successful \project{GALFIT}
-(\citealt{galfit}).
+models are small modifications of these; details below.  So our goal
+here is to provide replacements for these models in order to improve
+the performance of galaxy image modeling and analysis software.  Some
+of the models we present have been used previously in tools for
+precise photometry (\citealt{bundy}), and are being used in the Large
+Synoptic Survey Telescope (LSST) prototype galaxy photometry pipeline
+(\citealt{shaw}), in which these models are convolved with a shapelet
+representation of the PSF; because shapelets are simply polynomial
+perturbations on a Gaussian, they can also be convolved analytically
+with mixture-of-Gaussian galaxy models (\citealt{bosch}).  These
+models could also be used to speed other image-fitting systems, like
+the very successful \project{GALFIT} (\citealt{galfit}).  An
+alternative to making MoG profiles is to find exact analytic
+expressions for certain kinds of convolutions.  There \emph{are} some
+analytic results for PSF-convolved S\'ersic models but they involve
+some non-trivial series and special-function expressions
+(\citealt{trujillo}); we won't come back to these again but they might
+be very useful in many situations.
 
 Because we are thinking about two-dimensional imaging, we use here
 two-dimensional Gaussian or Normal distributions, which look like
@@ -537,6 +542,10 @@ Peng,~C.~Y., Ho, L.~C., Impey,~C.~D., \& Rix,~H.-W., 2002, \aj, 124, 266
 S{\'e}rsic,~J.~L., 1963, Boletin de la Asociacion Argentina de Astronomia La Plata Argentina, 6, 41
 \bibitem[Shaw(2012)]{shaw}
 Shaw,~R.~A., ed., 2012, LSST Data Challenge Handbook (Version 2.0; Tucson, AZ: LSST Corp.)
+\bibitem[Simard et al.(2011)]{bulgedisk}
+Simard,~L., Mendel,~J.~T., Patton,~D.~R., Ellison,~S.~L., \& McConnachie,~A.~W., 2011, \apjs, 196, 11
+\bibitem[Trujillo \etal(2001)]{trujillo}
+Trujillo,~I., Aguerri,~J.~A.~L., Cepa,~J., \& Guti{\'e}rrez,~C.~M., 2001, \mnras, 321, 269 
 \end{thebibliography}
 
 \clearpage
