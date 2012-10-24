@@ -260,12 +260,12 @@ In addition to these, there are general S\'ersic (``ser'') profiles, of
 which the exp and dev profiles are special cases.  The general ser
 profile has one parameter (the ``index'') $n$:
 \begin{eqnarray}\displaystyle
-Q^{\ser}(\spos\given n) &\equiv& \exp(-\alpha^{\ser}(n)\,[|\spos|^{1/n} - 1])
+Q^{\ser(n)}(\spos) &\equiv& \exp(-\alpha^{\ser(n)}\,[|\spos|^{1/n} - 1])
 \\
-\{\alpha^{\ser}(2), \alpha^{\ser}(3), \alpha^{\ser}(5)\} &\equiv& \{3.67206075, 5.67016119, 9.66871461\}
+\{\alpha^{\ser(2)}, \alpha^{\ser(3)}, \alpha^{\ser(5)}\} &\equiv& \{3.67206075, 5.67016119, 9.66871461\}
 \quad ,
 \end{eqnarray}
-where we have given the constant $\alpha^{\ser}(n)$ for just a few
+where we have given the constant $\alpha^{\ser(n)}$ for just a few
 values of $n$ (\citealt{ciotti}; the $\exp$ and $\dev$ profiles given
 above provide values for $n=1$ and $n=4$.)
 
@@ -372,7 +372,7 @@ fits by more than do these high-quality MoG approximations; no
 precision is lost.
 
 In \figurename~\ref{fig:ser}, we show the dependence of amplitudes
-$a^{\ser}_m(n)$ and variances $v^{\ser}_m(n)$ on the ser index $n$.
+$a^{\ser(n)}_m$ and variances $v^{\ser(n)}_m$ on the ser index $n$.
 There is clearly continuity; a valuable follow-up project would be to
 give expressions for the amplitudes and variances as a function of ser
 index $n$.  In the absence of cleverness our advice would be to make
@@ -430,15 +430,15 @@ I(\pos\given\exp,S_g,\pos_g,\affine_g) &=& \sum_{k=1}^K \sum_{m=1}^{M^{\exp}} S_
 \end{eqnarray}
 where $a$ and $b$ are the major and minor axis lengths of the galaxy
 ellipse (in appropriate units) and $\uv_1$ and $\uv_2$ are the
-eigenvectors on the sky pointing in the major-axis and minor-axis
-directions respectively.  Implicitly all vectors are two-dimensional
-column vectors, and $\affine_g$ is a $2\times 2$ affine transformation
-matrix that contains the ``shape'' (position angle, major-axis, and
-ellipticity) information about the galaxy.  The $\dev$, $\luv$, and
-$\lux$ cases are all similar.  Note the important and key result of
-this \documentname, to wit, that a MoG galaxy model (with $M$
-components) convolved with a MoG PSF model (with $K$ components)
-yields a MoG model image (with $[M\,K]$ components).  In
+eigenvectors in image coordinates pointing in the major-axis and
+minor-axis directions respectively.  Implicitly all vectors are
+two-dimensional column vectors, and $\affine_g$ is a $2\times 2$
+affine transformation matrix that contains the ``shape'' (position
+angle, major-axis, and ellipticity) information about the galaxy.  The
+$\dev$, $\luv$, and $\lux$ cases are all similar.  Note the important
+and key result of this \documentname, to wit, that a MoG galaxy model
+(with $M$ components) convolved with a MoG PSF model (with $K$
+components) yields a MoG model image (with $[M\,K]$ components).  In
 \figurename~\ref{fig:example} we show how we are using these MoG
 approximations in \project{The Tractor}---a generative modeling
 framework for measuring astronomical objects---to render PSF-convolved
@@ -604,8 +604,8 @@ Shaw,~R.~A., ed., 2012, LSST Data Challenge Handbook (Version 2.0; Tucson, AZ: L
 \caption{Three ser profiles---with $n=2$, $3$, and $5$---and
   approximations.  The top-left, top-right, and bottom-left panels are
   equivalent to those in the top-right of \figurename~\ref{fig:exp}.
-  \textsl{bottom-right:} The dependence on the amplitudes $a^{\ser}_m$
-  and root-variances $\sqrt{v^{\ser}_m}$ on ser index $n$.\label{fig:ser}}
+  \textsl{bottom-right:} The dependence on the amplitudes $a^{\ser(n)}_m$
+  and root-variances $\sqrt{v^{\ser(n)}_m}$ on ser index $n$.\label{fig:ser}}
 \end{figure}
 
 \clearpage
