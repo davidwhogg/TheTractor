@@ -1,6 +1,6 @@
 '''
 This file is part of the Tractor project.
-Copyright 2011 David W. Hogg.
+Copyright 2011, 2012 David W. Hogg.
 
 ### bugs:
 - When using chi-squared-like badness, we should use levmar not bfgs!
