@@ -1,0 +1,136 @@
+Dear Editor,
+
+This was a very useful referee report and we have revised the paper
+accordingly.  I think the referee comments have improved the paper
+substantially.
+
+David W. Hogg (on behalf of the authors)
+
+-----
+
+In what follows, the referee comments are indented and our responses
+are not indented.
+
+   1. Does the article contain significant new results and/or analysis
+   and reflect sufficiently high scientific standards to warrant its
+   publication in PASP?
+
+   This paper gives a particularly lucid, concise and clear
+   description of a relatively old idea. As such, it represents a
+   significant contribution to the literature as a pedagogical
+   reference. It should be published but see 4. below.
+
+We agree with the referee that the idea is old but we don't agree with
+any implication that the results shown are old.  All references we can
+find in the literature show *how* to do mixture-of-Gaussian fitting in
+real imaging, but don't give mixture-of-Gaussian approximations to
+known profiles.  This paper, in that sense, is more of an "applied
+math meets astronomy" paper than the previous work.  We will return to
+this below, where we *do* make changes to the text in response to this
+general concern of the referee.
+
+   2. Is the paper written with the maximum conciseness compatible
+   with accuracy and clarity?
+
+   I thoroughly enjoyed reading the paper for its refreshing
+   conciseness and clarity.
+
+Thanks!
+
+   3. Could the order or presentation or English be improved?  Editing
+   of English and typographic errors will be corrected by the Journal
+   copyediting staff and you do not need to specify these in your
+   report.  But if there are more general problems with presentation
+   or English please cite this in your report.
+
+   Contractions (don't,  doesn't) should not be used.
+
+   On page 8, paragraph 3: "If your PSF is not in MoG form ..." should read "If the
+    PSF is not in MoG form ..."
+
+   4. Do you have any comments or criticisms that may be helpful to the author(s)
+   to improve or correct the paper? In cases that may be ambiguous, please specify
+   whether you consider the suggested changes to be mandatory for publication or
+   advisory.
+
+   GENERAL COMMENT: Although I do think that this "Note" would stand on its own as
+   a separate publication, I would nonetheless strongly suggest that the authors
+   consider merging it into the forthcoming Lang et al. paper on The Tractor. This
+   Note appears to be an "ad" for The Tractor. In the words of the authors, the main
+   point of the Note is to emphasize the performance gain that the MoG approach
+   would bring to the analysis of truly large galaxy datasets.  However, the current
+   draft does not show any analysis of real data to support this performance claim.
+   Other methods have been proposed in the past with similar promises of significant
+   performance improvements (e.g., fast nonlinear regression via eigenimages,
+   Brigham et al.). They looked promising on paper but were found to exhibit unexpected
+   biases when applied to real data. I would hate to see this happen to MoGs. This
+   is why it would be really nice to have the beautiful description of MoGs
+   presented in this Note side-by-side with some tests on real data in the same paper.
+
+   SPECIFIC COMMENTS:
+
+   Page 2, paragraph 3: "There is no theoretical argument and only weak observational
+   arguments that the rotation-supported parts of galaxies are always exponential
+   and that the kinematically hot components are always more de Vaucouleurs-like".
+   Although your warning about over-interpretating exp and dev components using
+   bulges and disks is well taken (and others have given the same warning I might
+   add), I think your statement above is too strong. On the theoretical side, some
+   works (e.g., Brooks et al. 2011, ApJ, 728, 51; Agertz et al. 2011, MNRAS, 410,
+   1391) have performed photometric decompositions of their model galaxies to see how
+   photometric components mapped onto kinematical ones. The agreement is good and
+   does suggest that it is often a reasonable mapping. It is certainly not a "radical"
+   assumption to make. Also, while it is true that some dispersion-supported
+   galaxies such as dwarf ellipticals have exponential profiles, they certainly do not
+    make up the bulk of the galaxy population in large surveys. Finally, I note the
+    recent ATLAS3D paper by Krajnovic et al. 2012, arXiv:1210.816 in which it was
+   found that "early-type" galaxies with significant rotational support also
+   exhibited significant exponential ("disk") components.
+
+   Equations 2 and 3: I suggest you replace a_k by another symbol, c_k say, to
+   avoid confusion with the \alpha's in the following equations.
+
+   Page 6, first line: "The half-light inverse radius parameters \alpha^{exp} and \
+   alpha^{dev} -- and the softening and cutoff radius parameters -- are taken from
+   the SDSS codebase." I think you meant to write \alpha^{lux} and \alpha^{luv} here.
+
+   Page 6, paragraph 2: "Although there is an analytic result for the dev profile,
+   numerical integration of the concentrated profiles dev and luv to determine
+   total fluxes can be challenging."  Why are you flagging the numerical integration of
+    the dev profile as a challenge given that there is an analytic expression for it?
+
+   Page 6, paragraph 2: "K-L divergence" --> "Kullback-Leibler divergence"
+
+   Page 6 - Definition of "best": The authors should really have been "bolder" by
+   insisting on the use of an information-theoretic measure here rather than the
+   "traditional" chi-squared. The MoGs are a natural fit to an image entropy measure
+   because maximizing entropy, say, would naturally lead to minimizing the number of
+    components in a MoG. Chi-squared is also biased at low signal-to-noise ratios.
+   Please consider.
+
+   Page 6: Why is "badness" computed in a one-dimensional numerical integral? For
+   the sake of computational speed? What happens when dealing with heavily blended
+   objects? Where is the center for the 1D integral then? Please explain. A general
+   explanation of how object deblending is performed with MoGs would be welcome.
+
+   Page 7, paragraph 2: The statement "These -- M^lux = 6 and M^luv = 8 -- are good
+    compromises between mixture complexity and quality of fit" warrants more
+   explanation. Everytime I read about using MoGs for galaxy fitting, I have the same
+   reaction: it needs a large number of highly redundant to model something a single
+   exponential profile. Fans of the eigenimage decompositions are probably appalled!
+    Granted the mathematical simplicity of MoGs can make up for this by enabling
+   faster fitting times, but it is definitely an un-appealing aspect of the method.
+   It would be helpful to comment on this to counter a reaction that I think may be
+   shared by others. More importantly, I do not quite understand how you decided on
+    M^lux = 6 and M^luv = 8. If I look at Table 2, the badness for lux has clearly
+   converged and there is no gain in going higher than M=6. I cannot say the same
+   thing for the luv MoG. Badness goes down by a factor of 16 going from M=6 to M=8
+   and then goes down by a factor of 5 going from M=8 to M=10. How can you claim
+   that your badness has "converged" for M=8 then? A quantitative threshold and its
+   rationale are clearly needed here to justify the "good compromises" here. Please
+   be more quantitative or clarify if I misunderstood something.
+
+   Equation 19: I did not quite understand your distinction between the \Delta X
+   vector here and the x vector in equation 2. Please clarify.
+
+
+   ==============================================
