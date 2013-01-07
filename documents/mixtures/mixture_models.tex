@@ -82,7 +82,7 @@ Gaussians output by these operations are related simply to the means
 and variance tensors of the inputs.  Add to these wonders the fact
 that Gaussians form a complete basis for representing (smooth)
 probability distribution functions and it becomes remarkable that we
-don't do everything we do in terms of Gaussians.
+do not do everything we do in terms of Gaussians.
 
 To elaborate, a mixture of multivariate Gaussians---a linear
 superposition---can be used to represent any reasonable distribution
@@ -119,7 +119,7 @@ profiles---as rigid MoGs.
 
 Whenever an investigator is fitting PSF-convolved exponential or
 de~Vaucouleurs profiles, the models presented here will improve code
-performance.  That doesn't mean that doing such fitting is a Good
+performance.  That does not mean that doing such fitting is a Good
 Idea.  These profiles are effective models for galaxies at low
 signal-to-noise (as they are used in the \project{SDSS}) and they are
 useful templates for performing consistent photometry across
@@ -177,8 +177,8 @@ alternative to making MoG profiles is to find exact analytic
 expressions for certain kinds of convolutions.  There \emph{are} some
 analytic results for PSF-convolved S\'ersic models but they involve
 some non-trivial series and special-function expressions
-(\citealt{trujillo}); we won't come back to these again but they might
-be very useful in many situations.
+(\citealt{trujillo}); we will not come back to these again but they
+might be very useful in many situations.
 
 Because we are thinking about two-dimensional imaging, we use here
 two-dimensional Gaussian or Normal distributions, which look like
@@ -340,7 +340,7 @@ integral is weighted in radius (weight increasing linearly with
 radius) to make it equivalent to the two-dimensional chi-squared.  We
 also add to the badness a very tiny coefficient (on the order of
 $10^{-3}$ of the best-fit badness) times the sum of the variances
-$v_m$ for regularization.  In practice, this term doesn't have much
+$v_m$ for regularization.  In practice, this term does not have much
 effect and could be dropped.
 
 Optimization (minimization) of the badness is performed by the
@@ -451,11 +451,11 @@ require that the user do \emph{two} convolutions, the first with the
 PSF and the second with the square (or worse) pixel.  Our advice: Only
 fit for and use pixel-convolved PSFs.
 
-If your PSF is not in MoG form, it is still the case that convolution
-of a MoG approximation of a dev (say) profile will in general be
-easier than convolution of the original dev profile.  The reason is
-that convolution of a Gaussian with any PSF is fast (indeed most
-image-processing languages have such functions built in); the
+If the PSF is not represented in MoG form, it is still the case that
+convolution of a MoG approximation of a dev (say) profile will in
+general be easier than convolution of the original dev profile.  The
+reason is that convolution of a Gaussian with any PSF is fast (indeed
+most image-processing languages have such functions built in); the
 PSF-convolved profile becomes in this case just a mixture of
 Gaussian-convolved PSFs.
 

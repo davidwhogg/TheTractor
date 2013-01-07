@@ -8,8 +8,10 @@ David W. Hogg (on behalf of the authors)
 
 -----
 
-In what follows, the referee comments are indented and our responses
-are not indented.
+We very much appreciate the thorough and sensible referee comments;
+they have led to substantial improvements in the paper.  In what
+follows, the referee comments are indented and our responses are not
+indented.
 
    1. Does the article contain significant new results and/or analysis
    and reflect sufficiently high scientific standards to warrant its
@@ -45,8 +47,12 @@ Thanks!
 
    Contractions (don't,  doesn't) should not be used.
 
+Replaced all contractions.
+
    On page 8, paragraph 3: "If your PSF is not in MoG form ..." should read "If the
     PSF is not in MoG form ..."
+
+Fixed to "If the PSF is not represented in MoG form ...".
 
    4. Do you have any comments or criticisms that may be helpful to the author(s)
    to improve or correct the paper? In cases that may be ambiguous, please specify
@@ -133,4 +139,10 @@ Thanks!
    vector here and the x vector in equation 2. Please clarify.
 
 
-   ==============================================
+In other news, we also made the following changes to the text, in
+response to other comments and issues:
+
+- we did foo
+
+- we did bar
+
