@@ -22,14 +22,20 @@ indented.
    significant contribution to the literature as a pedagogical
    reference. It should be published but see 4. below.
 
-We agree with the referee that the idea is old but we don't agree with
-any implication that the results shown are old.  All references we can
+We agree with the referee that the idea of using Gaussians to fit
+galaxies is old but we don't agree with any implication that the
+method or applied math results shown are old.  All references we can
 find in the literature show *how* to do mixture-of-Gaussian fitting in
 real imaging, but don't give mixture-of-Gaussian approximations to
 known profiles.  This paper, in that sense, is more of an "applied
 math meets astronomy" paper than the previous work.  We will return to
 this below, where we *do* make changes to the text in response to this
 general concern of the referee.
+
+DSTN NOTES:.. math convenience... pre-compiling in Photo... adaptive
+sampling challenges... Bundy and Marshall uses... programming
+complexity... These points need to go in the paper, not just this
+response!
 
    2. Is the paper written with the maximum conciseness compatible
    with accuracy and clarity?
@@ -72,6 +78,8 @@ Fixed to "If the PSF is not represented in MoG form ...".
    biases when applied to real data. I would hate to see this happen to MoGs. This
    is why it would be really nice to have the beautiful description of MoGs
    presented in this Note side-by-side with some tests on real data in the same paper.
+
+[ let's do this and include it ]
 
    SPECIFIC COMMENTS:
 
