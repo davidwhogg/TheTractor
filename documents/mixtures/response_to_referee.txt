@@ -33,7 +33,8 @@ this below, where we *do* make changes to the text in response to this
 general concern of the referee.
 
 DSTN NOTES:.. math convenience... pre-compiling in Photo... adaptive
-sampling challenges... Bundy and Marshall uses... programming
+sampling challenges... cf mixture-of-delta-functions
+approximation... Bundy and Marshall uses... programming
 complexity... These points need to go in the paper, not just this
 response!
 
