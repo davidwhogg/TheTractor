@@ -130,25 +130,43 @@ useful templates for performing consistent photometry across
 morphologically diverse objects (as we use them in \citealt{bundy}).
 More radically, these profiles are sometimes used to distinguish disk
 and bulge light (as in \citealt{bulgedisk} and references cited
-therein); these uses are prone to over-interpretation: There is no
-theoretical argument and only weak observational arguments that the
-rotation-supported parts of galaxies are always exponential and that
-the kinematically hot components are always more de-Vaucouleurs-like.
-
-% syntactical reference point:  Expand the following paragraph to respond to referee.
+therein); these uses are prone to over-interpretation: There certainly
+could be rotation-supported parts of galaxies that are not exponential
+and kinematically hot components that are not de-Vaucouleurs-like.
 
 The performance advantages we will obtain from using MoG
-approximations are not simply that convolution itself is trivial.  The
-standard unconvolved galaxy models, especially the de~Vaucouleurs and
-S\'ersic models (\citealt{dev}, \citealt{ser}), are very ill-behaved
-near the galaxy center.  Rendering these profiles precisely near the
-center can be very challenging numerically.  In addition, most of the
-rendering time is spent at very small radii, where PSF convolution is
-going to erase all structure anyway.  That is, a MoG description of
-the de~Vaucouleurs profile saves time both in rendering \emph{and} in
-PSF convolution; it produces profiles that are approximate but very
-high performance when all real uses of the profiles are PSF-convolved,
-as they usually are.
+approximations are not simply that it makes the convolution trivial.
+The standard unconvolved galaxy models, especially the de~Vaucouleurs
+and S\'ersic models (\citealt{dev}, \citealt{ser}), are very
+ill-behaved near the galaxy center.  Rendering these profiles
+precisely near the center can be very challenging numerically.
+Computer codes that do this rendering and PSF convolution well use
+enormous numbers of samples; mathematically this sampling
+representation of the models is a mixture of delta functions.  In
+order for these representations of the profiles to be precise, large
+numbers of sample points are required.  The convolution and rendering
+step involves as many PSF evaluations as there are samples---which can
+number in the thousands.  In addition, most of the rendering time is
+spent at very small radii---most of the samples in any integration are
+in or near the central pixel---where PSF convolution is going to erase
+all structure anyway.  That is, a MoG description of the
+de~Vaucouleurs profile saves time both in rendering \emph{and} in PSF
+convolution; it produces code that is very high performance when all
+real uses of the profiles are PSF-convolved, as they usually are.
+
+Not only does a sampling representation of the profiles require many
+more compute operations per render than a MoG representation, it also
+requires more code complexity.  For the sampling to be both accurate
+and efficient, it has to be strongly adaptive (with much higher
+density in the center).  This adds complexity and choices into the
+code, leading to engineering and software maintenance and testing
+overheads that cost not just compute time but human time.  One
+response to this is to build large number of pre-computed profile PSF
+convolutions and interpolate among them.  This is the strategy taken
+in the \project{SDSS} pipelines (\citealt{lupton}), but that requires
+even \emph{more} human overhead, because not only does the sampling
+and convolution have to be done correctly, so does the numerical
+interpolation.
 
 On the subject of PSF-convolution, it is important in any
 image-modeling situation to think of the PSF as the

@@ -29,14 +29,23 @@ find in the literature show *how* to do mixture-of-Gaussian fitting in
 real imaging, but don't give mixture-of-Gaussian approximations to
 known profiles.  This paper, in that sense, is more of an "applied
 math meets astronomy" paper than the previous work.  We will return to
-this below, where we *do* make changes to the text in response to this
-general concern of the referee.
+this below, but we *did* make changes to the text in response to this
+general concern of the referee: We added sentences in the introductory
+paragraphs and at the end of the paper to emphasize the difficulty of
+rendering the profiles without these approximations.
 
-DSTN NOTES:.. math convenience... pre-compiling in Photo... adaptive
-sampling challenges... cf mixture-of-delta-functions
-approximation... Bundy and Marshall uses... programming
-complexity... These points need to go in the paper, not just this
-response!
+To be more specific: we added some sentences to emphasize that the
+currently used methods for rendering profiles are effectively mixtures
+of delta functions (the profile is sampled at a finite set of
+locations) and rendering requires as many PSF renderings as there are
+sample points.  This is a huge computation.
+
+We also added an introductory paragraph that points out that the code
+complexity required to do rendering correctly is large and this leads
+to engineering overheads in testing and correctness that go way beyond
+the simple numerical speed losses.
+
+[should we also add a late paragraph re-iterating and showing a comparison?]
 
    2. Is the paper written with the maximum conciseness compatible
    with accuracy and clarity?
@@ -56,50 +65,65 @@ Thanks!
 
 Replaced all contractions.
 
-   On page 8, paragraph 3: "If your PSF is not in MoG form ..." should read "If the
-    PSF is not in MoG form ..."
+   On page 8n, paragraph 3: "If your PSF is not in MoG form ..." should
+   read "If the PSF is not in MoG form ..."
 
 Fixed to "If the PSF is not represented in MoG form ...".
 
-   4. Do you have any comments or criticisms that may be helpful to the author(s)
-   to improve or correct the paper? In cases that may be ambiguous, please specify
-   whether you consider the suggested changes to be mandatory for publication or
-   advisory.
+   4. Do you have any comments or criticisms that may be helpful to
+   the author(s) to improve or correct the paper? In cases that may be
+   ambiguous, please specify whether you consider the suggested
+   changes to be mandatory for publication or advisory.
 
-   GENERAL COMMENT: Although I do think that this "Note" would stand on its own as
-   a separate publication, I would nonetheless strongly suggest that the authors
-   consider merging it into the forthcoming Lang et al. paper on The Tractor. This
-   Note appears to be an "ad" for The Tractor. In the words of the authors, the main
-   point of the Note is to emphasize the performance gain that the MoG approach
-   would bring to the analysis of truly large galaxy datasets.  However, the current
-   draft does not show any analysis of real data to support this performance claim.
-   Other methods have been proposed in the past with similar promises of significant
-   performance improvements (e.g., fast nonlinear regression via eigenimages,
-   Brigham et al.). They looked promising on paper but were found to exhibit unexpected
-   biases when applied to real data. I would hate to see this happen to MoGs. This
-   is why it would be really nice to have the beautiful description of MoGs
-   presented in this Note side-by-side with some tests on real data in the same paper.
+   GENERAL COMMENT: Although I do think that this "Note" would stand
+   on its own as a separate publication, I would nonetheless strongly
+   suggest that the authors consider merging it into the forthcoming
+   Lang et al. paper on The Tractor. This Note appears to be an "ad"
+   for The Tractor. In the words of the authors, the main point of the
+   Note is to emphasize the performance gain that the MoG approach
+   would bring to the analysis of truly large galaxy datasets.
+   However, the current draft does not show any analysis of real data
+   to support this performance claim.  Other methods have been
+   proposed in the past with similar promises of significant
+   performance improvements (e.g., fast nonlinear regression via
+   eigenimages, Brigham et al.). They looked promising on paper but
+   were found to exhibit unexpected biases when applied to real
+   data. I would hate to see this happen to MoGs. This is why it would
+   be really nice to have the beautiful description of MoGs presented
+   in this Note side-by-side with some tests on real data in the same
+   paper.
 
-[ let's do this and include it ]
+As noted above, we have added sentences in one paragraph and one new
+paragraph that makes it clearer what the performance gains are.
+
+[ should we also get quantitative at the end? ]
 
    SPECIFIC COMMENTS:
 
-   Page 2, paragraph 3: "There is no theoretical argument and only weak observational
-   arguments that the rotation-supported parts of galaxies are always exponential
-   and that the kinematically hot components are always more de Vaucouleurs-like".
-   Although your warning about over-interpretating exp and dev components using
-   bulges and disks is well taken (and others have given the same warning I might
-   add), I think your statement above is too strong. On the theoretical side, some
-   works (e.g., Brooks et al. 2011, ApJ, 728, 51; Agertz et al. 2011, MNRAS, 410,
-   1391) have performed photometric decompositions of their model galaxies to see how
-   photometric components mapped onto kinematical ones. The agreement is good and
-   does suggest that it is often a reasonable mapping. It is certainly not a "radical"
-   assumption to make. Also, while it is true that some dispersion-supported
-   galaxies such as dwarf ellipticals have exponential profiles, they certainly do not
-    make up the bulk of the galaxy population in large surveys. Finally, I note the
-    recent ATLAS3D paper by Krajnovic et al. 2012, arXiv:1210.816 in which it was
-   found that "early-type" galaxies with significant rotational support also
-   exhibited significant exponential ("disk") components.
+   Page 2, paragraph 3: "There is no theoretical argument and only
+   weak observational arguments that the rotation-supported parts of
+   galaxies are always exponential and that the kinematically hot
+   components are always more de Vaucouleurs-like".  Although your
+   warning about over-interpretating exp and dev components using
+   bulges and disks is well taken (and others have given the same
+   warning I might add), I think your statement above is too
+   strong. On the theoretical side, some works (e.g., Brooks et
+   al. 2011, ApJ, 728, 51; Agertz et al. 2011, MNRAS, 410, 1391) have
+   performed photometric decompositions of their model galaxies to see
+   how photometric components mapped onto kinematical ones. The
+   agreement is good and does suggest that it is often a reasonable
+   mapping. It is certainly not a "radical" assumption to make. Also,
+   while it is true that some dispersion-supported galaxies such as
+   dwarf ellipticals have exponential profiles, they certainly do not
+   make up the bulk of the galaxy population in large
+   surveys. Finally, I note the recent ATLAS3D paper by Krajnovic et
+   al. 2012, arXiv:1210.816 in which it was found that "early-type"
+   galaxies with significant rotational support also exhibited
+   significant exponential ("disk") components.
+
+Point well taken!  We softened this paragraph so that it no longer
+makes any claim on this point; we now only attempt to induce some
+feelings about conservativeness.
 
    Equations 2 and 3: I suggest you replace a_k by another symbol, c_k say, to
    avoid confusion with the \alpha's in the following equations.
