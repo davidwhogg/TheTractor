@@ -139,6 +139,8 @@ feelings about conservativeness.
 
    Page 6, paragraph 2: "K-L divergence" --> "Kullback-Leibler divergence"
 
+fixed.
+
    Page 6 - Definition of "best": The authors should really have been "bolder" by
    insisting on the use of an information-theoretic measure here rather than the
    "traditional" chi-squared. The MoGs are a natural fit to an image entropy measure
@@ -150,6 +152,14 @@ feelings about conservativeness.
    the sake of computational speed? What happens when dealing with heavily blended
    objects? Where is the center for the 1D integral then? Please explain. A general
    explanation of how object deblending is performed with MoGs would be welcome.
+
+All we are trying to do in this paper is come up with *replacements*
+for the exponential and deVaucouleurs profiles and variants.  We are
+not actually fitting real galaxy images.  Indeed that requires
+deblending and so on.  Literally, all we are doing is replacing the
+exp{r^{1/n}) with a sum of Gaussians.  We are not fitting real scenes.
+
+[ we should make a text change here ]
 
    Page 7, paragraph 2: The statement "These -- M^lux = 6 and M^luv = 8 -- are good
     compromises between mixture complexity and quality of fit" warrants more
