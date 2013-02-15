@@ -161,12 +161,16 @@ and efficient, it has to be strongly adaptive (with much higher
 density in the center).  This adds complexity and choices into the
 code, leading to engineering and software maintenance and testing
 overheads that cost not just compute time but human time.  One
-response to this is to build large number of pre-computed profile PSF
+response to this is to build large numbers of pre-computed profile PSF
 convolutions and interpolate among them.  This is the strategy taken
 in the \project{SDSS} pipelines (\citealt{lupton}), but that requires
 even \emph{more} human overhead, because not only does the sampling
 and convolution have to be done correctly, so does the numerical
-interpolation.
+interpolation.  Finally, a sampling approximation---or any finite
+numerical approximation---is effectively something like a ``mixture of
+delta functions'' or ``mixture of integration kernels'' approximation.
+Any such approximation (at fixed accuracy) will have far more degrees
+of freedom (complexity) than the MoG approximations given below.
 
 On the subject of PSF-convolution, it is important in any
 image-modeling situation to think of the PSF as the
@@ -219,15 +223,15 @@ with finite support and finite total integral---including as a special
 case any two-dimensional probability distribution function---can be
 represented as a MoG to arbitrary accuracy; that is
 \begin{eqnarray}
-p(\pos) &\approx& \sum_{k=1}^K a_k\,\normal(\pos\given\mean_k,\var_k)
+p(\pos) &\approx& \sum_{k=1}^K c_k\,\normal(\pos\given\mean_k,\var_k)
 \\
-1 &=& \sum_{k=1}^K a_k
+1 &=& \sum_{k=1}^K c_k
 \quad ,
 \end{eqnarray}
 where $p(\pos)$ is any probability distribution of a two-dimensional
 quantity $\pos$, the $\approx$ symbol implies approximation, $K$ is
 the number of Gaussians used in the MoG, and the $K$ Gaussians
-have amplitudes $a_k$, means $\mean_k$, and variance tensors $\var_k$.
+have amplitudes $c_k$, means $\mean_k$, and variance tensors $\var_k$.
 The sum-to-one condition ensures that the probability distribution
 approximation is properly normalized.
 
@@ -318,20 +322,31 @@ Q^{\luv}(\spos) &\equiv& \left\{\begin{array}{ll}
 \alpha^{\luv} &\equiv& 7.66925
 \quad .
 \end{eqnarray}
-The half-light inverse-radius parameters $\alpha^{\exp}$ and
-$\alpha^{\dev}$---and the softening and cutoff radius parameters---are
+The half-light inverse-radius parameters $\alpha^{\lux}$ and
+$\alpha^{\luv}$---and the softening and cutoff radius parameters---are
 taken from the \sdss\ codebase.
 
 The profiles above are normalized to have unit intensity
 (approximately) at their half-light radii.  In many cases, the
 investigator wants profiles that are normalized to have unit total
-flux (intensity integrated over solid angle).  Although there is an
-analytic result for the dev profile, numerical integration of the
-concentrated profiles dev and luv to determine total fluxes can be
-challenging.  This is not true for the MoG approximations: Each
-Gaussian is normalized, so the sum of the amplitudes $\sum_m
-a^{\luv}_m$ (for the luv profile, say) gives the total flux for the
-MoG approximation to that profile.
+flux (intensity integrated over solid angle).  Although there happens
+to be an analytic result for the dev profile, direct numerical
+integration of the concentrated profiles dev and luv to determine
+total fluxes can be challenging.  This is not true for the MoG
+approximations: Each Gaussian is normalized, so the sum of the
+amplitudes $\sum_m a^{\luv}_m$ (for the luv profile, say) gives the
+total flux for the MoG approximation to that profile.
+
+Since the dev profile has an analytic integral, numerical integration
+of the dev profile is never strictly needed, but the fact that the
+numerical integration is challenging is an argument that the function
+is ill-behaved.  Also, there aren't analytic integrals for most
+partial footprints (that is, definite integrals with finite domain or
+out to finite radius); these are also much easier to evaluate in the
+MoG approximation, since the small Gaussians (in the center) will lie
+(almost) entirely within a finite domain, and the larger Gaussians
+(where numerical integration is required) are easier to sample and
+integrate than the exact profile.
 
 We seek the \emph{best} MoG approximations.  This necessitates
 definition of the word ``best''.  If we think of the profiles as being

@@ -43,7 +43,9 @@ sample points.  This is a huge computation.
 We also added an introductory paragraph that points out that the code
 complexity required to do rendering correctly is large and this leads
 to engineering overheads in testing and correctness that go way beyond
-the simple numerical speed losses.
+the simple numerical speed losses.  We alsoo bring up the point that
+conventional numerical integration methods effectively treat the
+profiles as very complex mixtures of kernels.
 
 [should we also add a late paragraph re-iterating and showing a comparison?]
 
@@ -128,14 +130,22 @@ feelings about conservativeness.
    Equations 2 and 3: I suggest you replace a_k by another symbol, c_k say, to
    avoid confusion with the \alpha's in the following equations.
 
+Good point.  Fixed.
+
    Page 6, first line: "The half-light inverse radius parameters \alpha^{exp} and \
    alpha^{dev} -- and the softening and cutoff radius parameters -- are taken from
    the SDSS codebase." I think you meant to write \alpha^{lux} and \alpha^{luv} here.
+
+Absolutely; fixed.
 
    Page 6, paragraph 2: "Although there is an analytic result for the dev profile,
    numerical integration of the concentrated profiles dev and luv to determine
    total fluxes can be challenging."  Why are you flagging the numerical integration of
     the dev profile as a challenge given that there is an analytic expression for it?
+
+Indeed.  Adjusted that paragraph slightly and added a subsequent
+paragraph explaining the implications for integrals over finite
+domains.
 
    Page 6, paragraph 2: "K-L divergence" --> "Kullback-Leibler divergence"
 
