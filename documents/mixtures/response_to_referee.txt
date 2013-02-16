@@ -47,7 +47,8 @@ the simple numerical speed losses.  We alsoo bring up the point that
 conventional numerical integration methods effectively treat the
 profiles as very complex mixtures of kernels.
 
-[should we also add a late paragraph re-iterating and showing a comparison?]
+[ should we also add a late paragraph re-iterating and showing a
+comparison? ]
 
    2. Is the paper written with the maximum conciseness compatible
    with accuracy and clarity?
@@ -127,41 +128,69 @@ Point well taken!  We softened this paragraph so that it no longer
 makes any claim on this point; we now only attempt to induce some
 feelings about conservativeness.
 
-   Equations 2 and 3: I suggest you replace a_k by another symbol, c_k say, to
-   avoid confusion with the \alpha's in the following equations.
+   Equations 2 and 3: I suggest you replace a_k by another symbol, c_k
+   say, to avoid confusion with the \alpha's in the following
+   equations.
 
 Good point.  Fixed.
 
-   Page 6, first line: "The half-light inverse radius parameters \alpha^{exp} and \
-   alpha^{dev} -- and the softening and cutoff radius parameters -- are taken from
-   the SDSS codebase." I think you meant to write \alpha^{lux} and \alpha^{luv} here.
+   Page 6, first line: "The half-light inverse radius parameters
+   \alpha^{exp} and \ alpha^{dev} -- and the softening and cutoff
+   radius parameters -- are taken from the SDSS codebase." I think you
+   meant to write \alpha^{lux} and \alpha^{luv} here.
 
 Absolutely; fixed.
 
-   Page 6, paragraph 2: "Although there is an analytic result for the dev profile,
-   numerical integration of the concentrated profiles dev and luv to determine
-   total fluxes can be challenging."  Why are you flagging the numerical integration of
-    the dev profile as a challenge given that there is an analytic expression for it?
+   Page 6, paragraph 2: "Although there is an analytic result for the
+   dev profile, numerical integration of the concentrated profiles dev
+   and luv to determine total fluxes can be challenging."  Why are you
+   flagging the numerical integration of the dev profile as a
+   challenge given that there is an analytic expression for it?
 
 Indeed.  Adjusted that paragraph slightly and added a subsequent
 paragraph explaining the implications for integrals over finite
 domains.
 
-   Page 6, paragraph 2: "K-L divergence" --> "Kullback-Leibler divergence"
+   Page 6, paragraph 2: "K-L divergence" --> "Kullback-Leibler
+   divergence"
 
 fixed.
 
-   Page 6 - Definition of "best": The authors should really have been "bolder" by
-   insisting on the use of an information-theoretic measure here rather than the
-   "traditional" chi-squared. The MoGs are a natural fit to an image entropy measure
-   because maximizing entropy, say, would naturally lead to minimizing the number of
-    components in a MoG. Chi-squared is also biased at low signal-to-noise ratios.
-   Please consider.
+   Page 6 - Definition of "best": The authors should really have been
+   "bolder" by insisting on the use of an information-theoretic
+   measure here rather than the "traditional" chi-squared. The MoGs
+   are a natural fit to an image entropy measure because maximizing
+   entropy, say, would naturally lead to minimizing the number of
+   components in a MoG. Chi-squared is also biased at low
+   signal-to-noise ratios.  Please consider.
 
-   Page 6: Why is "badness" computed in a one-dimensional numerical integral? For
-   the sake of computational speed? What happens when dealing with heavily blended
-   objects? Where is the center for the 1D integral then? Please explain. A general
-   explanation of how object deblending is performed with MoGs would be welcome.
+Chi-squared would definitely be biased if what we were fitting in
+astronomical images were distributions of photon arrivals with no
+background or read noise.  The presence of background (sky photons)
+and read noise makes chi-squared a better statistic for optimization
+than, say, the Poisson likelihood.  However, the *precise* measure you
+would use in *principle* depends (weakly) on the properties of the
+data you have.
+
+[ make text change here ]
+
+As for the information-theoretic things mentioned by the referee: Yes,
+in principle things like AIC and BIC and Bayes integral etc measures
+for "how many components to use" would be very useful.  Unfortunately,
+unlike with the decision about chi-squared vs Poisson likelihood, the
+value of the AIC or BIC does depend very very sensitively on the noise
+model (object, sky, and read noise levels) in every pixel of every
+image.  That is, someone doing this correctly would use a higher K
+expansion for the brighter galaxies and a lower K expansion for the
+fainter galaxies.  That is very relevant and important...
+
+[ we must add text for this ]
+
+   Page 6: Why is "badness" computed in a one-dimensional numerical
+   integral? For the sake of computational speed? What happens when
+   dealing with heavily blended objects? Where is the center for the
+   1D integral then? Please explain. A general explanation of how
+   object deblending is performed with MoGs would be welcome.
 
 All we are trying to do in this paper is come up with *replacements*
 for the exponential and deVaucouleurs profiles and variants.  We are
@@ -169,33 +198,43 @@ not actually fitting real galaxy images.  Indeed that requires
 deblending and so on.  Literally, all we are doing is replacing the
 exp{r^{1/n}) with a sum of Gaussians.  We are not fitting real scenes.
 
-[ we should make a text change here ]
+In the Tractor papers which are forthcoming, we *are* solving this
+deblending problem, but that is a separate matter, involving image
+likelihoods, noise models, and priors (and utilities, perhaps) on
+parameters, so it is way beyond the scope of this paper.
 
-   Page 7, paragraph 2: The statement "These -- M^lux = 6 and M^luv = 8 -- are good
-    compromises between mixture complexity and quality of fit" warrants more
-   explanation. Everytime I read about using MoGs for galaxy fitting, I have the same
-   reaction: it needs a large number of highly redundant to model something a single
-   exponential profile. Fans of the eigenimage decompositions are probably appalled!
-    Granted the mathematical simplicity of MoGs can make up for this by enabling
-   faster fitting times, but it is definitely an un-appealing aspect of the method.
-   It would be helpful to comment on this to counter a reaction that I think may be
-   shared by others. More importantly, I do not quite understand how you decided on
-    M^lux = 6 and M^luv = 8. If I look at Table 2, the badness for lux has clearly
-   converged and there is no gain in going higher than M=6. I cannot say the same
-   thing for the luv MoG. Badness goes down by a factor of 16 going from M=6 to M=8
-   and then goes down by a factor of 5 going from M=8 to M=10. How can you claim
-   that your badness has "converged" for M=8 then? A quantitative threshold and its
-   rationale are clearly needed here to justify the "good compromises" here. Please
-   be more quantitative or clarify if I misunderstood something.
+In this paper *all* we are doing is the "applied math" problem of
+replacing the analytic profiles with MoG approximations.
 
-   Equation 19: I did not quite understand your distinction between the \Delta X
-   vector here and the x vector in equation 2. Please clarify.
+[ we must make a text change here in response to this issue ]
 
+   Page 7, paragraph 2: The statement "These -- M^lux = 6 and M^luv =
+   8 -- are good compromises between mixture complexity and quality of
+   fit" warrants more explanation. Everytime I read about using MoGs
+   for galaxy fitting, I have the same reaction: it needs a large
+   number of highly redundant to model something a single exponential
+   profile. Fans of the eigenimage decompositions are probably
+   appalled!  Granted the mathematical simplicity of MoGs can make up
+   for this by enabling faster fitting times, but it is definitely an
+   un-appealing aspect of the method.  It would be helpful to comment
+   on this to counter a reaction that I think may be shared by
+   others. More importantly, I do not quite understand how you decided
+   on M^lux = 6 and M^luv = 8. If I look at Table 2, the badness for
+   lux has clearly converged and there is no gain in going higher than
+   M=6. I cannot say the same thing for the luv MoG. Badness goes down
+   by a factor of 16 going from M=6 to M=8 and then goes down by a
+   factor of 5 going from M=8 to M=10. How can you claim that your
+   badness has "converged" for M=8 then? A quantitative threshold and
+   its rationale are clearly needed here to justify the "good
+   compromises" here. Please be more quantitative or clarify if I
+   misunderstood something.
 
-In other news, we also made the following changes to the text, in
-response to other comments and issues:
+[ response ; what changes ]
 
-- we did foo
+   Equation 19: I did not quite understand your distinction between
+   the \Delta X vector here and the x vector in equation 2. Please
+   clarify.
 
-- we did bar
+[ response; what changes ]
 
+[ and search email for other issues arising / suggestions / etc... ]
