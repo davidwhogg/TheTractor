@@ -431,10 +431,20 @@ where the means $\mean_k$ are \emph{not} required to vanish because
 the PSF can have arbitrarily non-trivial structure (think speckles and
 the like) and the variances $\var_k$ will not in general be
 proportional to the identity or even diagonal because the PSF will not
-in general be round.  An example that illustrates the use of this PSF
-is the following: A star of flux $S_s$ at focal-plane position
-$\pos_s$ will lead to an image (PSF-convolved intensity map) of the
-form
+in general be round.  The reason we use $\Delta\pos$ in the argument
+of $\psi(\cdot)$---and not $\pos$---is that the PSF describes the
+probability distribution for two-dimensional \emph{displacements} of
+detected photons from true source positions.  It is equivalent to say
+that the PSF is a function that is only used to \emph{convolve} (or
+correlate) two-dimensional models; it is never used as an image model
+\emph{itself}.  The PSF is only used in the context of convolving some
+high-resolution model, which might be as complex as a multi-component
+galaxy, or might be as simple as a delta function, in the case of a
+star.
+
+An example that illustrates the use of this PSF is the following: A
+star of flux $S_s$ at focal-plane position $\pos_s$ will lead to an
+image (PSF-convolved intensity map) of the form
 \begin{eqnarray}\displaystyle
 I(\pos\given\star,S_s,\pos_s) &=& \sum_{k=1}^K S_s\,p_k\,\normal(\pos\given\pos_s+\mean_k,\var_k)
 \quad .

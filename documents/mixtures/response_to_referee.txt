@@ -235,6 +235,9 @@ replacing the analytic profiles with MoG approximations.
    the \Delta X vector here and the x vector in equation 2. Please
    clarify.
 
-[ response; what changes ]
+Agreed.  We added three sentences shortly after equation (19)
+explaining explicitly why we use \Delta x and not x here.  It relates
+to the fact that the PSF is only used as a convolution kernel, never
+as a model in itself.
 
 [ and search email for other issues arising / suggestions / etc... ]
