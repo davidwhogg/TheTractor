@@ -41,14 +41,12 @@ locations) and rendering requires as many PSF renderings as there are
 sample points.  This is a huge computation.
 
 We also added an introductory paragraph that points out that the code
-complexity required to do rendering correctly is large and this leads
-to engineering overheads in testing and correctness that go way beyond
-the simple numerical speed losses.  We alsoo bring up the point that
-conventional numerical integration methods effectively treat the
-profiles as very complex mixtures of kernels.
-
-[ should we also add a late paragraph re-iterating and showing a
-comparison? ]
+complexity required to do straight profile rendering (ie without the
+MoGs) correctly is large and this leads to engineering overheads in
+testing and correctness that go way beyond the simple numerical speed
+losses.  We alsoo bring up the point that conventional numerical
+integration methods effectively treat the profiles as very complex
+mixtures of kernels.
 
    2. Is the paper written with the maximum conciseness compatible
    with accuracy and clarity?
@@ -98,8 +96,6 @@ Fixed to "If the PSF is not represented in MoG form ...".
 
 As noted above, we have added sentences in one paragraph and one new
 paragraph that makes it clearer what the performance gains are.
-
-[ should we also get quantitative at the end? ]
 
    SPECIFIC COMMENTS:
 
