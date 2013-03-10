@@ -255,6 +255,8 @@ as a model in itself.
 
 In addition to the changes given above, we also made the following small changes:
 
-[ and search email for other issues arising / suggestions / etc... ]
+* Added references to Kochanek 2000 and van den Bosch 2008 and Bendinelli 1993.
 
-* We added an acknowledgement to the referee.
+* Fixed a few typos.
+
+* Added an acknowledgement to the referee.

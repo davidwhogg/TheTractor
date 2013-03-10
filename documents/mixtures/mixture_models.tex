@@ -112,7 +112,7 @@ approximate MoG PSF models for every imaging field).
 
 We are not the first in this space: Deconvolution and modeling of
 galaxy images with MoGs has been done very successfully before (for
-example, \citealt{bendinelli, emsellem, bendinelli2, cappellari}; they
+example, \citealt{bendinelli, emsellem, bendinelli2, kochanek, cappellari}; they
 use the name ``multi-Gaussian expansion'' or MGE).  However, the idea
 behind those projects was to use the MoGs to provide a very free form
 for the isophotes or morphologies of resolved galaxies or other
@@ -166,11 +166,13 @@ convolutions and interpolate among them.  This is the strategy taken
 in the \project{SDSS} pipelines (\citealt{lupton}), but that requires
 even \emph{more} human overhead, because not only does the sampling
 and convolution have to be done correctly, so does the numerical
-interpolation.  Finally, a sampling approximation---or any finite
-numerical approximation---is effectively something like a ``mixture of
-delta functions'' or ``mixture of integration kernels'' approximation.
-Any such approximation (at fixed accuracy) will have far more degrees
-of freedom (complexity) than the MoG approximations given below.
+interpolation.  Another less common strategy is to find other kinds of
+function expansions (\citealt{bendi}).  Finally, a sampling
+approximation---or any finite numerical approximation---is effectively
+something like a ``mixture of delta functions'' or ``mixture of
+integration kernels'' approximation.  Any such approximation (at fixed
+accuracy) will have far more degrees of freedom (complexity) than the
+MoG approximations given below.
 
 On the subject of PSF-convolution, it is important in any
 image-modeling situation to think of the PSF as the
@@ -189,7 +191,7 @@ on the order of $10^{13}$ pixels.  We are basing our models on the
 \project{Sloan Digital Sky Survey} (\sdss) Catalog galaxy models,
 which only include exponential, de~Vaucouleurs, and composite (mixture
 of the two) radial profiles.  In detail, in fact, the \sdss\ Catalog
-models are small modifications of these; details below.  So our goal
+models are small modifications of these; details below.  Our goal
 here is to provide replacements for these models in order to improve
 the performance of galaxy image modeling and analysis software.  Some
 of the models we present have been used previously in tools for
@@ -395,8 +397,8 @@ available.\footnote{\url{https://github.com/davidwhogg/TheTractor/}}
 
 The results of the optimizations are shown in \tablename
 s~\ref{tab:exp} and \ref{tab:lux} and \figurename s~\ref{fig:exp}
-through \ref{fig:M}.  All the results shown in these figures and
-tables and more are available in machine-readable form from author DWH
+through \ref{fig:M}.  All the results shown in these \figurename s and
+\tablename s and more are available in machine-readable form from author DWH
 upon request.  In the \tablename s and \figurename s we show
 root-variances rather than variances because these have units of
 half-light radii; they are simple standard deviations for the Gaussian
@@ -549,10 +551,11 @@ deprojected to rigid, spherical approximations to the
 three-dimensional profiles trivially.  The two-dimensional models we
 have started with are not accurate models of galaxies in detail---no
 galaxy follows exactly any ser profile---so deprojection of our
-approximations are not that interesting in themselves.  However,
-the general program of fitting two-dimensional sources with MoGs may
-have strong implications in the future for three-dimensional modeling
-and deprojection.
+approximations are not that interesting in themselves.  However, the
+general program of fitting two-dimensional sources with MoGs may have
+strong implications in the future for three-dimensional modeling and
+deprojection; some work has been done in this direction previously
+(\citealt{vdb}); it is promising.
 
 \acknowledgements It is a pleasure to thank
       Brendon Brewer (Auckland),
@@ -567,6 +570,8 @@ from author DWH upon request.
 \begin{thebibliography}{70}
 \bibitem[Bendinelli(1991)]{bendinelli}
 Bendinelli,~O., 1991, \apj, 366, 599
+\bibitem[Bendinelli et al.(1993)]{bendi}
+Bendinelli,~O., Ciotti,~L., \& Parmeggiani,~G.\ 1993, \aap, 279, 668 
 \bibitem[Bendinelli \& Parmeggiani(1995)]{bendinelli2}
 Bendinelli,~O. \& Parmeggiani,~G., 1995, \aj, 109, 572
 \bibitem[Bosch(2010)]{bosch}
@@ -587,6 +592,8 @@ Ciotti,~L. \& Bertin,~G., 1999, \aa, 352, 447
 de~Vaucouleurs,~G., 1948, Annales d'Astrophysique, 11, 247
 \bibitem[Emsellem \etal(1994)]{emsellem}
 Emsellem,~E., Monnet,~G., Bacon,~R., \& Nieto,~J.-L., 1994, \aap, 285, 739
+\bibitem[Kochanek et al.(2000)]{kochanek}
+Kochanek,~C.~S., Falco,~E.~E., Impey,~C.~D., et al., 2000, \apj, 535, 692
 \bibitem[Lupton \etal(2001)]{lupton}
 Lupton,~R., Gunn,~J.~E., Ivezic,~Z., Knapp,~G.~R., Kent,~S.~M., \& Yasuda,~N., 2001, ASPC, 238, 269
 \bibitem[Peng \etal(2002)]{galfit}
@@ -599,6 +606,8 @@ Shaw,~R.~A., ed., 2012, LSST Data Challenge Handbook (Version 2.0; Tucson, AZ: L
 Simard,~L., Mendel,~J.~T., Patton,~D.~R., Ellison,~S.~L., \& McConnachie,~A.~W., 2011, \apjs, 196, 11
 \bibitem[Trujillo \etal(2001)]{trujillo}
 Trujillo,~I., Aguerri,~J.~A.~L., Cepa,~J., \& Guti{\'e}rrez,~C.~M., 2001, \mnras, 321, 269 
+\bibitem[van~den~Bosch et al.(2008)]{vdb}
+van~den~Bosch,~R.~C.~E., van de Ven,~G., Verolme,~E.~K., Cappellari,~M., \& de~Zeeuw,~P.~T., 2008, \mnras, 385, 647
 \end{thebibliography}
 
 \clearpage
