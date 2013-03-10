@@ -359,7 +359,12 @@ to Gaussian.  This suggests more chi-squared-like objectives.  We
 adopt the latter, in part because they are most appropriate for our
 specific proposed application (modeling \sdss-like astronomical
 imaging), but experiments we have performed suggest that
-information-theoretic objectives also lead to good results.
+information-theoretic objectives also lead to good results.  In
+principle the objective that should be used to make these
+approximations could be slightly different in different contexts.  In
+practice, since the dependence of ``best objective'' on data
+properties is weak and because the point here is to make generic
+replacements for the analytic profiles, chi-squared is a good choice.
 
 In detail, the chi-squared objective we minimize---the
 \emph{badness}---is a squared residual between the exact profile
@@ -401,9 +406,15 @@ In our work on \project{The Tractor}, we use the $M^{\lux}=6$ lux and
 the $M^{\luv}=8$ luv profiles.  Our advice to users would be to do the
 same.  We use the lux and luv over the exp and dev partly because of
 their better behaviors numerically, and partly because they and we are
-both part of the \project{SDSS} tradition.  These---$M^{\lux}=6$ and
-$M^{\luv}=8$---are good compromises between mixture complexity ($M$)
-and quality of fit (badness).  Also, even the best-fitting late-type
+both part of the \project{SDSS} tradition.  We find that
+these---$M^{\lux}=6$ and $M^{\luv}=8$---are good compromises between
+mixture complexity ($M$) and quality of fit (badness) for our purposes
+fitting \project{SDSS} data.  We expect this to be true for many
+typical data sets.  In principle, $M$ should rise as the data quality
+improves, because better data requires better models, and as $M$
+increases, the approximations to the analytic profiles improve.  It is
+important to remember, however, if you are tempted to go to very large
+$M$, that this can be effort wasted: Even the best-fitting late-type
 and early-type galaxies deviate from exponential and de~Vaucouleurs
 fits by more than do these high-quality MoG approximations; no
 precision is lost.
@@ -546,7 +557,8 @@ and deprojection.
 \acknowledgements It is a pleasure to thank
       Brendon Brewer (Auckland),
       Jim Bosch (Princeton),
-  and Kevin Bundy (IPMU)
+      Kevin Bundy (IPMU),
+      and an anonymous referee
 for valuable comments.  This work was supported in part by NASA (grant
 NNX12AI50G) and the NSF (grant IIS-1124794).  All the results shown in
 the figures and tables and more are available in machine-readable form

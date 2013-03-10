@@ -164,11 +164,13 @@ Chi-squared would definitely be biased if what we were fitting in
 astronomical images were distributions of photon arrivals with no
 background or read noise.  The presence of background (sky photons)
 and read noise makes chi-squared a better statistic for optimization
-than, say, the Poisson likelihood.  However, the *precise* measure you
-would use in *principle* depends (weakly) on the properties of the
-data you have.
-
-[ make text change here ]
+than, say, the Poisson likelihood.  (That wouldn't be true if we were
+fitting to *actual* images in which we know the sky level and read
+noise, but we aren't.  Here we are just making *replacements* for the
+standard profiles in a generic setting.)  All that said, the *precise*
+measure you would use in *principle* depends (weakly) on the
+properties of the data you have.  We added two sentences to this
+effect in the relevant place (right after the K-L divergence mention).
 
 As for the information-theoretic things mentioned by the referee: Yes,
 in principle things like AIC and BIC and Bayes integral etc measures
@@ -176,11 +178,15 @@ for "how many components to use" would be very useful.  Unfortunately,
 unlike with the decision about chi-squared vs Poisson likelihood, the
 value of the AIC or BIC does depend very very sensitively on the noise
 model (object, sky, and read noise levels) in every pixel of every
-image.  That is, someone doing this correctly would use a higher K
-expansion for the brighter galaxies and a lower K expansion for the
-fainter galaxies.  That is very relevant and important...
-
-[ we must add text for this ]
+image.  That is, someone doing this correctly would use a higher M
+expansion for the brighter galaxies and a lower M expansion for the
+fainter galaxies.  That is very relevant and important.  We added text
+about this where we give the M_exp=6 advice.  We note that although it
+might make sense to go to large M from a data precision point of view,
+it doesn't from a *model* precision point of view, since the models
+don't fit the data at this level (there are spiral arms, deviations
+from ellipsoidal symmetry and so on), as the referee evidently knows!
+We added text about this too.
 
    Page 6: Why is "badness" computed in a one-dimensional numerical
    integral? For the sake of computational speed? What happens when
@@ -197,12 +203,17 @@ exp{r^{1/n}) with a sum of Gaussians.  We are not fitting real scenes.
 In the Tractor papers which are forthcoming, we *are* solving this
 deblending problem, but that is a separate matter, involving image
 likelihoods, noise models, and priors (and utilities, perhaps) on
-parameters, so it is way beyond the scope of this paper.
+parameters, so it is way beyond the scope of this paper.  This paper
+is just about the profiles *themselves*, not any specific data
+analysis problem that we can solve with them.
 
 In this paper *all* we are doing is the "applied math" problem of
-replacing the analytic profiles with MoG approximations.
-
-[ we must make a text change here in response to this issue ]
+replacing the analytic profiles with MoG approximations.  As we note
+in the introductory paragraphs, *any* use of deV and exp profiles
+involves some approximation when convolving with a realistic PSF.  We
+are just arguing for using MoG approximations instead of the
+alternatives, most of which are finite, adaptive samplings, which are
+more computationally expensive and less accurate.
 
    Page 7, paragraph 2: The statement "These -- M^lux = 6 and M^luv =
    8 -- are good compromises between mixture complexity and quality of
@@ -225,7 +236,13 @@ replacing the analytic profiles with MoG approximations.
    compromises" here. Please be more quantitative or clarify if I
    misunderstood something.
 
-[ response ; what changes ]
+We don't mean to claim that the badness has converged, and we modified
+the text to say so.  We just mean that as a trade-off between code
+speed and precision, in *practice* this is a good place to stop.
+Again, this is just for *replacing* the analytic profiles, not for
+general galaxy fitting.  For general galaxy fitting, we agree that
+many more Gaussians can be required, especially for nearby
+well-resolved galaxies.
 
    Equation 19: I did not quite understand your distinction between
    the \Delta X vector here and the x vector in equation 2. Please
@@ -236,4 +253,8 @@ explaining explicitly why we use \Delta x and not x here.  It relates
 to the fact that the PSF is only used as a convolution kernel, never
 as a model in itself.
 
+In addition to the changes given above, we also made the following small changes:
+
 [ and search email for other issues arising / suggestions / etc... ]
+
+* We added an acknowledgement to the referee.
