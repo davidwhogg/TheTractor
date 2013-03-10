@@ -253,10 +253,12 @@ explaining explicitly why we use \Delta x and not x here.  It relates
 to the fact that the PSF is only used as a convolution kernel, never
 as a model in itself.
 
-In addition to the changes given above, we also made the following small changes:
+In addition to the changes given above, we also made the following
+small changes:
 
-* Added references to Kochanek 2000 and van den Bosch 2008 and Bendinelli 1993.
+* Added references to Kochanek 2000 and van den Bosch 2008 and
+  Bendinelli 1993 and Spergel 2010.
 
 * Fixed a few typos.
 
-* Added an acknowledgement to the referee.
+* Added some acknowledgements, including one to the referee.
