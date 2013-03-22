@@ -16,19 +16,18 @@ ps = PlotSequence('sernorm')
 X = np.linspace(0., 8., 8001)
 dx = (X[1]-X[0])
 X = X[:-1] + dx/2.
-for n in np.arange(1, 6, 0.5):
+cc = ['r','b','g','m','y','c','k',(1.,0.5,0),'0.3',(0,0.5,1.)]
+plt.clf()
+for i,n in enumerate(np.arange(1, 6, 0.5)):
 	print 'sernorm(%f)' % n, sernorm(n)
 	S = np.exp(-sernorm(n) * (X**(1./n) - 1.))
-	plt.clf()
-	plt.plot(X, S, 'r-')
+	plt.plot(X, S, '-', color=cc[i])
 	cs = np.cumsum(S*X)*dx
-	plt.plot(X, cs / (cs[-1]), 'r:')
-	plt.axhline(1., color='k', alpha=0.5)
-	plt.axhline(0.5, color='k', alpha=0.5)
-	plt.axvline(1., color='k', alpha=0.5)
-	plt.title('n = %f' % n)
-	#ps.savefig()
-	plt.xscale('log')
-	plt.yscale('log')
-	ps.savefig()
-
+	plt.plot(X, cs / (cs[-1]), ':', color=cc[i])
+plt.axhline(1., color='k', alpha=0.5)
+plt.axhline(0.5, color='k', alpha=0.5)
+plt.axvline(1., color='k', alpha=0.5)
+plt.xscale('log')
+plt.yscale('log')
+plt.xlim(X.min(), X.max())
+ps.savefig()
