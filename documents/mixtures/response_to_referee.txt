@@ -44,7 +44,7 @@ We also added an introductory paragraph that points out that the code
 complexity required to do straight profile rendering (ie without the
 MoGs) correctly is large and this leads to engineering overheads in
 testing and correctness that go way beyond the simple numerical speed
-losses.  We alsoo bring up the point that conventional numerical
+losses.  We also bring up the point that conventional numerical
 integration methods effectively treat the profiles as very complex
 mixtures of kernels.
 
