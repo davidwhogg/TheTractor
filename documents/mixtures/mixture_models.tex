@@ -297,16 +297,15 @@ where we have given the constant $\alpha^{\ser(n)}$ for just a few
 values of $n$ (\citealt{ciotti}; the $\exp$ and $\dev$ profiles given
 above provide values for $n=1$ and $n=4$.)
 
-\cite{ciotti} give an equation for $\alpha^{\ser(n)}$ in their
-equation 5:
+The general equation for $\alpha^{\ser(n)}$ is (\citealt{ciotti} equation~5):
 \begin{eqnarray}
 \gamma(2 n, \alpha^{\ser(n)}) &=& \frac{\Gamma(2 n)}{2}
+\\
+\gamma(q, x) &\equiv& \int_0^x \exp(-t) \, t^{q-1} \, \mathrm{d}t
+\quad ,
 \end{eqnarray}
-where $\gamma$ is the \emph{left} or \emph{lower} incomplete gamma function,
-\begin{eqnarray}
-\gamma(a, x) &=& \int_0^x \exp(-t) \, t^{a-1} \, \mathrm{d} t \quad .
-\end{eqnarray}
-Fortunately for us, this can be evaluated using
+where $\gamma(\cdot)$ is the \emph{left} or \emph{lower} incomplete
+gamma function.  Fortunately for us, this can be evaluated using
 \begin{eqnarray}
 \alpha^{\ser(n)} &=& \texttt{gammaincinv}(2 n, \, \frac{1}{2})
 \end{eqnarray}
