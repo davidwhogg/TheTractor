@@ -50,7 +50,7 @@ def write_table(model):
     fd.write(r"$M^{\%s}=$ &" % model + "\n")
     write_table_line(fd, [r"\multicolumn{2}{|c|}{$%d$}" % K for K in Ks])
     fd.write(r"$m$ &" + "\n")
-    write_table_line(fd, [r"$a^{\%s}_m$ & $\sqrt{v^{\%s}_m}$" % (model, model) for K in Ks])
+    write_table_line(fd, [r"$c^{\%s}_m$ & $\sqrt{v^{\%s}_m}$" % (model, model) for K in Ks])
     for k in range(np.max(Ks)):
         fd.write(r"$%d$ &" % (k + 1) + "\n")
         aks = []
@@ -64,7 +64,7 @@ def write_table(model):
                 svks += [r"~"] # [r"\cdots"]
         write_table_line(fd, [r"$%s$ & $%s$" % (a, sv) for a, sv in zip(aks, svks)])
     fd.write(r"\hline" + "\n")
-    fd.write(r"$\sum_m a^{\%s}_m=$ &" % model + "\n")
+    fd.write(r"$\sum_m c^{\%s}_m=$ &" % model + "\n")
     write_table_line(fd, [r"\multicolumn{2}{|c|}{$%6.3f$}" % q for q in [np.sum(pars[i][0:K]) for i, K in enumerate(Ks)]])
     fd.write(r"badness~$=$ &" + "\n")
     MR = 8.

@@ -259,6 +259,9 @@ small changes:
 * Added references to Kochanek 2000 and van den Bosch 2008 and
   Bendinelli 1993 and Spergel 2010.
 
+* Added the general formula for \alpha as a function of Sersic n and a
+  reference.
+
 * Fixed a few typos.
 
 * Added some acknowledgements, including one to the referee.

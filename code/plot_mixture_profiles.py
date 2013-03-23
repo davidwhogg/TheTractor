@@ -47,7 +47,7 @@ def plot_mixtures_vs_model(K):
         plt.annotate(label, [sigmas[-1], amps[-1]], xytext=[4,-4+tweak], textcoords="offset points", va="baseline", ha="left")
     model = "ser"
     plt.xlabel(r"root-variance $\sqrt{v^{\mathrm{%s}}_m}$ (units of half-light radii)" % model)
-    plt.ylabel(r"amplitudes $a^{\mathrm{%s}}_m$" % model)
+    plt.ylabel(r"amplitudes $c^{\mathrm{%s}}_m$" % model)
     plt.title(r"approximations to ser profiles at $M^{\mathrm{ser}}=%d$" % K)
     plt.loglog()
     plt.xlim(0.5e-4, 2.e1)
@@ -77,7 +77,7 @@ def plot_mixtures_vs_K(model):
         plt.annotate(label, [sigmas[0], amps[0]], xytext=[-4,-4], textcoords="offset points", va="baseline", ha="right")
         plt.annotate(label, [sigmas[-1], amps[-1]], xytext=[4,-4+tweak], textcoords="offset points", va="baseline", ha="left")
     plt.xlabel(r"root-variance $\sqrt{v^{\mathrm{%s}}_m}$ (units of half-light radii)" % model)
-    plt.ylabel(r"amplitudes $a^{\mathrm{%s}}_m$" % model)
+    plt.ylabel(r"amplitudes $c^{\mathrm{%s}}_m$" % model)
     plt.title(r"approximations to %s" % model)
     plt.loglog()
     plt.xlim(0.5e-4, 2.e1)

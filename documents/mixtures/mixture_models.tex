@@ -252,7 +252,7 @@ dimensionless because it parameterizes the unit-size dimensionless
 function.  We seek the best (where ``best'' will be defined below)
 $M^{\exp}$-Gaussian MoG (where $M^{\exp}$ is an integer) approximation
 \begin{eqnarray}\displaystyle
-Q^{\exp}(\spos) &\approx& \sum_{m=1}^{M^{\exp}} a^{\exp}_m\,\normal(\spos\given\zero,\var^{\exp}_m)
+Q^{\exp}(\spos) &\approx& \sum_{m=1}^{M^{\exp}} c^{\exp}_m\,\normal(\spos\given\zero,\var^{\exp}_m)
 \\
 \var^{\exp}_m &\equiv& v^{\exp}_m\,\identity
 \quad ,
@@ -268,7 +268,7 @@ Q^{\dev}(\spos) &\equiv& \exp(-\alpha^{\dev}\,[|\spos|^{1/4} - 1])
 \\
 \alpha^{\dev} &\equiv& 7.66924944
 \\
-Q^{\dev}(\spos) &\approx& \sum_{m=1}^{M^{\dev}} a^{\dev}_m\,\normal(\spos\given\zero,\var^{\dev}_m)
+Q^{\dev}(\spos) &\approx& \sum_{m=1}^{M^{\dev}} c^{\dev}_m\,\normal(\spos\given\zero,\var^{\dev}_m)
 \\
 \var^{\dev}_m &\equiv& v^{\dev}_m\,\identity
 \quad .
@@ -277,7 +277,7 @@ The half-light inverse-radius parameters $\alpha^{\exp}$ and
 $\alpha^{\dev}$ are from \citet{ciotti}.  The challenge we
 meet below is to determine the parameters
 \begin{eqnarray}
-\{a^{\exp}_m,v^{\exp}_m\}_{m=1}^{M^{\exp}}~,~\{a^{\dev}_m,v^{\dev}_m\}_{m=1}^{M^{\dev}}
+\{c^{\exp}_m,v^{\exp}_m\}_{m=1}^{M^{\exp}}~,~\{c^{\dev}_m,v^{\dev}_m\}_{m=1}^{M^{\dev}}
 \end{eqnarray}
 to best approximate the traditional galaxy profile functions, under
 some sensible definition of the word ``best'', as a function of the
@@ -308,9 +308,9 @@ where $\gamma$ is the \emph{left} or \emph{lower} incomplete gamma function,
 \end{eqnarray}
 Fortunately for us, this can be evaluated using
 \begin{eqnarray}
-\alpha^{\ser(n)} &=& \mathrm{gammaincinv}(2 n, \, \frac{1}{2})
+\alpha^{\ser(n)} &=& \texttt{gammaincinv}(2 n, \, \frac{1}{2})
 \end{eqnarray}
-using the gammaincinv (inverse incomplete gamma) function in the
+using the \texttt{gammaincinv} (inverse incomplete gamma) function in the
 \project{scipy.special} library.
 
 The \sdss\ pipelines (\citealt{lupton}) make use of modified profiles,
@@ -352,7 +352,7 @@ to be an analytic result for the dev profile, direct numerical
 integration of the concentrated profiles dev and luv to determine
 total fluxes can be challenging.  This is not true for the MoG
 approximations: Each Gaussian is normalized, so the sum of the
-amplitudes $\sum_m a^{\luv}_m$ (for the luv profile, say) gives the
+amplitudes $\sum_m c^{\luv}_m$ (for the luv profile, say) gives the
 total flux for the MoG approximation to that profile.
 
 Since the dev profile has an analytic integral, numerical integration
@@ -438,7 +438,7 @@ fits by more than do these high-quality MoG approximations; no
 precision is lost.
 
 In \figurename~\ref{fig:ser}, we show the dependence of amplitudes
-$a^{\ser(n)}_m$ and variances $v^{\ser(n)}_m$ on the ser index $n$.
+$c^{\ser(n)}_m$ and variances $v^{\ser(n)}_m$ on the ser index $n$.
 There is clearly continuity; a valuable follow-up project would be to
 give expressions for the amplitudes and variances as a function of ser
 index $n$.  In the absence of cleverness our advice would be to make
@@ -497,7 +497,7 @@ affine transformation \emph{prior} to PSF convolution, so the
 focal-plane image (PSF-convolved intensity field) for a general (say)
 $\exp$ galaxy is given by
 \begin{eqnarray}\displaystyle
-I(\pos\given\exp,S_g,\pos_g,\affine_g) &=& \sum_{k=1}^K \sum_{m=1}^{M^{\exp}} S_g\,a^{\exp}_m\,p_k\,\normal(\pos\given\pos_g+\mean_k,\var_{gm}+\var_k)
+I(\pos\given\exp,S_g,\pos_g,\affine_g) &=& \sum_{k=1}^K \sum_{m=1}^{M^{\exp}} S_g\,c^{\exp}_m\,p_k\,\normal(\pos\given\pos_g+\mean_k,\var_{gm}+\var_k)
 \\
 \var_{gm} &\equiv& \affine_g\cdot\var^{\exp}_m\cdot\transpose{\affine_g}
 \\
@@ -583,12 +583,14 @@ deprojection; some work has been done in this direction previously
 for valuable comments.
 %
 We thank Jim Bosch (Princeton) for bringing to our attention the
-\emph{gammaincinv} function.
+formula involving \texttt{gammaincinv}.
 %
-  This work was supported in part by NASA (grant
-NNX12AI50G) and the NSF (grant IIS-1124794).  All the results shown in
-the figures and tables and more are available in machine-readable form
-from author DWH upon request.
+This work was supported in part by NASA (grant NNX12AI50G) and the NSF
+(grant IIS-1124794).  All the results shown in the figures and tables
+and more are available in machine-readable form from author DWH upon
+request.  This research made use of the Python projects
+\project{numpy} and \project{scipy} and the NASA \project{Astrophysics
+  Data System}.
 
 \begin{thebibliography}{70}
 \bibitem[Bendinelli(1991)]{bendinelli}
@@ -701,7 +703,7 @@ van~den~Bosch,~R.~C.~E., van de Ven,~G., Verolme,~E.~K., Cappellari,~M., \& de~Z
 \caption{Three ser profiles---with $n=2$, $3$, and $5$---and
   approximations.  The top-left, top-right, and bottom-left panels are
   equivalent to those in the top-right of \figurename~\ref{fig:exp}.
-  \textsl{bottom-right:} The dependence on the amplitudes $a^{\ser(n)}_m$
+  \textsl{bottom-right:} The dependence on the amplitudes $c^{\ser(n)}_m$
   and root-variances $\sqrt{v^{\ser(n)}_m}$ on ser index $n$.\label{fig:ser}}
 \end{figure}
 
@@ -712,7 +714,7 @@ van~den~Bosch,~R.~C.~E., van de Ven,~G., Verolme,~E.~K., Cappellari,~M., \& de~Z
 \includegraphics[width=\figurewidth]{mixtures_vs_K_lux.pdf}%
 \includegraphics[width=\figurewidth]{mixtures_vs_K_luv.pdf}
 \caption{Comparisons of approximations.  \textsl{top-left:} The
-  dependence of amplitude $a^{\exp}_m$ and root-variance
+  dependence of amplitude $c^{\exp}_m$ and root-variance
   $\sqrt{v^{\exp}_m}$ on $M^{\exp}$ for the exp profile.
   \textsl{top-right:} The same but for the dev profile.
   \textsl{bottom-left:} The same but for the lux profile.
