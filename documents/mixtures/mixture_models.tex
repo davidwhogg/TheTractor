@@ -302,16 +302,13 @@ equation 5:
 \begin{eqnarray}
 \gamma(2 n, \alpha^{\ser(n)}) &=& \frac{\Gamma(2 n)}{2}
 \end{eqnarray}
-where $\gamma$ is the \emph{left} or \emph{lower} incomplete gamma function,
-\begin{eqnarray}
-\gamma(a, x) &=& \int_0^x \exp(-t) \, t^{a-1} \, \mathrm{d} t \quad .
-\end{eqnarray}
+where $\gamma$ is the lower incomplete gamma function.
 Fortunately for us, this can be evaluated using
 \begin{eqnarray}
 \alpha^{\ser(n)} &=& \mathrm{gammaincinv}(2 n, \, \frac{1}{2})
 \end{eqnarray}
-using the gammaincinv (inverse incomplete gamma) function in the
-\project{scipy.special} library.
+where gammaincinv is the inverse incomplete gamma function implemented
+in the \project{scipy.special} library.
 
 The \sdss\ pipelines (\citealt{lupton}) make use of modified profiles,
 which have been truncated smoothly at large radius and (in the case of
