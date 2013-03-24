@@ -1,6 +1,11 @@
 % This file is part of The Tractor.
-% Copyright 2012 David W. Hogg (NYU) and Dustin Lang (Princeton, CMU).
+% Copyright 2012, 2013 David W. Hogg (NYU) and Dustin Lang (Princeton, CMU).
 % All rights reserved.
+
+% to-do items
+% -----------
+% - respond to referee
+% - resubmit
 
 \documentclass[12pt,pdftex,preprint]{aastex}
 \usepackage{amssymb,amsmath,mathrsfs}
@@ -81,7 +86,7 @@ Gaussians output by these operations are related simply to the means
 and variance tensors of the inputs.  Add to these wonders the fact
 that Gaussians form a complete basis for representing (smooth)
 probability distribution functions and it becomes remarkable that we
-don't do everything we do in terms of Gaussians.
+do not do everything we do in terms of Gaussians.
 
 To elaborate, a mixture of multivariate Gaussians---a linear
 superposition---can be used to represent any reasonable distribution
@@ -107,7 +112,7 @@ approximate MoG PSF models for every imaging field).
 
 We are not the first in this space: Deconvolution and modeling of
 galaxy images with MoGs has been done very successfully before (for
-example, \citealt{bendinelli, emsellem, bendinelli2, cappellari}; they
+example, \citealt{bendinelli, emsellem, bendinelli2, kochanek, cappellari}; they
 use the name ``multi-Gaussian expansion'' or MGE).  However, the idea
 behind those projects was to use the MoGs to provide a very free form
 for the isophotes or morphologies of resolved galaxies or other
@@ -118,30 +123,56 @@ profiles---as rigid MoGs.
 
 Whenever an investigator is fitting PSF-convolved exponential or
 de~Vaucouleurs profiles, the models presented here will improve code
-performance.  That doesn't mean that doing such fitting is a Good
+performance.  That does not mean that doing such fitting is a Good
 Idea.  These profiles are effective models for galaxies at low
 signal-to-noise (as they are used in the \project{SDSS}) and they are
 useful templates for performing consistent photometry across
 morphologically diverse objects (as we use them in \citealt{bundy}).
 More radically, these profiles are sometimes used to distinguish disk
 and bulge light (as in \citealt{bulgedisk} and references cited
-therein); these uses are prone to over-interpretation: There is no
-theoretical argument and only weak observational arguments that the
-rotation-supported parts of galaxies are always exponential and that
-the kinematically hot components are always more de-Vaucouleurs-like.
+therein); these uses are prone to over-interpretation: There certainly
+could be rotation-supported parts of galaxies that are not exponential
+and kinematically hot components that are not de-Vaucouleurs-like.
 
 The performance advantages we will obtain from using MoG
-approximations are not simply that convolution itself is trivial.  The
-standard unconvolved galaxy models, especially the de~Vaucouleurs and
-S\'ersic models (\citealt{dev}, \citealt{ser}), are very ill-behaved
-near the galaxy center.  Rendering these profiles precisely near the
-center can be very challenging numerically.  In addition, most of the
-rendering time is spent at very small radii, where PSF convolution is
-going to erase all structure anyway.  That is, a MoG description of
-the de~Vaucouleurs profile saves time both in rendering \emph{and} in
-PSF convolution; it produces profiles that are approximate but very
-high performance when all real uses of the profiles are PSF-convolved,
-as they usually are.
+approximations are not simply that it makes the convolution trivial.
+The standard unconvolved galaxy models, especially the de~Vaucouleurs
+and S\'ersic models (\citealt{dev}, \citealt{ser}), are very
+ill-behaved near the galaxy center.  Rendering these profiles
+precisely near the center can be very challenging numerically.
+Computer codes that do this rendering and PSF convolution well use
+enormous numbers of samples; mathematically this sampling
+representation of the models is a mixture of delta functions.  In
+order for these representations of the profiles to be precise, large
+numbers of sample points are required.  The convolution and rendering
+step involves as many PSF evaluations as there are samples---which can
+number in the thousands.  In addition, most of the rendering time is
+spent at very small radii---most of the samples in any integration are
+in or near the central pixel---where PSF convolution is going to erase
+all structure anyway.  That is, a MoG description of the
+de~Vaucouleurs profile saves time both in rendering \emph{and} in PSF
+convolution; it produces code that is very high performance when all
+real uses of the profiles are PSF-convolved, as they usually are.
+
+Not only does a sampling representation of the profiles require many
+more compute operations per render than a MoG representation, it also
+requires more code complexity.  For the sampling to be both accurate
+and efficient, it has to be strongly adaptive (with much higher
+density in the center).  This adds complexity and choices into the
+code, leading to engineering and software maintenance and testing
+overheads that cost not just compute time but human time.  One
+response to this is to build large numbers of pre-computed profile PSF
+convolutions and interpolate among them.  This is the strategy taken
+in the \project{SDSS} pipelines (\citealt{lupton}), but that requires
+even \emph{more} human overhead, because not only does the sampling
+and convolution have to be done correctly, so does the numerical
+interpolation.  Another less common strategy is to find other kinds of
+function expansions or approximations (\citealt{bendi},
+\citealt{spergel}).  Finally, a sampling approximation---or any finite
+numerical approximation---is effectively something like a ``mixture of
+delta functions'' or ``mixture of integration kernels'' approximation.
+Any such approximation (at fixed accuracy) will have far more degrees
+of freedom (complexity) than the MoG approximations given below.
 
 On the subject of PSF-convolution, it is important in any
 image-modeling situation to think of the PSF as the
@@ -160,7 +191,7 @@ on the order of $10^{13}$ pixels.  We are basing our models on the
 \project{Sloan Digital Sky Survey} (\sdss) Catalog galaxy models,
 which only include exponential, de~Vaucouleurs, and composite (mixture
 of the two) radial profiles.  In detail, in fact, the \sdss\ Catalog
-models are small modifications of these; details below.  So our goal
+models are small modifications of these; details below.  Our goal
 here is to provide replacements for these models in order to improve
 the performance of galaxy image modeling and analysis software.  Some
 of the models we present have been used previously in tools for
@@ -176,8 +207,8 @@ alternative to making MoG profiles is to find exact analytic
 expressions for certain kinds of convolutions.  There \emph{are} some
 analytic results for PSF-convolved S\'ersic models but they involve
 some non-trivial series and special-function expressions
-(\citealt{trujillo}); we won't come back to these again but they might
-be very useful in many situations.
+(\citealt{trujillo}); we will not come back to these again but they
+might be very useful in many situations.
 
 Because we are thinking about two-dimensional imaging, we use here
 two-dimensional Gaussian or Normal distributions, which look like
@@ -194,15 +225,15 @@ with finite support and finite total integral---including as a special
 case any two-dimensional probability distribution function---can be
 represented as a MoG to arbitrary accuracy; that is
 \begin{eqnarray}
-p(\pos) &\approx& \sum_{k=1}^K a_k\,\normal(\pos\given\mean_k,\var_k)
+p(\pos) &\approx& \sum_{k=1}^K c_k\,\normal(\pos\given\mean_k,\var_k)
 \\
-1 &=& \sum_{k=1}^K a_k
+1 &=& \sum_{k=1}^K c_k
 \quad ,
 \end{eqnarray}
 where $p(\pos)$ is any probability distribution of a two-dimensional
 quantity $\pos$, the $\approx$ symbol implies approximation, $K$ is
 the number of Gaussians used in the MoG, and the $K$ Gaussians
-have amplitudes $a_k$, means $\mean_k$, and variance tensors $\var_k$.
+have amplitudes $c_k$, means $\mean_k$, and variance tensors $\var_k$.
 The sum-to-one condition ensures that the probability distribution
 approximation is properly normalized.
 
@@ -221,7 +252,7 @@ dimensionless because it parameterizes the unit-size dimensionless
 function.  We seek the best (where ``best'' will be defined below)
 $M^{\exp}$-Gaussian MoG (where $M^{\exp}$ is an integer) approximation
 \begin{eqnarray}\displaystyle
-Q^{\exp}(\spos) &\approx& \sum_{m=1}^{M^{\exp}} a^{\exp}_m\,\normal(\spos\given\zero,\var^{\exp}_m)
+Q^{\exp}(\spos) &\approx& \sum_{m=1}^{M^{\exp}} c^{\exp}_m\,\normal(\spos\given\zero,\var^{\exp}_m)
 \\
 \var^{\exp}_m &\equiv& v^{\exp}_m\,\identity
 \quad ,
@@ -237,7 +268,7 @@ Q^{\dev}(\spos) &\equiv& \exp(-\alpha^{\dev}\,[|\spos|^{1/4} - 1])
 \\
 \alpha^{\dev} &\equiv& 7.66924944
 \\
-Q^{\dev}(\spos) &\approx& \sum_{m=1}^{M^{\dev}} a^{\dev}_m\,\normal(\spos\given\zero,\var^{\dev}_m)
+Q^{\dev}(\spos) &\approx& \sum_{m=1}^{M^{\dev}} c^{\dev}_m\,\normal(\spos\given\zero,\var^{\dev}_m)
 \\
 \var^{\dev}_m &\equiv& v^{\dev}_m\,\identity
 \quad .
@@ -246,7 +277,7 @@ The half-light inverse-radius parameters $\alpha^{\exp}$ and
 $\alpha^{\dev}$ are from \citet{ciotti}.  The challenge we
 meet below is to determine the parameters
 \begin{eqnarray}
-\{a^{\exp}_m,v^{\exp}_m\}_{m=1}^{M^{\exp}}~,~\{a^{\dev}_m,v^{\dev}_m\}_{m=1}^{M^{\dev}}
+\{c^{\exp}_m,v^{\exp}_m\}_{m=1}^{M^{\exp}}~,~\{c^{\dev}_m,v^{\dev}_m\}_{m=1}^{M^{\dev}}
 \end{eqnarray}
 to best approximate the traditional galaxy profile functions, under
 some sensible definition of the word ``best'', as a function of the
@@ -265,6 +296,21 @@ Q^{\ser(n)}(\spos) &\equiv& \exp(-\alpha^{\ser(n)}\,[|\spos|^{1/n} - 1])
 where we have given the constant $\alpha^{\ser(n)}$ for just a few
 values of $n$ (\citealt{ciotti}; the $\exp$ and $\dev$ profiles given
 above provide values for $n=1$ and $n=4$.)
+
+The general equation for $\alpha^{\ser(n)}$ is (\citealt{ciotti} equation~5):
+\begin{eqnarray}
+\gamma(2 n, \alpha^{\ser(n)}) &=& \frac{\Gamma(2 n)}{2}
+\\
+\gamma(q, x) &\equiv& \int_0^x \exp(-t) \, t^{q-1} \, \mathrm{d}t
+\quad ,
+\end{eqnarray}
+where $\gamma(\cdot)$ is the lower incomplete gamma function.
+Fortunately for us, this can be evaluated using
+\begin{eqnarray}
+\alpha^{\ser(n)} &=& \texttt{gammaincinv}(2 n, \, \frac{1}{2})
+\end{eqnarray}
+where \texttt{gammaincinv} is the inverse incomplete gamma function implemented
+in the \project{scipy.special} library.\footnote{\url{http://scipy.org}}
 
 The \sdss\ pipelines (\citealt{lupton}) make use of modified profiles,
 which have been truncated smoothly at large radius and (in the case of
@@ -293,33 +339,49 @@ Q^{\luv}(\spos) &\equiv& \left\{\begin{array}{ll}
 \alpha^{\luv} &\equiv& 7.66925
 \quad .
 \end{eqnarray}
-The half-light inverse-radius parameters $\alpha^{\exp}$ and
-$\alpha^{\dev}$---and the softening and cutoff radius parameters---are
+The half-light inverse-radius parameters $\alpha^{\lux}$ and
+$\alpha^{\luv}$---and the softening and cutoff radius parameters---are
 taken from the \sdss\ codebase.
 
 The profiles above are normalized to have unit intensity
 (approximately) at their half-light radii.  In many cases, the
 investigator wants profiles that are normalized to have unit total
-flux (intensity integrated over solid angle).  Although there is an
-analytic result for the dev profile, numerical integration of the
-concentrated profiles dev and luv to determine total fluxes can be
-challenging.  This is not true for the MoG approximations: Each
-Gaussian is normalized, so the sum of the amplitudes $\sum_m
-a^{\luv}_m$ (for the luv profile, say) gives the total flux for the
-MoG approximation to that profile.
+flux (intensity integrated over solid angle).  Although there happens
+to be an analytic result for the dev profile, direct numerical
+integration of the concentrated profiles dev and luv to determine
+total fluxes can be challenging.  This is not true for the MoG
+approximations: Each Gaussian is normalized, so the sum of the
+amplitudes $\sum_m c^{\luv}_m$ (for the luv profile, say) gives the
+total flux for the MoG approximation to that profile.
+
+Since the dev profile has an analytic integral, numerical integration
+of the dev profile is never strictly needed, but the fact that the
+numerical integration is challenging is an argument that the function
+is ill-behaved.  Also, there aren't analytic integrals for most
+partial footprints (that is, definite integrals with finite domain or
+out to finite radius); these are also much easier to evaluate in the
+MoG approximation, since the small Gaussians (in the center) will lie
+(almost) entirely within a finite domain, and the larger Gaussians
+(where numerical integration is required) are easier to sample and
+integrate than the exact profile.
 
 We seek the \emph{best} MoG approximations.  This necessitates
 definition of the word ``best''.  If we think of the profiles as being
 two-dimensional probability distribution functions (for, say, the
-arrivals of photons), then one natural choice is the K-L divergence or
-similar cross-entropy or information-theoretic measure.  However, in
-typical astronomical imaging, the galaxy is superimposed on a
-substantial, flat sky level, and the noise in the data is close to
-Gaussian.  This suggests more chi-squared-like objectives.  We adopt
-the latter, in part because they are most appropriate for our specific
-proposed application (modeling \sdss-like astronomical imaging), but
-experiments we have performed suggest that information-theoretic
-objectives also lead to good results.
+arrivals of photons), then one natural choice is the Kullback--Leibler
+divergence or similar cross-entropy or information-theoretic measure.
+However, in typical astronomical imaging, the galaxy is superimposed
+on a substantial, flat sky level, and the noise in the data is close
+to Gaussian.  This suggests more chi-squared-like objectives.  We
+adopt the latter, in part because they are most appropriate for our
+specific proposed application (modeling \sdss-like astronomical
+imaging), but experiments we have performed suggest that
+information-theoretic objectives also lead to good results.  In
+principle the objective that should be used to make these
+approximations could be slightly different in different contexts.  In
+practice, since the dependence of ``best objective'' on data
+properties is weak and because the point here is to make generic
+replacements for the analytic profiles, chi-squared is a good choice.
 
 In detail, the chi-squared objective we minimize---the
 \emph{badness}---is a squared residual between the exact profile
@@ -339,7 +401,7 @@ integral is weighted in radius (weight increasing linearly with
 radius) to make it equivalent to the two-dimensional chi-squared.  We
 also add to the badness a very tiny coefficient (on the order of
 $10^{-3}$ of the best-fit badness) times the sum of the variances
-$v_m$ for regularization.  In practice, this term doesn't have much
+$v_m$ for regularization.  In practice, this term does not have much
 effect and could be dropped.
 
 Optimization (minimization) of the badness is performed by the
@@ -350,8 +412,8 @@ available.\footnote{\url{https://github.com/davidwhogg/TheTractor/}}
 
 The results of the optimizations are shown in \tablename
 s~\ref{tab:exp} and \ref{tab:lux} and \figurename s~\ref{fig:exp}
-through \ref{fig:M}.  All the results shown in these figures and
-tables and more are available in machine-readable form from author DWH
+through \ref{fig:M}.  All the results shown in these \figurename s and
+\tablename s and more are available in machine-readable form from author DWH
 upon request.  In the \tablename s and \figurename s we show
 root-variances rather than variances because these have units of
 half-light radii; they are simple standard deviations for the Gaussian
@@ -361,15 +423,21 @@ In our work on \project{The Tractor}, we use the $M^{\lux}=6$ lux and
 the $M^{\luv}=8$ luv profiles.  Our advice to users would be to do the
 same.  We use the lux and luv over the exp and dev partly because of
 their better behaviors numerically, and partly because they and we are
-both part of the \project{SDSS} tradition.  These---$M^{\lux}=6$ and
-$M^{\luv}=8$---are good compromises between mixture complexity ($M$)
-and quality of fit (badness).  Also, even the best-fitting late-type
+both part of the \project{SDSS} tradition.  We find that
+these---$M^{\lux}=6$ and $M^{\luv}=8$---are good compromises between
+mixture complexity ($M$) and quality of fit (badness) for our purposes
+fitting \project{SDSS} data.  We expect this to be true for many
+typical data sets.  In principle, $M$ should rise as the data quality
+improves, because better data requires better models, and as $M$
+increases, the approximations to the analytic profiles improve.  It is
+important to remember, however, if you are tempted to go to very large
+$M$, that this can be effort wasted: Even the best-fitting late-type
 and early-type galaxies deviate from exponential and de~Vaucouleurs
 fits by more than do these high-quality MoG approximations; no
 precision is lost.
 
 In \figurename~\ref{fig:ser}, we show the dependence of amplitudes
-$a^{\ser(n)}_m$ and variances $v^{\ser(n)}_m$ on the ser index $n$.
+$c^{\ser(n)}_m$ and variances $v^{\ser(n)}_m$ on the ser index $n$.
 There is clearly continuity; a valuable follow-up project would be to
 give expressions for the amplitudes and variances as a function of ser
 index $n$.  In the absence of cleverness our advice would be to make
@@ -391,10 +459,20 @@ where the means $\mean_k$ are \emph{not} required to vanish because
 the PSF can have arbitrarily non-trivial structure (think speckles and
 the like) and the variances $\var_k$ will not in general be
 proportional to the identity or even diagonal because the PSF will not
-in general be round.  An example that illustrates the use of this PSF
-is the following: A star of flux $S_s$ at focal-plane position
-$\pos_s$ will lead to an image (PSF-convolved intensity map) of the
-form
+in general be round.  The reason we use $\Delta\pos$ in the argument
+of $\psi(\cdot)$---and not $\pos$---is that the PSF describes the
+probability distribution for two-dimensional \emph{displacements} of
+detected photons from true source positions.  It is equivalent to say
+that the PSF is a function that is only used to \emph{convolve} (or
+correlate) two-dimensional models; it is never used as an image model
+\emph{itself}.  The PSF is only used in the context of convolving some
+high-resolution model, which might be as complex as a multi-component
+galaxy, or might be as simple as a delta function, in the case of a
+star.
+
+An example that illustrates the use of this PSF is the following: A
+star of flux $S_s$ at focal-plane position $\pos_s$ will lead to an
+image (PSF-convolved intensity map) of the form
 \begin{eqnarray}\displaystyle
 I(\pos\given\star,S_s,\pos_s) &=& \sum_{k=1}^K S_s\,p_k\,\normal(\pos\given\pos_s+\mean_k,\var_k)
 \quad .
@@ -418,7 +496,7 @@ affine transformation \emph{prior} to PSF convolution, so the
 focal-plane image (PSF-convolved intensity field) for a general (say)
 $\exp$ galaxy is given by
 \begin{eqnarray}\displaystyle
-I(\pos\given\exp,S_g,\pos_g,\affine_g) &=& \sum_{k=1}^K \sum_{m=1}^{M^{\exp}} S_g\,a^{\exp}_m\,p_k\,\normal(\pos\given\pos_g+\mean_k,\var_{gm}+\var_k)
+I(\pos\given\exp,S_g,\pos_g,\affine_g) &=& \sum_{k=1}^K \sum_{m=1}^{M^{\exp}} S_g\,c^{\exp}_m\,p_k\,\normal(\pos\given\pos_g+\mean_k,\var_{gm}+\var_k)
 \\
 \var_{gm} &\equiv& \affine_g\cdot\var^{\exp}_m\cdot\transpose{\affine_g}
 \\
@@ -450,11 +528,11 @@ require that the user do \emph{two} convolutions, the first with the
 PSF and the second with the square (or worse) pixel.  Our advice: Only
 fit for and use pixel-convolved PSFs.
 
-If your PSF is not in MoG form, it is still the case that convolution
-of a MoG approximation of a dev (say) profile will in general be
-easier than convolution of the original dev profile.  The reason is
-that convolution of a Gaussian with any PSF is fast (indeed most
-image-processing languages have such functions built in); the
+If the PSF is not represented in MoG form, it is still the case that
+convolution of a MoG approximation of a dev (say) profile will in
+general be easier than convolution of the original dev profile.  The
+reason is that convolution of a Gaussian with any PSF is fast (indeed
+most image-processing languages have such functions built in); the
 PSF-convolved profile becomes in this case just a mixture of
 Gaussian-convolved PSFs.
 
@@ -488,23 +566,36 @@ deprojected to rigid, spherical approximations to the
 three-dimensional profiles trivially.  The two-dimensional models we
 have started with are not accurate models of galaxies in detail---no
 galaxy follows exactly any ser profile---so deprojection of our
-approximations are not that interesting in themselves.  However,
-the general program of fitting two-dimensional sources with MoGs may
-have strong implications in the future for three-dimensional modeling
-and deprojection.
+approximations are not that interesting in themselves.  However, the
+general program of fitting two-dimensional sources with MoGs may have
+strong implications in the future for three-dimensional modeling and
+deprojection; some work has been done in this direction previously
+(\citealt{vdb}); it is promising.
 
 \acknowledgements It is a pleasure to thank
       Brendon Brewer (Auckland),
-      Jim Bosch (Princeton),
-  and Kevin Bundy (IPMU)
-for valuable comments.  This work was supported in part by NASA (grant
-NNX12AI50G) and the NSF (grant IIS-1124794).  All the results shown in
-the figures and tables and more are available in machine-readable form
-from author DWH upon request.
+      Kevin Bundy (IPMU),
+      Luca Ciotti (Bologna),
+      Rachel Mandelbaum (CMU),
+      Chien Peng (OCIW),
+      and an anonymous referee
+for valuable comments.
+%
+We thank Jim Bosch (Princeton) for bringing to our attention the
+formula involving \texttt{gammaincinv}.
+%
+This work was supported in part by NASA (grant NNX12AI50G) and the NSF
+(grant IIS-1124794).  All the results shown in the figures and tables
+and more are available in machine-readable form from author DWH upon
+request.  This research made use of the Python projects
+\project{numpy} and \project{scipy} and the NASA \project{Astrophysics
+  Data System}.
 
 \begin{thebibliography}{70}
 \bibitem[Bendinelli(1991)]{bendinelli}
 Bendinelli,~O., 1991, \apj, 366, 599
+\bibitem[Bendinelli et al.(1993)]{bendi}
+Bendinelli,~O., Ciotti,~L., \& Parmeggiani,~G.\ 1993, \aap, 279, 668 
 \bibitem[Bendinelli \& Parmeggiani(1995)]{bendinelli2}
 Bendinelli,~O. \& Parmeggiani,~G., 1995, \aj, 109, 572
 \bibitem[Bosch(2010)]{bosch}
@@ -520,11 +611,13 @@ Bundy,~K. \etal, \aj, in press
 \bibitem[Cappellari(2002)]{cappellari}
 Cappellari,~M., 2002, \mnras, 333, 400
 \bibitem[Ciotti \& Bertin(1999)]{ciotti}
-Ciotti,~L. \& Bertin,~G., 1999, \aa, 352, 447
+Ciotti,~L. \& Bertin,~G., 1999, \aap, 352, 447
 \bibitem[de~Vaucouleurs(1948)]{dev}
 de~Vaucouleurs,~G., 1948, Annales d'Astrophysique, 11, 247
 \bibitem[Emsellem \etal(1994)]{emsellem}
 Emsellem,~E., Monnet,~G., Bacon,~R., \& Nieto,~J.-L., 1994, \aap, 285, 739
+\bibitem[Kochanek et al.(2000)]{kochanek}
+Kochanek,~C.~S., Falco,~E.~E., Impey,~C.~D., et al., 2000, \apj, 535, 692
 \bibitem[Lupton \etal(2001)]{lupton}
 Lupton,~R., Gunn,~J.~E., Ivezic,~Z., Knapp,~G.~R., Kent,~S.~M., \& Yasuda,~N., 2001, ASPC, 238, 269
 \bibitem[Peng \etal(2002)]{galfit}
@@ -535,8 +628,12 @@ S{\'e}rsic,~J.~L., 1963, Boletin de la Asociacion Argentina de Astronomia La Pla
 Shaw,~R.~A., ed., 2012, LSST Data Challenge Handbook (Version 2.0; Tucson, AZ: LSST Corp.)
 \bibitem[Simard et al.(2011)]{bulgedisk}
 Simard,~L., Mendel,~J.~T., Patton,~D.~R., Ellison,~S.~L., \& McConnachie,~A.~W., 2011, \apjs, 196, 11
+\bibitem[Spergel(2010)]{spergel}
+Spergel,~D.~N.\ 2010, \apjs, 191, 58
 \bibitem[Trujillo \etal(2001)]{trujillo}
 Trujillo,~I., Aguerri,~J.~A.~L., Cepa,~J., \& Guti{\'e}rrez,~C.~M., 2001, \mnras, 321, 269 
+\bibitem[van~den~Bosch et al.(2008)]{vdb}
+van~den~Bosch,~R.~C.~E., van de Ven,~G., Verolme,~E.~K., Cappellari,~M., \& de~Zeeuw,~P.~T., 2008, \mnras, 385, 647
 \end{thebibliography}
 
 \clearpage
@@ -605,18 +702,18 @@ Trujillo,~I., Aguerri,~J.~A.~L., Cepa,~J., \& Guti{\'e}rrez,~C.~M., 2001, \mnras
 \caption{Three ser profiles---with $n=2$, $3$, and $5$---and
   approximations.  The top-left, top-right, and bottom-left panels are
   equivalent to those in the top-right of \figurename~\ref{fig:exp}.
-  \textsl{bottom-right:} The dependence on the amplitudes $a^{\ser(n)}_m$
+  \textsl{bottom-right:} The dependence on the amplitudes $c^{\ser(n)}_m$
   and root-variances $\sqrt{v^{\ser(n)}_m}$ on ser index $n$.\label{fig:ser}}
 \end{figure}
 
 \clearpage
 \begin{figure}
-\includegraphics[width=\figurewidth]{mixtures_vs_K_exp}%
-\includegraphics[width=\figurewidth]{mixtures_vs_K_dev}\\
-\includegraphics[width=\figurewidth]{mixtures_vs_K_lux}%
-\includegraphics[width=\figurewidth]{mixtures_vs_K_luv}
+\includegraphics[width=\figurewidth]{mixtures_vs_K_exp.pdf}%
+\includegraphics[width=\figurewidth]{mixtures_vs_K_dev.pdf}\\
+\includegraphics[width=\figurewidth]{mixtures_vs_K_lux.pdf}%
+\includegraphics[width=\figurewidth]{mixtures_vs_K_luv.pdf}
 \caption{Comparisons of approximations.  \textsl{top-left:} The
-  dependence of amplitude $a^{\exp}_m$ and root-variance
+  dependence of amplitude $c^{\exp}_m$ and root-variance
   $\sqrt{v^{\exp}_m}$ on $M^{\exp}$ for the exp profile.
   \textsl{top-right:} The same but for the dev profile.
   \textsl{bottom-left:} The same but for the lux profile.
@@ -627,12 +724,12 @@ Trujillo,~I., Aguerri,~J.~A.~L., Cepa,~J., \& Guti{\'e}rrez,~C.~M., 2001, \mnras
 \begin{figure}
 \setlength{\figurewidth}{0.25\textwidth}
 \begin{tabular}{@{}c@{}c@{}}
-\includegraphics[width=\figurewidth]{trdemo-01} &
-\includegraphics[width=\figurewidth]{trdemo-02} \\
-\includegraphics[width=\figurewidth]{trdemo-03} &
-\includegraphics[width=\figurewidth]{trdemo-06} \\
-\includegraphics[width=\figurewidth]{trdemo-08} &
-\includegraphics[width=\figurewidth]{trdemo-09}
+\includegraphics[width=\figurewidth]{trdemo-01.pdf} &
+\includegraphics[width=\figurewidth]{trdemo-02.pdf} \\
+\includegraphics[width=\figurewidth]{trdemo-03.pdf} &
+\includegraphics[width=\figurewidth]{trdemo-06.pdf} \\
+\includegraphics[width=\figurewidth]{trdemo-08.pdf} &
+\includegraphics[width=\figurewidth]{trdemo-09.pdf}
 \end{tabular}
 \caption{Demonstration of use of the profiles, or the implicit
   generative model in this \documentname.  \textsl{top-left:} The

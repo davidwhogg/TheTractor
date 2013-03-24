@@ -13,4 +13,4 @@ justified probabilistic fitting.  This project really lives at
 
 ### License
 
-Copyright 2012 by the authors.  **All rights reserved.**
+Copyright 2011, 2012, 2013 by the authors.  **All rights reserved.**
