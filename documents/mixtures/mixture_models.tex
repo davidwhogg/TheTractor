@@ -304,13 +304,13 @@ The general equation for $\alpha^{\ser(n)}$ is (\citealt{ciotti} equation~5):
 \gamma(q, x) &\equiv& \int_0^x \exp(-t) \, t^{q-1} \, \mathrm{d}t
 \quad ,
 \end{eqnarray}
-where $\gamma(\cdot)$ is the \emph{left} or \emph{lower} incomplete
-gamma function.  Fortunately for us, this can be evaluated using
+where $\gamma(\cdot)$ is the lower incomplete gamma function.
+Fortunately for us, this can be evaluated using
 \begin{eqnarray}
 \alpha^{\ser(n)} &=& \texttt{gammaincinv}(2 n, \, \frac{1}{2})
 \end{eqnarray}
-using the \texttt{gammaincinv} (inverse incomplete gamma) function in the
-\project{scipy.special} library.
+where \texttt{gammaincinv} is the inverse incomplete gamma function implemented
+in the \project{scipy.special} library.\footnote{\url{http://scipy.org}}
 
 The \sdss\ pipelines (\citealt{lupton}) make use of modified profiles,
 which have been truncated smoothly at large radius and (in the case of
