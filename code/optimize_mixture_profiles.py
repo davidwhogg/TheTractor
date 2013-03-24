@@ -146,8 +146,8 @@ def badness_of_fit(lnpars, model, max_radius, log10_squared_deviation):
     Compute chi-squared deviation between profile and
     mixture-of-Gaussian approximation, where the chi-squared is
     appropriate for two-dimensional intensity fitting.
-
-    Note magic number in penalty for large variance.
+    
+    Magic number in extrabadness.
     """
     pars = np.exp(lnpars)
     x = np.arange(0.0005, max_radius, 0.001)
@@ -155,11 +155,13 @@ def badness_of_fit(lnpars, model, max_radius, log10_squared_deviation):
     # note radius (x) weighting, this makes the differential proportional to 2 * pi * r * dr
     numerator = np.sum(x * residual * residual)
     denominator = np.sum(x)
-    badness = numerator / denominator / 10.**log10_squared_deviation
+    badness = numerator / denominator
     K = len(pars) / 2
     var = pars[K:]
-    extrabadness = 0.0001 * np.sum(var) / max_radius**2
-    return badness + extrabadness
+    extrabadness = 1e-10 * np.mean(var / max_radius**2)
+    if extrabadness > badness:
+        print "EXTRABAD:", model, pars, max_radius, log10_squared_deviation
+    return (badness + extrabadness) / 10.**log10_squared_deviation
 
 def negative_score(lnpars, model, max_radius, log10_squared_deviation):
     """
