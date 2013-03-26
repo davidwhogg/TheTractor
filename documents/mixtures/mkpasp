@@ -1,0 +1,103 @@
+#!/usr/bin/perl
+#
+# Make a sensible set-up into an Pasp type set-up
+#
+# MB 1/99
+# 2004-09-10  made more general - Hogg
+# 2008-08-28  made yet more general - Hogg
+#
+my $figformatsuffix= "eps";
+$papername=shift;
+
+if($papername eq "") {$papername="paper";}
+
+sub inputfile {
+    local ($infile) = @_;
+    my ($filehand);
+    $nfiles++;
+    $filehand="auxfile$nfiles";
+    print "$filehand\n";
+    open($filehand,"<$infile");
+    while(<$filehand>) {
+	if(/^\s*\\input\{(\S*)\}.*$/ || 
+	   /^\s*\\include\{(\S*)\}.*$/) {
+	    inputfile("$1");
+	} else {
+	    print paspfile;
+	}
+    }
+    close($filehand);
+    $nfiles--;
+}
+
+#
+# Make pasp directory if necessary
+#
+system("mkdir -p ./pasp");
+
+# start tex file
+my $paspms1= "pasp/tmp_1_ms.tex";
+open(paspfile,">$paspms1");
+print paspfile "\\documentclass[12pt,preprint]\{aastex\}\n";
+
+# deal with include files, bibliography, etc
+open(paperfile,"<$papername.tex");
+while(<paperfile>) {
+    if (/^.*\\documentclass.*$/) {
+    } elsif (/^\s*\\input\{(\S*)\}\.*$/) {
+	inputfile("$1");
+    } elsif (/^\s*\\include\{(\S*)\}\.*$/) {
+	inputfile("$1");
+    } elsif (/\\bibliography/) {
+	$dummy=<paperfile>;
+	inputfile("$papername.bbl");
+    } elsif (/^\s*\\bibliographystyle/) {
+    } else {
+	print paspfile;
+    }
+}
+close(paperfile);
+close(paspfile);
+
+# deal with figures
+my $nfig= 0;
+my $nsubfig= 0;
+my $figappend= "";
+open(infile,"<$paspms1");
+my $paspms2= "pasp/tmp_2_ms.tex";
+open(outfile,">$paspms2");
+while(<infile>) {
+    if(/^(.*\\begin\{figure\}.*)$/){
+	$nfig++;
+	$nsubfig= 0;
+    }
+    if(/^.*\\addtocounter\{figure\}\{(.*)\}.*$/){
+	$nfig+= $1;
+    }
+    if((/^(.*\\plot\w*\{)(\S*)(\}.*)$/ ||
+	/^(.*\\epsfig\{figure\=)(\S*?)(,.*\}.*)$/ ||
+	/^(.*\\includegraphics\w*\{)(\S*?)(\}+.*)$/ ||
+	/^(.*\\includegraphics\[.*\]\w*\{)(\S*?)(\}+.*)$/) &&
+       !/^%/
+       ) {
+	$figfile=$2;
+	$prepend=$1;
+	$postpend=$3;
+	$line=sprintf("%sf%d%c.%s%s\n",$prepend,$nfig,97+$nsubfig,
+		      $figformatsuffix,$postpend);
+	print outfile $line;
+	print $line;
+	$cmd=sprintf("convert %s pasp/f%d%c.%s",$figfile,$nfig,97+$nsubfig,
+		     $figformatsuffix);
+	system("$cmd");
+	printf readmefile " f%d%s.%s\n",$nfig,$figappend,$figformatsuffix;
+	$nsubfig++;
+    } else {
+	print outfile;
+    }
+}
+close(outfile);
+close(infile);
+
+system("/bin/rm -fv $paspms1");
+system("/bin/mv -fv $paspms2 pasp/ms.tex");
