@@ -1,8 +1,9 @@
 *~
-*.pyc
 *.aux
+*.eps
 *.log
 *.pdf
+*.pyc
 code/*.png
 code/*.txt
 code/*.tex
