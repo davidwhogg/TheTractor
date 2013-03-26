@@ -1,6 +1,6 @@
 all: mixture_models.pdf
 
-FIG_SUFFIX = eps
+FIG_SUFFIX = pdf
 
 MIXTURE_MODELS_FIGURES = \
 	exp_K06_MR08_profile.$(FIG_SUFFIX) \
@@ -22,7 +22,13 @@ MIXTURE_MODELS_FIGURES = \
 	mixtures_vs_K_exp.$(FIG_SUFFIX) \
 	mixtures_vs_K_dev.$(FIG_SUFFIX) \
 	mixtures_vs_K_lux.$(FIG_SUFFIX) \
-	mixtures_vs_K_luv.$(FIG_SUFFIX)
+	mixtures_vs_K_luv.$(FIG_SUFFIX) \
+	trdemo-01.$(FIG_SUFFIX) \
+	trdemo-02.$(FIG_SUFFIX) \
+	trdemo-03.$(FIG_SUFFIX) \
+	trdemo-06.$(FIG_SUFFIX) \
+	trdemo-08.$(FIG_SUFFIX) \
+	trdemo-09.$(FIG_SUFFIX)
 
 MIXTURE_MODELS_TABLES = \
 	table_exp.tex \
