@@ -21,7 +21,7 @@ sub inputfile {
     while(<$filehand>) {
 	if(/^\s*\\input\{(\S*)\}.*$/ || 
 	   /^\s*\\include\{(\S*)\}.*$/) {
-	    inputfile("$1");
+	    inputfile("$1.tex");
 	} else {
 	    print paspfile;
 	}
@@ -87,7 +87,7 @@ while(<infile>) {
 		      $figformatsuffix,$postpend);
 	print outfile $line;
 	print $line;
-	$cmd=sprintf("convert %s pasp/f%d%c.%s",$figfile,$nfig,97+$nsubfig,
+	$cmd=sprintf("convert -density 300 %s pasp/f%d%c.%s",$figfile,$nfig,97+$nsubfig,
 		     $figformatsuffix);
 	system("$cmd");
 	printf readmefile " f%d%s.%s\n",$nfig,$figappend,$figformatsuffix;
