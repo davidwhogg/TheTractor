@@ -18,6 +18,7 @@ import scipy.optimize as op
 from multiprocessing import Pool
 import cPickle as pickle
 import os as os
+from sernorm import sernorm
 
 def not_normal(x, V):
     """
@@ -32,13 +33,18 @@ def not_normal(x, V):
     result[I] = 1. / (2. * np.pi * V) * np.exp(exparg[I])
     return result
 
+def hogg_ser(x, n, soft=None):
+    if soft:
+        return np.exp(-sernorm(n) * ((x**2 + soft) ** (1./(2.*n)) - 1.))
+    return np.exp(-sernorm(n) * (x ** (1./n) - 1.))
+
 def hogg_exp(x):
     """
     One-dimensional exponential profile.
 
-    Magic number from Ciotti & Bertin, A&A, 352, 447 (1999).
     Normalized to return 1. at x=1.
     """
+    #return hogg_ser(x, 1.)
     return np.exp(-1.67834699 * (x - 1.))
 
 def hogg_dev(x):
@@ -48,6 +54,8 @@ def hogg_dev(x):
     magic number from Ciotti & Bertin, A&A, 352, 447 (1999)
     normalized to return 1. at x=1.
     """
+    #return hogg_ser(x, 4.)
+    #return np.exp(-sernorm(4.) * ((x * x)**0.125 - 1.))
     return np.exp(-7.66924944 * ((x * x)**0.125 - 1.))
 
 def hogg_luv(x):
@@ -59,7 +67,9 @@ def hogg_luv(x):
     """
     inner = 7.
     outer = 8.
-    luv = np.exp(-7.66925 * ((x * x + 0.0004)**0.125 - 1.))
+    #luv = hogg_ser(x, 4., soft=4e-4)
+    #luv = np.exp(-sernorm(4.) * ((x * x + 0.0004)**0.125 - 1.))
+    luv = np.exp(-7.66924944 * ((x * x + 0.0004)**0.125 - 1.))
     luv[x > outer] *= 0.
     middle = (x >= inner) * (x <= outer)
     luv[middle] *= (1. - ((x[middle] - inner) / (outer - inner)) ** 2) ** 2
@@ -74,6 +84,8 @@ def hogg_lux(x):
     """
     inner = 3.
     outer = 4.
+    #lux = hogg_ser(x, 1.)
+    #lux = np.exp(-sernorm(1.) * (x - 1.))
     lux = np.exp(-1.67835 * (x - 1.))
     lux[x > outer] *= 0.
     middle = (x >= inner) * (x <= outer)
@@ -87,6 +99,8 @@ def hogg_ser2(x):
     Magic numbers from Ciotti & Bertin, A&A, 352, 447 (1999)
     Normalized to return 1. at x=1.
     """
+    #return hogg_ser(x, 2.)
+    #return np.exp(-sernorm(2.) * ((x * x)**0.25 - 1.))
     return np.exp(-3.67206075 * ((x * x)**0.25 - 1.))
 
 def hogg_ser3(x):
@@ -96,6 +110,8 @@ def hogg_ser3(x):
     Magic numbers from Ciotti & Bertin, A&A, 352, 447 (1999)
     Normalized to return 1. at x=1.
     """
+    #return hogg_ser(x, 3.)
+    #return np.exp(-sernorm(3.) * ((x * x)**(1./6.) - 1.))
     return np.exp(-5.67016119 * ((x * x)**(1./6.) - 1.))
 
 def hogg_ser5(x):
@@ -105,6 +121,7 @@ def hogg_ser5(x):
     Magic numbers from Ciotti & Bertin, A&A, 352, 447 (1999)
     Normalized to return 1. at x=1.
     """
+    #return hogg_ser(x, 5.)
     return np.exp(-9.66871461 * ((x * x)**0.1 - 1.))
 
 def hogg_model(x, model):
@@ -342,6 +359,48 @@ def main(input):
     return None
 
 if __name__ == '__main__':
+
+    for x in [0.56, 2.7]:
+        a = hogg_exp(x)
+        b = hogg_ser(x, 1.)
+        print a, b
+        assert(np.abs(a - b) < 1e-8)
+
+        a = hogg_dev(x)
+        b = hogg_ser(x, 4.)
+        print a, b
+        assert(np.abs(a - b) < 1e-8)
+
+        a = hogg_luv(np.array([x]))
+        # doesn't ramp
+        b = hogg_ser(x, 4., soft=4e-4)
+        print a, b
+        assert(np.abs(a - b) < 1e-8)
+
+        a = hogg_lux(np.array([x]))
+        b = hogg_ser(x, 1.)
+        print a, b
+        assert(np.abs(a - b) < 1e-5)
+
+        a = hogg_ser2(x)
+        b = hogg_ser(x, 2.)
+        print a, b
+        assert(np.abs(a - b) < 1e-8)
+
+        a = hogg_ser3(x)
+        b = hogg_ser(x, 3.)
+        print a, b
+        assert(np.abs(a - b) < 1e-8)
+
+        a = hogg_ser5(x)
+        b = hogg_ser(x, 5.)
+        print a, b
+        assert(np.abs(a - b) < 1e-8)
+
+
+    sys.exit(0)
+
+
     if True: # use multiprocessing
         pmap = Pool(8).map
     else: # don't use multiprocessing
