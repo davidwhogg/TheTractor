@@ -113,20 +113,19 @@ def hogg_model(x, model):
     """
     if model == 'exp':
         return hogg_exp(x)
-    if model == 'dev':
+    elif model == 'dev':
         return hogg_dev(x)
-    if model == 'luv':
+    elif model == 'luv':
         return hogg_luv(x)
-    if model == 'lux':
+    elif model == 'lux':
         return hogg_lux(x)
-    if model == 'ser2':
+    elif model == 'ser2':
         return hogg_ser2(x)
-    if model == 'ser3':
+    elif model == 'ser3':
         return hogg_ser3(x)
-    if model == 'ser5':
+    elif model == 'ser5':
         return hogg_ser5(x)
-    assert(1 == 0)
-    return None
+    return hogg_ser(x, model)
 
 def mixture_of_not_normals(x, pars):
     """
@@ -346,13 +345,16 @@ if __name__ == '__main__':
         pmap = Pool(8).map
     else: # don't use multiprocessing
         pmap = map
-    inputs = [
-        ('dev', 8.),
-        ('luv', 8.),
-        ('ser2', 8.),
-        ('ser3', 8.),
-        ('ser5', 8.),
-        ('exp', 8.),
-        ('lux', 4.),
-        ]
+    # inputs = [
+    #     ('dev', 8.),
+    #     ('luv', 8.),
+    #     ('ser2', 8.),
+    #     ('ser3', 8.),
+    #     ('ser5', 8.),
+    #     ('exp', 8.),
+    #     ('lux', 4.),
+    #     ]
+    #inputs = [(x, 8.) for x in np.arange(0.5, 6)]
+    inputs = [(x, 8.) for x in np.arange(0.75, 6, 0.5)]
     pmap(main, inputs)
+
