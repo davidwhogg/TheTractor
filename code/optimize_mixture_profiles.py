@@ -6,7 +6,12 @@ Copyright 2011, 2012 David W. Hogg.
 - When using chi-squared-like badness, we should use levmar not bfgs!
 - Spews enormous numbers of warnings when log10_squared_deviation gets very negative.
 '''
-
+from __future__ import print_function
+try:
+    # py2
+    import cPickle as pickle
+except:
+    import pickle
 import matplotlib
 matplotlib.use('Agg')
 from matplotlib import rc
@@ -16,7 +21,6 @@ import pylab as plt
 import numpy as np
 import scipy.optimize as op
 from multiprocessing import Pool
-import cPickle as pickle
 import os as os
 from sernorm import sernorm
 
@@ -132,7 +136,7 @@ def mixture_of_not_normals(x, pars):
     One-dimensional profile made from a mixture of two dimensional
     concentric Gaussians.
     """
-    K = len(pars)/2
+    K = len(pars)//2
     y = 0.
     for k in range(K):
         y += pars[k] * not_normal(x, pars[k + K])
@@ -155,11 +159,11 @@ def badness_of_fit(lnpars, model, max_radius, log10_squared_deviation):
     numerator = np.sum(x * residual * residual)
     denominator = np.sum(x)
     badness = numerator / denominator
-    K = len(pars) / 2
+    K = len(pars) // 2
     var = pars[K:]
     extrabadness = 1e-10 * np.mean(var / max_radius**2)
     if extrabadness > badness:
-        print "EXTRABAD:", model, pars, max_radius, log10_squared_deviation
+        print("EXTRABAD:", model, pars, max_radius, log10_squared_deviation)
     return (badness + extrabadness) / 10.**log10_squared_deviation
 
 def negative_score(lnpars, model, max_radius, log10_squared_deviation):
@@ -173,7 +177,7 @@ def negative_score(lnpars, model, max_radius, log10_squared_deviation):
     """
     pars = np.exp(lnpars)
     extrabadness = 1. * (mixture_of_not_normals(np.ones(1), pars)[0] - 1.)**2
-    K = pars.size / 2
+    K = pars.size // 2
     # normalize (REQUIRED):
     pars[0:K] /= np.sum(pars[0:K])
     dx = 0.001
@@ -193,17 +197,17 @@ def optimize_mixture(K, pars, model, max_radius, log10_squared_deviation, badnes
 
 def hogg_savefig(prefix):
     fn = prefix + '.png'
-    print "writing %s" % fn
+    print("writing %s" % fn)
     plt.savefig(fn)
     fn = prefix + '.pdf'
-    print "writing %s" % fn
+    print("writing %s" % fn)
     plt.savefig(fn)
 
 def plot_mixture(pars, prefix, model, max_radius, log10_squared_deviation, badness_fn):
     x2 = np.arange(0.0005, np.sqrt(5. * max_radius), 0.001)**2 # note non-linear spacing
     y1 = hogg_model(x2, model)
     badness = badness_fn(np.log(pars), model, max_radius, log10_squared_deviation)
-    K = len(pars) / 2
+    K = len(pars) // 2
     y2 = mixture_of_not_normals(x2, pars)
     plt.figure(figsize=(5,5))
     plt.clf()
@@ -267,7 +271,7 @@ def plot_mixture(pars, prefix, model, max_radius, log10_squared_deviation, badne
     return None
 
 def rearrange_pars(pars):
-    K = len(pars) / 2
+    K = len(pars) // 2
     indx = np.argsort(pars[K: K + K])
     amp = pars[indx]
     var = pars[K+indx]
@@ -292,7 +296,7 @@ def main(input):
         prefix = '%s_K%02d_MR%02d' % (model, K, int(round(max_radius) + 0.01))
         picklefn = prefix + '.pickle'
         if os.path.exists(picklefn):
-            print 'not working on %s at K = %d (%s); just reading %s' % (model, K, prefix, picklefn)
+            print('not working on %s at K = %d (%s); just reading %s' % (model, K, prefix, picklefn))
             picklefile = open(picklefn, "r")
             pars = pickle.load(picklefile)
             picklefile.close()
@@ -300,9 +304,9 @@ def main(input):
             while bestbadness < 1. and log10_squared_deviation > -7.5:
                 bestbadness *= 10.
                 log10_squared_deviation = np.round(log10_squared_deviation - 1.)
-                print "K, bestbadness, log10_squared_deviation", K, bestbadness, log10_squared_deviation
+                print("K, bestbadness, log10_squared_deviation", K, bestbadness, log10_squared_deviation)
         else:
-            print 'working on %s at K = %d (%s)' % (model, K, prefix)
+            print('working on %s at K = %d (%s)' % (model, K, prefix))
             newvar = 2.0 * np.max(np.append(var, 1.0))
             newamp = 1.0 * newvar
             amp = np.append(newamp, amp)
@@ -311,15 +315,15 @@ def main(input):
             for i in range(2 * K):
                 (badness, pars) = optimize_mixture(K, pars, model, max_radius, log10_squared_deviation, bad_fn)
                 if (badness < (bestbadness - 1.e-7)) or (i == 0):
-                    print '%s %d %d improved' % (model, K, i)
+                    print('%s %d %d improved' % (model, K, i))
                     bestpars = rearrange_pars(pars)
                     bestbadness = badness
                     while bestbadness < 1. and log10_squared_deviation > -7.5:
                         bestbadness *= 10.
                         log10_squared_deviation = np.round(log10_squared_deviation - 1.)
-                        print "K, bestbadness, log10_squared_deviation", K, bestbadness, log10_squared_deviation
+                        print("K, bestbadness, log10_squared_deviation", K, bestbadness, log10_squared_deviation)
                 else:
-                    print '%s %d %d not improved' % (model, K, i)
+                    print('%s %d %d not improved' % (model, K, i))
                     amp = 1. * bestpars[0:K]
                     var = 1. * bestpars[K:K+K]
                     var[0] = 2.0 * var[np.mod(i, K)]
@@ -341,6 +345,9 @@ def main(input):
     return None
 
 if __name__ == '__main__':
+    main((0.4, 8.))
+    sys.exit(0)
+    
     if True: # use multiprocessing
         pmap = Pool(8).map
     else: # don't use multiprocessing

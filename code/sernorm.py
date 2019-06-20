@@ -1,5 +1,6 @@
 # Just checking out Jim Bosch's formula for the half-light radius scaling
 # "sernorm".
+from __future__ import print_function
 from scipy.special import gammaincinv
 
 def sernorm(n):
@@ -18,7 +19,7 @@ if __name__ == '__main__':
     cc = ['k', 'r','b','g','m','y','c','k',(1.,0.5,0),'0.3',(0,0.5,1.)]
     plt.clf()
     for i,n in enumerate(np.arange(0.5, 6, 0.5)):
-    	print 'sernorm(%f)' % n, sernorm(n)
+    	print('sernorm(%f)' % n, sernorm(n))
     	S = np.exp(-sernorm(n) * (X**(1./n) - 1.))
     	plt.plot(X, S, '-', color=cc[i])
     	cs = np.cumsum(S*X)*dx
