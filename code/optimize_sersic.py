@@ -187,18 +187,56 @@ def main():
     init_05 = ([9.065], [0.7213])
 
     dser = 0.01
-    sersicsF = np.arange(0.5-dser, 0.45-dser/2., -dser)
+    #sersicsF = np.arange(0.5-dser, 0.45-dser/2., -dser)
+    sersicsF = np.arange(0.5-dser, 0.4-dser/2., -dser)
     init_049 = ([9.24, -0.23], [0.71, 0.33])
     #init_049 = ([8.695, -0.4262, 0.007687], [0.7419, 0.4275, 0.08817])
+
+    sersicsG = np.arange(0.4, 0.3-dser/2., -dser)
+    init_04 = ([25.35, 8.269, -25.22], [0.5045, 0.3587, 0.4013])
+
+    dser = 0.5
+    sersics6 = np.arange(6.0, 3.0-dser/2., -dser)
+    init_6 = ([0.0113067,  0.04898785,  0.18195408,  0.55939775,
+               1.46288372, 3.28556791,  6.27896305,  9.86946446],
+               [6.07125356e-07,   7.02153046e-06,   5.60375312e-05,
+                3.98494081e-04,   2.72853912e-03,   1.93601976e-02,
+                1.58544866e-01,   1.95149972e+00])
+    #([9.785, 5.923, 3.086, 1.376, 0.5284, 0.1732, 0.04717, 0.01113],
+    #[1.53, 0.1326, 0.01691, 0.002454, 0.0003669, 5.274e-05, 6.766e-06, 6.002e-07])
+
+    # sersics4 = np.arange(4.0, 3.0-dser/2., -dser)
+    # init_4 = ([2.62202676e-03,   2.50014044e-02,   1.34130119e-01,
+    #            5.13259912e-01,   1.52004848e+00,   3.56204592e+00,
+    #            6.44844889e+00,   8.10104944e+00],
+    #            [1.26864655e-06,   2.25833632e-05,   2.13622743e-04,
+    #             1.54481548e-03,   9.85336661e-03,   6.10053309e-02,
+    #             4.08099539e-01,   3.70794983e+00])
+
+    #sersics3 = np.arange(3.0, 1.0-dser/2., -dser)
+    sersics3 = np.array([3., 2.5, 2., 1.5]) #, 1.25, 1.2, 1.1, 1.])
+    init_3 = ([7.872, 5.073, 2.661, 1.112, 0.3659, 0.09262, 0.01655],
+              [2.095, 0.3306, 0.06875, 0.01458, 0.002892, 0.0004967, 6.458e-05])
+
+    sersics15 = np.array([1.5, 1.4, 1.3, 1.2, 1.1, 1.])
+    init_15 = ([6.653, 4.537, 1.776, 0.5341, 0.121, 0.01932],
+               [1.83, 0.4273, 0.1187, 0.03255, 0.007875, 0.001491])
     
     for sersics,ini,patch in [
-        #(sersicsA, init_1,  False),
-        #(sersicsB, init_08, False),
-        # (sersicsC, init_07, False),
+        (sersics6, init_6, False),
+        #(sersics4, init_4, False),
+        (sersics3, init_3, False),
+        (sersics15, init_15, False),
+
+        (sersicsA, init_1,  False),
+        (sersicsB, init_08, False),
+        (sersicsC, init_07, False),
         (sersicsC2,init_06, False),
         (sersicsD, init_055, False),
         (sersicsE, init_05,  False),
         (sersicsF, init_049, True),
+        #(sersicsF, init_049, False),
+        (sersicsG, init_04, False),
                         ]:
         amps,vars,loglikes = fit_range(sersics, radii, ini)
 
@@ -214,15 +252,15 @@ def main():
             vars_half = all_vars[-1]
             assert(len(amps_before) == len(amps_after))
 
-            print('vars before:', vars_before)
-            print('vars after:', vars_after)
-            print('vars half:', vars_half)
+            #print('vars before:', vars_before)
+            #print('vars after:', vars_after)
+            #print('vars half:', vars_half)
             
             patchvars = np.append([vars_half[0]], np.sqrt(vars_before[1:] * vars_after[1:]))
-            print('Patch variances:', patchvars)
+            #print('Patch variances:', patchvars)
 
             patchamps = np.array([amps_half[0]] + [0.] * (len(amps_after)-1))
-            print('Patch amps:', patchamps)
+            #print('Patch amps:', patchamps)
             
             #all_sersics.append(sersics[0])
             #all_amps.append(patchamps)
@@ -244,7 +282,7 @@ def main():
     plt.figure(figsize=(12,6))
     plt.subplot(1,2,1)
     #for i in range(3):
-    for i in range(6):
+    for i in range(8):
         J, = np.nonzero([len(a) > i for a in all_amps])
         plt.plot(all_sersics[J], np.array([all_amps[j][i] for j in J]), 'o-')
     plt.xlabel('Sersic index')
@@ -254,7 +292,7 @@ def main():
 
     plt.subplot(1,2,2)
     #for i in range(3):
-    for i in range(6):
+    for i in range(8):
         J, = np.nonzero([len(a) > i for a in all_vars])
         plt.plot(all_sersics[J], np.array([all_vars[j][i] for j in J]), 'o-')
     plt.xlabel('Sersic index')
@@ -262,6 +300,14 @@ def main():
     plt.yscale('log')
     plt.suptitle('Gaussian Mixture approximations to Sersic profiles');
     plt.savefig('/tmp/mix.png')
+
+    plt.xscale('log')
+    xt = [6, 5, 4, 3, 2, 1, 0.5, 0.4, 0.3]
+    plt.xticks(xt, ['%g'%x for x in xt])
+    plt.subplot(1,2,1)
+    plt.xscale('log')
+    plt.xticks(xt, ['%g'%x for x in xt])
+    plt.savefig('/tmp/mix2.png')
     
     return
     
