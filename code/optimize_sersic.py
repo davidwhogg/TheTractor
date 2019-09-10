@@ -28,12 +28,15 @@ def mixture_logprior(params):
     variances = params[K:]
     if np.any(variances < 0):
         return -np.inf
-    amp_prior = -0.5 * np.sum(amps**2 / 10.**2)
-    var_prior = -0.5 * np.sum(variances**2 / 10.**2)
-    return amp_prior + var_prior
+
+    # Standard deviation of the amplitude prior
+    amp_std = 2.
+
+    amp_prior = -0.5 * np.sum(amps**2 / amp_std**2)
+    return amp_prior
 
 def mixture_logprob(params, radii, target):
-    loglike = mixture_loglikelihood(params, radii, target)
+    loglike  = mixture_loglikelihood(params, radii, target)
     logprior = mixture_logprior(params)
     return loglike + logprior
 
@@ -49,10 +52,21 @@ def optimize_mixture(pars, radii, target):
     # pars = 1. * newpars
     # newpars = op.fmin_cg(opt_func, pars, args=(radii, target), maxiter=128 * 2)
     # pars = 1. * newpars
-    pars = opt.minimize(opt_func, pars, args=(radii, target), method='Powell').x
-    pars = opt.minimize(opt_func, pars, args=(radii, target), method='BFGS').x
-    pars = opt.minimize(opt_func, pars, args=(radii, target), method='CG').x
-    pars = opt.minimize(opt_func, pars, args=(radii, target), method='Nelder-Mead').x
+
+    def callback(xk):
+        print('  x', xk, '->', opt_func(xk, radii, target))
+
+    for meth,kwargs in [#('BFGS', dict(eps=1e-6)),
+        #('Powell', {}),
+                        ('Powell', dict(ftol=1e-6, xtol=1e-6, maxfev=20000)),
+                        ('Powell', dict(ftol=1e-8, xtol=1e-8, maxfev=20000)),
+        # ('CG', {}),
+        #                ('Nelder-Mead', {}),
+        ]:
+        R = opt.minimize(opt_func, pars, args=(radii, target), method=meth,
+                         options=kwargs) #, callback=callback)
+        pars = R.x
+        print('Method', meth, 'success', R.success, R.message)
     return pars
 
 # n: sersic index
@@ -105,7 +119,11 @@ def fit_range(sersics, radii, init):
         #      'amps', ', '.join(['%.4g'%a for a in initamps]),
         #      'vars', ', '.join(['%.4g'%v for v in initvars]))
         pars = np.append(initamps, initvars)
+
+
         pars = optimize_mixture(pars, radii, target)
+        #pars = sample_sersic(radii, target, pars)
+
         fitamps = pars[:len(pars)//2].copy()
         fitvars = pars[len(pars)//2:].copy()
 
@@ -123,7 +141,41 @@ def fit_range(sersics, radii, init):
               'amps', ', '.join(['%.4g'%a for a in fitamps]),
               'vars', ', '.join(['%.4g'%v for v in fitvars]))
         print('  log-likehood', ll)
+        print('(%.2f' % sersic, ', [', ''.join(['%g, '%a for a in fitamps]), '], [',
+              ''.join(['%g, '%v for v in fitvars]), ']),')
     return all_amps, all_vars, all_loglikes
+
+def sample_sersic(radii, target, pars):
+    import emcee
+    ndim, nwalkers = len(pars), 30
+    scatter = 0.01 * np.ones(len(pars))
+    params = emcee.utils.sample_ball(pars, scatter, size=nwalkers)
+    sampler = emcee.EnsembleSampler(nwalkers, ndim, mixture_logprob, args=[radii, target])
+    nsteps = 5000
+    sampler.run_mcmc(params, nsteps)
+
+    # print('flatchain:', sampler.flatchain.shape)
+    # for i in range(len(pars)):
+    #     plt.clf()
+    #     plt.plot(sampler.flatchain[:,i])
+    #     plt.title('Parameter %i' % i)
+    #     plt.savefig('chain-%i.png' % i)
+
+    samples = sampler.flatchain[nsteps//2:,:]
+    lnprobs = sampler.flatlnprobability[nsteps//2:]
+
+    # import corner
+    # fig = corner.corner(samples)
+    # fig.savefig('corner.png')
+
+    ibest = np.argmax(lnprobs)
+    print('Largest log-prob:', lnprobs[ibest], 'at params', samples[ibest,:])
+    print('Median params:', np.median(samples, axis=0))
+
+    pbest = samples[ibest,:]
+    p2 = optimize_mixture(pbest, radii, target)
+    print('After opt:', mixture_logprob(p2, radii, target), 'at', p2)
+    return p2
 
 def main():
 
@@ -131,11 +183,21 @@ def main():
     rstep = 0.001
     radii = np.arange(rstep/2., max_radius, rstep)
 
+    # emcee
+    # init_04 = ([25.35, 8.269, -25.22], [0.5045, 0.3587, 0.4013])
+    # sersic = 0.4
+    # target = ser_model(radii, sersic)
+    # initamps,initvars = init_04
+    # pars = np.append(initamps, initvars)
+    # sample_sersic(radii, target, pars)
+    # return
+
+    
     ### Need to fit parameters for both N-component mixtures at the
-    ### transition indices.
+    ### transition indices (plus some overlap!)
     
     #dser = 0.01
-    dser = 0.05
+    #dser = 0.05
     #all_sersics = np.arange(0.6, 0.3-dser/2., -dser)
     #all_sersics = np.arange(1.0, 0.8-dser/2., -dser)
     #all_sersics = np.arange(0.85, 0.60-dser/2., -dser)
@@ -154,32 +216,21 @@ def main():
     init_1 = ([6.0, 4.34, 1.18, 0.223, 0.0308, 0.00235],
               [1.5, 0.461, 0.14, 0.0391, 0.00885, 0.0012])
 
-    #dser = 0.025
-    sersicsB = np.arange(0.8, 0.7-dser/2., -dser)
-    #init_08 = ([5.729, 4.086, 0.8569, 0.1297, 0.01497],
-    #           [1.28, 0.4863, 0.1643, 0.04959, 0.01203])
+    sersicsB = np.array([0.81, 0.8, 0.75, 0.7])
     init_08 = ([5.818, 4.1, 0.7976, 0.0947, 0.006378],
                [1.272, 0.4728, 0.1475, 0.03664, 0.005635])
     # At 0.65, seems to change mode -- amp goes negative, or pattern breaks
 
-    #sersicsC = np.arange(0.7, 0.55-dser/2., -dser)
-    sersicsC = np.arange(0.7, 0.6-dser/2., -dser)
-    init_07 = ([6.09, 3.697, 0.4622, 0.02679],
-               [1.108, 0.4562, 0.1305, 0.02194])
-    #[5.845, 3.798, 0.5746, 0.0568],
-    #[1.126, 0.484, 0.1605, 0.04168])
-    # 0.55 -- reordered!
+    sersicsC = np.array([0.71, 0.7, 0.65, 0.6])
+    init_07 = ([ 6.06735, 3.75046, 0.485251, 0.0287147,  ],
+               [ 1.12455, 0.455509, 0.12943, 0.0216252,  ])
 
-    sersicsC2 = np.arange(0.6, 0.55-dser/2., -dser)
-    init_06 = ([6.09, 3.697, 0.4622],
-               [1.108, 0.4562, 0.1305])
+    sersicsC2 = np.array([0.61, 0.6, 0.55])
+    init_06 = ([ 7.17173, 2.46264, 0.113251,],
+               [ 0.919541, 0.398251, 0.0800462,])
     
     dser = 0.01
-    sersicsD = np.arange(0.55, 0.50+dser/2., -dser)
-    #init_055 = ([6.522, 2.721, 0.1968],
-    #            [0.873, 0.5162, 0.1796])
-    #init_055 = ([7.747, 1.589, 0.04717],
-    #            [0.8195, 0.4178, 0.08735])
+    sersicsD = np.arange(0.57, 0.50+dser/2., -dser)
     init_055 = ([7.747, 1.589],
                 [0.8195, 0.4178])
 
@@ -187,13 +238,11 @@ def main():
     init_05 = ([9.065], [0.7213])
 
     dser = 0.01
-    #sersicsF = np.arange(0.5-dser, 0.45-dser/2., -dser)
     sersicsF = np.arange(0.5-dser, 0.4-dser/2., -dser)
     init_049 = ([9.24, -0.23], [0.71, 0.33])
-    #init_049 = ([8.695, -0.4262, 0.007687], [0.7419, 0.4275, 0.08817])
 
-    sersicsG = np.arange(0.4, 0.3-dser/2., -dser)
-    init_04 = ([25.35, 8.269, -25.22], [0.5045, 0.3587, 0.4013])
+    sersicsG = np.arange(0.41, 0.3-dser/2., -dser)
+    init_04 = ([ 14.4519, 0.998542, -6.97335,], [ 0.557467, 0.294148, 0.373739,])
 
     dser = 0.5
     sersics6 = np.arange(6.0, 3.0-dser/2., -dser)
@@ -202,32 +251,26 @@ def main():
                [6.07125356e-07,   7.02153046e-06,   5.60375312e-05,
                 3.98494081e-04,   2.72853912e-03,   1.93601976e-02,
                 1.58544866e-01,   1.95149972e+00])
-    #([9.785, 5.923, 3.086, 1.376, 0.5284, 0.1732, 0.04717, 0.01113],
-    #[1.53, 0.1326, 0.01691, 0.002454, 0.0003669, 5.274e-05, 6.766e-06, 6.002e-07])
 
-    # sersics4 = np.arange(4.0, 3.0-dser/2., -dser)
-    # init_4 = ([2.62202676e-03,   2.50014044e-02,   1.34130119e-01,
-    #            5.13259912e-01,   1.52004848e+00,   3.56204592e+00,
-    #            6.44844889e+00,   8.10104944e+00],
-    #            [1.26864655e-06,   2.25833632e-05,   2.13622743e-04,
-    #             1.54481548e-03,   9.85336661e-03,   6.10053309e-02,
-    #             4.08099539e-01,   3.70794983e+00])
-
-    #sersics3 = np.arange(3.0, 1.0-dser/2., -dser)
-    sersics3 = np.array([3., 2.5, 2., 1.5]) #, 1.25, 1.2, 1.1, 1.])
+    sersics7 = np.array([6.0, 6.1, 6.2, 6.3])
+    init_7 = ([ 9.78462, 5.92346, 3.08624, 1.37584,
+                0.528399, 0.17315, 0.0471669, 0.0111288,  ],
+                [ 1.52991, 0.132595, 0.0169103, 0.00245378,
+                  0.000366884, 5.27404e-05, 6.76674e-06, 6.00242e-07, ])
+    
+    sersics3 = np.array([3.1, 3., 2.5, 2., 1.5])
     init_3 = ([7.872, 5.073, 2.661, 1.112, 0.3659, 0.09262, 0.01655],
               [2.095, 0.3306, 0.06875, 0.01458, 0.002892, 0.0004967, 6.458e-05])
 
-    sersics15 = np.array([1.5, 1.4, 1.3, 1.2, 1.1, 1.])
+    sersics15 = np.array([1.6, 1.55, 1.51, 1.5, 1.4, 1.3, 1.2, 1.1, 1.])
     init_15 = ([6.653, 4.537, 1.776, 0.5341, 0.121, 0.01932],
                [1.83, 0.4273, 0.1187, 0.03255, 0.007875, 0.001491])
     
     for sersics,ini,patch in [
+        (sersics7, init_7, False),
         (sersics6, init_6, False),
-        #(sersics4, init_4, False),
         (sersics3, init_3, False),
         (sersics15, init_15, False),
-
         (sersicsA, init_1,  False),
         (sersicsB, init_08, False),
         (sersicsC, init_07, False),
@@ -235,11 +278,42 @@ def main():
         (sersicsD, init_055, False),
         (sersicsE, init_05,  False),
         (sersicsF, init_049, True),
-        #(sersicsF, init_049, False),
+        # (sersicsF, init_049, False),
         (sersicsG, init_04, False),
                         ]:
         amps,vars,loglikes = fit_range(sersics, radii, ini)
 
+        # amps2,vars2,loglikes2 = fit_range(reversed(sersics), radii,
+        #                                   (amps[-1], vars[-1]))
+        # 
+        # amps3,vars3,loglikes3 = fit_range(sersics, radii,
+        #                                   (amps2[-1], vars2[-1]))
+        # 
+        # amps4,vars4,loglikes4 = fit_range(reversed(sersics), radii,
+        #                                   (amps3[-1], vars3[-1]))
+        # amps,vars = amps4,vars4
+        
+        print('After fitting range forward:', sersics)
+        #print('amps:', amps)
+        #print('vars:', vars)
+        print('log-likes:', loglikes)
+
+        # print('After fitting range backwards:', sersics)
+        # #print('amps:', amps2)
+        # #print('vars:', vars2)
+        # print('log-likes:', loglikes2)
+        # 
+        # print('After fitting range forwards again:', sersics)
+        # print('log-likes:', loglikes3)
+        # 
+        # print('After fitting range backwards again:', sersics)
+        # print('log-likes:', loglikes4)
+
+        for sersic,fitamps,fitvars in reversed(list(zip(sersics,amps,vars))):
+            print('(%.2f' % sersic, ', [', ''.join(['%g, '%a for a in fitamps]), '], [',
+                  ''.join(['%g, '%v for v in fitvars]), ']),')
+
+        
         # the one after 0.5: patch across 0.5
         if patch:
             amps_before = all_amps[-2]
@@ -308,7 +382,7 @@ def main():
     plt.xscale('log')
     plt.xticks(xt, ['%g'%x for x in xt])
     plt.savefig('/tmp/mix2.png')
-    
+
     return
     
     #all_sersics = np.arange(1.0, 0.25-dser/2, -dser)
