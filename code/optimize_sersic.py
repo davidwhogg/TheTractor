@@ -211,30 +211,28 @@ def main():
     all_loglikes = []
     #all_logprobs = []
 
-    sersics7 = np.array([6.0, 6.1, 6.2, 6.3])
+    sersics7 = np.array([6.1, 6.2, 6.3])
     init_7 = ([ 9.78462, 5.92346, 3.08624, 1.37584,
                 0.528399, 0.17315, 0.0471669, 0.0111288,  ],
                 [ 1.52991, 0.132595, 0.0169103, 0.00245378,
                   0.000366884, 5.27404e-05, 6.76674e-06, 6.00242e-07, ])
     
-    dser = 0.5
-    sersics6 = np.arange(6.0, 3.0-dser/2., -dser)
+    sersics6 = np.array([6.0, 5.5, 5.0, 4.5, 4.0, 3.5, 3.0, 2.7])
     init_6 = ([0.0113067,  0.04898785,  0.18195408,  0.55939775,
                1.46288372, 3.28556791,  6.27896305,  9.86946446],
                [6.07125356e-07,   7.02153046e-06,   5.60375312e-05,
                 3.98494081e-04,   2.72853912e-03,   1.93601976e-02,
                 1.58544866e-01,   1.95149972e+00])
 
-    sersics3 = np.array([3.1, 3., 2.5, 2., 1.5])
+    sersics3 = np.array([3.2, 3.1, 3., 2.5, 2., 1.5])
     init_3 = ([7.872, 5.073, 2.661, 1.112, 0.3659, 0.09262, 0.01655],
               [2.095, 0.3306, 0.06875, 0.01458, 0.002892, 0.0004967, 6.458e-05])
 
-    sersics15 = np.array([1.6, 1.55, 1.51, 1.5, 1.4, 1.3, 1.2, 1.1, 1.])
+    sersics15 = np.array([1.55, 1.51, 1.5, 1.4, 1.3, 1.2, 1.1, 1.0])
     init_15 = ([6.653, 4.537, 1.776, 0.5341, 0.121, 0.01932],
                [1.83, 0.4273, 0.1187, 0.03255, 0.007875, 0.001491])
     
-    dser = 0.05
-    sersicsA = np.arange(1.0, 0.8-dser/2., -dser)
+    sersicsA = np.array([1.0, 0.95, 0.9, 0.85, 0.8, 0.76, 0.75])
     init_1 = ([6.0, 4.34, 1.18, 0.223, 0.0308, 0.00235],
               [1.5, 0.461, 0.14, 0.0391, 0.00885, 0.0012])
 
@@ -245,16 +243,11 @@ def main():
 
     # From 0.6 down to 0.55, the two largest-variance components merge
     # (sharp change at about 0.56)
-    sersicsC = np.array([0.71, 0.7, 0.65, 0.6, 0.58]) #, 0.58, 0.56, 0.55])
+    sersicsC = np.array([0.76, 0.75, 0.71, 0.7, 0.65, 0.6, 0.58, 0.57])
     init_07 = ([ 6.06735, 3.75046, 0.485251, 0.0287147,  ],
                [ 1.12455, 0.455509, 0.12943, 0.0216252,  ])
 
-    # sersicsC2 = np.array([0.61, 0.6, 0.55])
-    # init_06 = ([ 7.17173, 2.46264, 0.113251,],
-    #            [ 0.919541, 0.398251, 0.0800462,])
-    
     dser = 0.01
-    #sersicsD = np.arange(0.57, 0.50+dser/2., -dser)
     sersicsD = np.arange(0.61, 0.50+dser/2., -dser)
     init_055 = ([7.747, 1.589],
                 [0.8195, 0.4178])
@@ -266,7 +259,7 @@ def main():
     sersicsF = np.arange(0.5-dser, 0.4-dser/2., -dser)
     init_049 = ([9.24, -0.23], [0.71, 0.33])
 
-    sersicsG = np.arange(0.41, 0.3-dser/2., -dser)
+    sersicsG = np.arange(0.42, 0.3-dser/2., -dser)
     init_04 = ([ 14.4519, 0.998542, -6.97335,], [ 0.557467, 0.294148, 0.373739,])
 
 
@@ -283,7 +276,7 @@ def main():
         # (sersicsE, init_05,  False),
         # (sersicsF, init_049, True),
         # (sersicsF, init_049, False),
-        # (sersicsG, init_04, False),
+        (sersicsG, init_04, False),
                         ]:
         amps,vars,loglikes = fit_range(sersics, radii, ini)
 
@@ -387,6 +380,28 @@ def main():
     plt.xticks(xt, ['%g'%x for x in xt])
     plt.savefig('/tmp/mix2.png')
 
+    plt.clf()
+    plt.subplot(1,2,1)
+    for s,a,v in zip(all_sersics, all_amps, all_vars):
+        plt.plot(s + np.zeros_like(a), a, '-')
+    plt.xlabel('Sersic index')
+    plt.ylabel('Mixture amplitudes')
+    plt.axhline(0., color='k')
+    plt.yscale('symlog', linthreshy=1e-3)
+    plt.xscale('log')
+    xt = [6, 5, 4, 3, 2, 1, 0.5, 0.4, 0.3]
+    plt.xticks(xt, ['%g'%x for x in xt])
+    plt.subplot(1,2,2)
+    for s,a,v in zip(all_sersics, all_amps, all_vars):
+        plt.plot(s + np.zeros_like(v), v, '-')
+    plt.xlabel('Sersic index')
+    plt.ylabel('Mixture variances');
+    plt.yscale('log')
+    plt.xscale('log')
+    xt = [6, 5, 4, 3, 2, 1, 0.5, 0.4, 0.3]
+    plt.xticks(xt, ['%g'%x for x in xt])
+    plt.savefig('/tmp/mix3.png')
+    
     return
     
     #all_sersics = np.arange(1.0, 0.25-dser/2, -dser)
