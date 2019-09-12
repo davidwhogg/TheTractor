@@ -293,7 +293,10 @@ def main():
     sersicsG = np.arange(0.42, 0.29-dser/2., -dser)
     init_04 = ([ 13.5581, 0.433216, -5.44774,  ], [ 0.575113, 0.304652, 0.385431,  ])
 
-    sersicsFG = np.array([0.40, 0.41, 0.42, 0.43])
+    # sersicsFG = np.array([0.40, 0.41, 0.42, 0.43])
+    # initFG = ([ 15.4473, 1.43828, -8.47514,  ], [ 0.540383, 0.28262, 0.365116,  ])
+    # priorsFG = [ [None, 1., None], [None, 0.5, None], [None, 0.25, None], [None, 0.125, None] ]
+    sersicsFG = np.array([0.39, 0.40, 0.41, 0.42])
     initFG = ([ 15.4473, 1.43828, -8.47514,  ], [ 0.540383, 0.28262, 0.365116,  ])
     priorsFG = [ [None, 1., None], [None, 0.5, None], [None, 0.25, None], [None, 0.125, None] ]
     
