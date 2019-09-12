@@ -22,7 +22,7 @@ def mixture_loglikelihood(params, radii, target):
     chi_ish = np.sum(radii * residual**2)
     return -0.5 * chi_ish
 
-def mixture_logprior(params):
+def mixture_logprior(params, extra=None):
     K = len(params)//2
     amps = params[:K]
     variances = params[K:]
@@ -31,20 +31,33 @@ def mixture_logprior(params):
 
     # Standard deviation of the amplitude prior
     amp_std = 2.
-
     amp_prior = -0.5 * np.sum(amps**2 / amp_std**2)
+
+    if extra:
+        assert(len(extra) == len(amps))
+        for a,sig in zip(amps, extra):
+            if sig is None:
+                continue
+            # add extra amplitude priors!
+            amp_prior += -0.5 * (a**2 / sig**2)
+
     return amp_prior
 
-def mixture_logprob(params, radii, target):
+def mixture_logprob(*args):
+    extra_priors = None
+    if len(args) == 4:
+        extra_priors = args[3]
+    params, radii, target = args[:3]
+
     loglike  = mixture_loglikelihood(params, radii, target)
-    logprior = mixture_logprior(params)
+    logprior = mixture_logprior(params, extra=extra_priors)
+
     return loglike + logprior
 
 def opt_func(*args):
     return -mixture_logprob(*args)
 
-
-def optimize_mixture(pars, radii, target):
+def optimize_mixture(pars, radii, target, priors=None):
     import scipy.optimize as opt
     # newpars = op.fmin_powell(opt_func, pars, args=(radii, target), maxfun=16384 * 2)
     # pars = 1. * newpars
@@ -56,17 +69,25 @@ def optimize_mixture(pars, radii, target):
     def callback(xk):
         print('  x', xk, '->', opt_func(xk, radii, target))
 
-    for meth,kwargs in [#('BFGS', dict(eps=1e-6)),
-        #('Powell', {}),
+    #('BFGS', dict(eps=1e-6)),
+    #('CG', {}),
+
+    if priors is None:
+        args = (radii, target)
+    else:
+        args = (radii, target, priors)
+    
+    for meth,kwargs in [('Powell', dict(ftol=1e-6, xtol=1e-6, maxfev=20000)),
+                        ('Nelder-Mead', dict(maxfev=20000)),
                         ('Powell', dict(ftol=1e-6, xtol=1e-6, maxfev=20000)),
                         ('Powell', dict(ftol=1e-8, xtol=1e-8, maxfev=20000)),
-        # ('CG', {}),
-        #                ('Nelder-Mead', {}),
         ]:
-        R = opt.minimize(opt_func, pars, args=(radii, target), method=meth,
-                         options=kwargs) #, callback=callback)
+        R = opt.minimize(opt_func, pars, args=args, method=meth, options=kwargs)
+        #, callback=callback)
         pars = R.x
-        print('Method', meth, 'success', R.success, R.message)
+        print('Method', meth, 'success', R.success, R.message, 'lnprob', -R.fun)
+        #print('  Params', pars)
+        #print('  Value', R.fun)
     return pars
 
 # n: sersic index
@@ -106,22 +127,32 @@ def plot_one_row(n, a, v, xx):
             #plt.axis(ax)
         plt.title('Sersic %.2f' % n)
 
-def fit_range(sersics, radii, init):
+def fit_range(sersics, radii, init, priors=None):
     a,v = init
     initamps = np.array(a)
     initvars = np.array(v)
     all_amps = []
     all_vars = []
     all_loglikes = []
-    for sersic in sersics:
+    all_logprobs = []
+
+    if priors is not None:
+        assert(len(priors) == len(sersics))
+        for p in priors:
+            assert(len(p) == len(a))
+
+    for iser,sersic in enumerate(sersics):
         target = ser_model(radii, sersic)
         #print('Sersic %.2f' % sersic, 'ini at',
         #      'amps', ', '.join(['%.4g'%a for a in initamps]),
         #      'vars', ', '.join(['%.4g'%v for v in initvars]))
         pars = np.append(initamps, initvars)
 
+        prior = None
+        if priors is not None:
+            prior = priors[iser]
 
-        pars = optimize_mixture(pars, radii, target)
+        pars = optimize_mixture(pars, radii, target, priors=prior)
         #pars = sample_sersic(radii, target, pars)
 
         fitamps = pars[:len(pars)//2].copy()
@@ -133,14 +164,14 @@ def fit_range(sersics, radii, init):
 
         all_amps.append(fitamps)
         all_vars.append(fitvars)
-        ll = mixture_loglikelihood(pars, radii, target)
-        all_loglikes.append(ll)
+        all_loglikes.append(mixture_loglikelihood(pars, radii, target))
+        all_logprobs.append(mixture_logprob(pars, radii, target))
         initamps = fitamps
         initvars = fitvars
         print('Sersic %.2f' % sersic, 'opt at',
               'amps', ', '.join(['%.4g'%a for a in fitamps]),
               'vars', ', '.join(['%.4g'%v for v in fitvars]))
-        print('  log-likehood', ll)
+        print('  log-prob', all_logprobs[-1])
         print('(%.2f' % sersic, ', [', ''.join(['%g, '%a for a in fitamps]), '], [',
               ''.join(['%g, '%v for v in fitvars]), ']),')
     return all_amps, all_vars, all_loglikes
@@ -259,26 +290,32 @@ def main():
     sersicsF = np.arange(0.5-dser, 0.4-dser/2., -dser)
     init_049 = ([9.24, -0.23], [0.71, 0.33])
 
-    sersicsG = np.arange(0.42, 0.3-dser/2., -dser)
-    init_04 = ([ 14.4519, 0.998542, -6.97335,], [ 0.557467, 0.294148, 0.373739,])
+    sersicsG = np.arange(0.42, 0.29-dser/2., -dser)
+    init_04 = ([ 13.5581, 0.433216, -5.44774,  ], [ 0.575113, 0.304652, 0.385431,  ])
 
-
-    for sersics,ini,patch in [
-        # (sersics7, init_7, False),
-        # (sersics6, init_6, False),
-        # (sersics3, init_3, False),
-        # (sersics15, init_15, False),
-        # (sersicsA, init_1,  False),
-        # (sersicsB, init_08, False),
-        # (sersicsC, init_07, False),
-        # (sersicsC2,init_06, False),
-        # (sersicsD, init_055, False),
-        # (sersicsE, init_05,  False),
-        # (sersicsF, init_049, True),
-        # (sersicsF, init_049, False),
-        (sersicsG, init_04, False),
-                        ]:
-        amps,vars,loglikes = fit_range(sersics, radii, ini)
+    sersicsFG = np.array([0.40, 0.41, 0.42, 0.43])
+    initFG = ([ 15.4473, 1.43828, -8.47514,  ], [ 0.540383, 0.28262, 0.365116,  ])
+    priorsFG = [ [None, 1., None], [None, 0.5, None], [None, 0.25, None], [None, 0.125, None] ]
+    
+    #sersicsG = np.array([0.42, 0.43])
+    #init_04 = ([ 13.5581, 0.433216, -5.44774,  ], [ 0.575113, 0.304652, 0.385431,  ])
+    
+    for sersics,ini,priors,patch in [
+        # (sersics7, init_7,   None, False),
+        # (sersics6, init_6,   None, False),
+        # (sersics3, init_3,   None, False),
+        # (sersics15, init_15, None, False),
+        # (sersicsA, init_1,   None, False),
+        # (sersicsB, init_08,  None, False),
+        # (sersicsC, init_07,  None, False),
+        # (sersicsD, init_055, None, False),
+        # (sersicsE, init_05,  None, False),
+        # (sersicsF, init_049, None, True),
+        # (sersicsF, init_049, None, False),
+        # (sersicsG, init_04, None, False),
+        (sersicsFG, initFG, priorsFG, False),
+        ]:
+        amps,vars,loglikes = fit_range(sersics, radii, ini, priors=priors)
 
         # amps2,vars2,loglikes2 = fit_range(reversed(sersics), radii,
         #                                   (amps[-1], vars[-1]))
@@ -393,7 +430,7 @@ def main():
     plt.xticks(xt, ['%g'%x for x in xt])
     plt.subplot(1,2,2)
     for s,a,v in zip(all_sersics, all_amps, all_vars):
-        plt.plot(s + np.zeros_like(v), v, '-')
+        plt.plot(s + np.zeros_like(v), v, '.')
     plt.xlabel('Sersic index')
     plt.ylabel('Mixture variances');
     plt.yscale('log')
